@@ -1,5 +1,5 @@
 // ButtonStyles.js
-import styled from 'styled-components/native';
+import styled from '@emotion/native';
 
 export const Button = styled.TouchableOpacity`
   background-color: #00bfff;
