@@ -1,10 +1,16 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ['./App.{js,ts,tsx}', './components/**/*.{js,ts,tsx}'],
+const colors = require('./src/styles/colors');
 
+module.exports = {
+  content: ['./src/**/*.{js,ts,tsx,jsx}'],
   presets: [require('nativewind/preset')],
   theme: {
-    extend: {},
+    extend: {
+      colors,
+      fontFamily: {
+        sans: ['PoppinsRegular'],
+      },
+    },
   },
   plugins: [],
 };
