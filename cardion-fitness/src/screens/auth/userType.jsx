@@ -1,19 +1,20 @@
-import { useNavigation } from '@react-navigation/native';
 import { View, Image, SafeAreaView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
-import BackgroundWrapper from '~/components/loadingBackgroundImage';
+
+import BackgroundImage from '~/components/loadingBackgroundImage';
 
 export default function UserType() {
     const navigation = useNavigation();
     return (
-        <BackgroundWrapper
-            source={require('../../assets/img/imagemFundo2.png')}
+        <BackgroundImage
+            source={require('~/assets/img/backgroundImage/imagemFundo2.png')}
             style={{ resizeMode: 'contain' }}
         >
-
             <SafeAreaView className='w-full items-center'>
+
                 <Image
-                    source={require('../../assets/img/Logo1.png')}
+                    source={require('~/assets/img/logo/Logo1.png')}
                     className='w-6/12' style={{ resizeMode: 'contain' }}
                 />
 
@@ -44,6 +45,6 @@ export default function UserType() {
                 </View>
 
             </SafeAreaView>
-        </BackgroundWrapper>
+        </BackgroundImage>
     );
 }
