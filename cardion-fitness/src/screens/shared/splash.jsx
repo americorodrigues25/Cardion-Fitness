@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { SafeAreaView, Image, ActivityIndicator } from "react-native";
+import { Image, ActivityIndicator, SafeAreaView } from "react-native";
+import BackgroundWrapper from '~/components/loadingBackgroundImage'
 
 export default function Splash({ navigation }) {
     const [showSplash] = useState(true);
@@ -17,21 +18,27 @@ export default function Splash({ navigation }) {
     }, []);
 
     return (
-        <SafeAreaView className='flex-1 justify-center items-center bg-colorDark400'>
-            {showSplash && (
-                <Image
-                    source={require('../../assets/img/Logo1.png')}
-                    className='w-10/12'
-                    style={{ resizeMode: 'contain' }}
-                />
-            )}
-            {showLoading && (
-                <ActivityIndicator
-                    size="large"
-                    color="#ffffff"
-                    style={{ position: 'absolute', bottom: '350' }}
-                />
-            )}
-        </SafeAreaView>
+        <BackgroundWrapper
+            source={require('../../assets/img/imagemFundo1.png')}
+            style={{ resizeMode: 'contain' }}
+        >
+            <SafeAreaView className='flex-1 justify-center items-center'>
+                {showSplash && (
+                    <Image
+                        source={require('../../assets/img/Logo2.png')}
+                        className='w-8/12 absolute'
+                        style={{ resizeMode: 'contain' }}
+                    />
+                )}
+                {showLoading && (
+                    <ActivityIndicator
+                        size="large"
+                        color="#ffffff"
+                        style={{ position: 'absolute', bottom: '350' }}
+                    />
+                )}
+            </SafeAreaView>
+        </BackgroundWrapper>
+
     );
 }

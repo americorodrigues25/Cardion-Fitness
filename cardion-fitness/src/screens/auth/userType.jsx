@@ -1,27 +1,49 @@
-import { View, Text, Image } from 'react-native';
-import { ButtonGreen, ButtonTextGreen, ButtonViolet, ButtonTextViolet } from '~/components/button';
+import { useNavigation } from '@react-navigation/native';
+import { View, Image, SafeAreaView } from 'react-native';
+import { ButtonViolet, ButtonTextViolet } from '~/components/button';
+import BackgroundWrapper from '~/components/loadingBackgroundImage';
 
 export default function UserType() {
+    const navigation = useNavigation();
     return (
-        <View className='flex-1 justify-center items-center bg-colorDark400'>
-            <View className='w-full items-center'>
+        <BackgroundWrapper
+            source={require('../../assets/img/imagemFundo2.png')}
+            style={{ resizeMode: 'contain' }}
+        >
 
+            <SafeAreaView className='w-full items-center'>
                 <Image
                     source={require('../../assets/img/Logo1.png')}
-                    className='w-10/12 h-2/5'
+                    className='w-6/12' style={{ resizeMode: 'contain' }}
                 />
 
-                <Text className='text-lg font-semibold text-colorLight300 mt-2'>O seu app</Text>
+                <View className='w-full items-center mt-12 px-10'>
+                    <ButtonViolet
+                        onPress={() => navigation.navigate('login')}
+                        style={{
+                            shadowColor: '#6943FF',
+                            shadowOffset: 0,
+                            shadowOpacity: 0.7,
+                            shadowRadius: 7,
+                            elevation: 12,
+                        }}>
+                        <ButtonTextViolet >SOU ALUNO</ButtonTextViolet>
+                    </ButtonViolet>
 
-                <View className='w-full items-center mt-2'>
-                    <ButtonGreen className='w-10/12'>
-                        <ButtonTextGreen>Sou aluno</ButtonTextGreen>
-                    </ButtonGreen>
-                    <ButtonViolet className='w-10/12'>
-                        <ButtonTextViolet>Sou personal trainer</ButtonTextViolet>
+                    <ButtonViolet
+                        onPress={() => navigation.navigate('login')}
+                        style={{
+                            shadowColor: '#6943FF',
+                            shadowOffset: 0,
+                            shadowOpacity: 0.7,
+                            shadowRadius: 7,
+                            elevation: 12,
+                        }}>
+                        <ButtonTextViolet>SOU PROFESSOR</ButtonTextViolet>
                     </ButtonViolet>
                 </View>
-            </View>
-        </View>
+
+            </SafeAreaView>
+        </BackgroundWrapper>
     );
 }

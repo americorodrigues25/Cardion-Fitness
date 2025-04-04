@@ -6,8 +6,8 @@ const colors = {
   colorLight100: '#F4F4F5',
   colorLight200: '#E4E4E7',
   colorLight300: '#D4D4D8',
-  colorGreen: '#A3E635',
-  colorViolet: '#7E22CE',
+  colorInputs: '#171c26',
+  colorViolet: '#6943FF',
 };
 
 export default colors;
