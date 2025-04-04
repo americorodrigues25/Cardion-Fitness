@@ -1,5 +1,6 @@
 import { SafeAreaView, View, Image, Text, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 import { Input } from '~/components/input';
 
@@ -7,6 +8,7 @@ import BackgroundImage from '~/components/loadingBackgroundImage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default function SignUp({ }) {
+    const navigation = useNavigation();
     const [rememberMe, setRememberMe] = useState(false);
 
     return (
@@ -16,7 +18,9 @@ export default function SignUp({ }) {
 
             <SafeAreaView className='w-full h-full'>
                 <View className="absolute top-0 left-0 w-full px-5 pt-16 z-10">
-                    <Icon name="arrow-back-ios-new" size={25} color="#FFFFFF" />
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Icon name="arrow-back-ios-new" size={25} color="#FFFFFF" />
+                    </TouchableOpacity>
                 </View>
 
                 <View className='px-10'>

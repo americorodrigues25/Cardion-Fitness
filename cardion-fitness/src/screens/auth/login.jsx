@@ -26,8 +26,6 @@ export default function Login() {
                     />
                 </View>
 
-
-
                 <Text className="text-colorLight200 text-5xl font-semibold text-center mt-10 mb-10 px-10">
                     Vamos entrar?
                 </Text>
