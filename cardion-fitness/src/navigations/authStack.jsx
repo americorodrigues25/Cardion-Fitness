@@ -23,14 +23,14 @@ const AuthNavigation = () => {
                     component={UserType}
                 />
                 <Stack.Screen
-                    name='signup'
-                    options={{ headerShown: false }}
-                    component={SignUp}
-                />
-                <Stack.Screen
                     name='login'
                     options={{ headerShown: false }}
                     component={Login}
+                />
+                <Stack.Screen
+                    name='signup'
+                    options={{ headerShown: false }}
+                    component={SignUp}
                 />
             </Stack.Navigator>
         </NavigationContainer>
