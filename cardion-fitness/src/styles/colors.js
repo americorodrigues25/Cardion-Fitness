@@ -1,4 +1,5 @@
-const colors = {
+// src/styles/colors.js
+module.exports = {
   colorDark100: '#27272A',
   colorDark200: '#18181B',
   colorDark300: '#09090B',
@@ -8,5 +9,3 @@ const colors = {
   colorInputs: '#171c26',
   colorViolet: '#6943FF',
 };
-
-export default colors;
