@@ -10,7 +10,8 @@
       "tsconfigPaths": true
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "expo-facebook"
     ],
     "orientation": "portrait",
     "icon": "",
@@ -25,14 +26,35 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "newArchEnabled": true
+      "newArchEnabled": true,
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
+        "SKAdNetworkItems": [
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          }
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "",
         "backgroundColor": "#ffffff"
       },
+       "package": "cardion.android",
+       "googleSignIn": {
+  "certificateHash": "D6:CD:F9:2D:AC:DA:6B:CF:66:15:22:69:32:29:48:D3:32:77:12:AF"
+              },
       "newArchEnabled": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6581bcfd-31da-41a3-b160-7fabc91aace8"
+      }
+    },
+    "owner": "marcosmartinsdelima"
   }
 }

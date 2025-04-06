@@ -10,22 +10,17 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 // hook
 import { useAuth } from '~/hook/useAuthentication';
 
-export default function SignUp({ }) {
-    const { login, signUp, loading, error } = useAuth();
+export default function ResetPassword({ }) {
+    const { resetPassword,login, signUp, loading, error } = useAuth();
     const navigation = useNavigation();
     const [rememberMe, setRememberMe] = useState(false);
     const [email,setEmail] = useState()
-    const [password,setPassword] = useState()
-    const [confirmPassword,setConfirmPassword] = useState()
 
-    const handleSignUp = async () => {
-        if(password != confirmPassword){
-            Alert.alert("Erro","A senha de confirmação precisa ser a mesma")
-            return
-        }
-        const user = await signUp(email, password);
-        if (user) {
-          console.log("Conta criada com sucesso!", user);
+
+    const handleReset = async () => {
+        const ok = await resetPassword(email);
+        if (ok) {
+          setSuccess(true);
         }
       };
 
@@ -43,7 +38,7 @@ export default function SignUp({ }) {
 
                 <View className='px-10'>
                     <Text className="text-colorLight200 text-5xl font-semibold text-center mt-20 mb-10 px-10">
-                        Crie sua conta
+                        Esqueci minha senha
                     </Text>
 
                     <Input
@@ -53,51 +48,19 @@ export default function SignUp({ }) {
                         onChangeText={setEmail}
                     />
 
-                    <Input
-                        placeholder='Senha'
-                        placeholderTextColor='#5d5d5d'
-                        value={password}
-                        onChangeText={setPassword}
-                    />
-
-                    <Input
-                        placeholder='Confirme sua senha'
-                        placeholderTextColor='#5d5d5d'
-                        value={confirmPassword}
-                        onChangeText={setConfirmPassword}
-                    />
-
+                    {/* todo: alterar estilo do botao de redefinir senha */}
                     <View className="mt-10 flex-row items-center gap-2 justify-center">
                         <TouchableOpacity
-                            onPress={() => setRememberMe(!rememberMe)}
+                            onPress={handleReset}
                             activeOpacity={0.7}
                             className="w-6 h-6 rounded-md border-2 border-colorViolet flex items-center justify-center"
                         >
-                            {rememberMe && <View className="w-6 h-6 bg-colorViolet rounded-md" />}
+                           
                         </TouchableOpacity>
 
-                        <Text className="text-gray-300 text-lg">Lembrar</Text>
+                        <Text className="text-gray-300 text-lg">Enviar link de redefinição</Text>
                     </View>
 
-                    {/* alterei o texto para criar conta apenas pq eu precisava diferenciar login e sigin */}
-                    <View className='mt-5'>
-                        <ButtonViolet onPress={handleSignUp}>
-                            <ButtonTextViolet>Criar Conta</ButtonTextViolet>
-                        </ButtonViolet>
-                    </View>
-
-                    {/* Coloquei mais para cima apenas para teste */}
-                    <TouchableOpacity className=''onPress={() => navigation.navigate('resetPassword')}>
-                        <Text className="text-colorLight200 text-base font-normal text-center">
-                            Esqueci minha <Text className='text-colorViolet font-semibold'>senha</Text>
-                        </Text>
-                    </TouchableOpacity>
-
-                    <View className="flex-row items-center mt-14">
-                        <View className="flex-1 h-[0.5px] bg-gray-500" />
-                        <Text className="text-colorLight200 mx-2 text-xl">ou continuar com</Text>
-                        <View className="flex-1 h-[0.5px] bg-gray-500" />
-                    </View>
 
                     <View className='flex-1 items-center flex-row justify-center gap-5 my-20'>
                         <TouchableOpacity className="flex-row items-center justify-center bg-colorInputs border-colorDark100 border-[1.5px] p-4 rounded-2xl  w-20">
@@ -113,11 +76,9 @@ export default function SignUp({ }) {
                         </TouchableOpacity>
                     </View>
 
-
-
-                    <TouchableOpacity className='' onPress={() => navigation.navigate('login')}>
+                    <TouchableOpacity className=''>
                         <Text className="text-colorLight200 text-base font-normal text-center">
-                            Já possui uma conta? <Text className='text-colorViolet font-semibold'>Acesse agora</Text>
+                            Esqueci minha <Text className='text-colorViolet font-semibold'>senha</Text>
                         </Text>
                     </TouchableOpacity>
 

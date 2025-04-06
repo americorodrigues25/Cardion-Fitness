@@ -1,13 +1,30 @@
-import { SafeAreaView, View, Image, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, Image, Text, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
+
+import { useState } from 'react';
 
 import BackgroundImage from '~/components/loadingBackgroundImage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+// hooks
+import { useGoogleAuth } from '../../hook/useGoogleAuth';
+import { useAuth } from '~/hook/useAuthentication';
 
 export default function Login() {
+    const [role, setRole] = useState('aluno'); // ou 'personal'
+    const { promptAsync, loading, error, userRole } = useGoogleAuth(role);
     const navigation = useNavigation();
+    const { login, signUp, loading: loadingAuth, error:errorAuth } = useAuth();
+
+    const handleLogin = async () => {
+        const user = await login(email, password);
+        if (user) {
+            // todo: remover alert, coloquei para teste
+          console.log("Login bem-sucedido!", user);
+          Alert.alert("Deu certo")
+        }
+      };
 
     return (
         <BackgroundImage
@@ -36,7 +53,7 @@ export default function Login() {
                         <Text className="text-colorLight200 ml-4 text-lg">Continuar com Facebook</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity className="flex-row items-center justify-center bg-colorInputs border-colorDark100 border-[1.5px] p-4 rounded-2xl mb-3">
+                    <TouchableOpacity onPress={() => promptAsync()} className="flex-row items-center justify-center bg-colorInputs border-colorDark100 border-[1.5px] p-4 rounded-2xl mb-3">
                         <Image source={require('~/assets/img/redeSocial/google.png')} className='w-10 h-10 mr-3' />
                         <Text className="text-colorLight200 ml-4 text-lg">Continuar com Google</Text>
                     </TouchableOpacity>
@@ -64,7 +81,7 @@ export default function Login() {
                             elevation: 12,
                         }}
                     >
-                        <ButtonTextViolet >Entrar com senha</ButtonTextViolet>
+                        <ButtonTextViolet onPress={handleLogin}>Entrar com senha</ButtonTextViolet>
                     </ButtonViolet>
                 </View>
                 <TouchableOpacity className='mt-20'>
