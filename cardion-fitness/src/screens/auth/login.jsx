@@ -43,7 +43,7 @@ export default function Login() {
                     />
                 </View>
 
-                <Text className="text-colorLight200 text-5xl font-semibold text-center mt-10 mb-10 px-10">
+                <Text className="text-colorLight200 text-5xl font-semibold text-center my-10 px-10">
                     Vamos entrar?
                 </Text>
 
@@ -64,13 +64,13 @@ export default function Login() {
                     </TouchableOpacity>
                 </View>
 
-                <View className="flex-row items-center my-6 px-10 mt-20">
+                <View className="flex-row items-center my-6 px-10 mt-10">
                     <View className="flex-1 h-[0.5px] bg-gray-500" />
                     <Text className="text-colorLight200 mx-2 text-4xl">ou</Text>
                     <View className="flex-1 h-[0.5px] bg-gray-500" />
                 </View>
 
-                <View className='w-full items-center mt-10 px-10'>
+                <View className='w-full items-center px-10'>
                     <ButtonViolet
                         onPress={() => navigation.navigate('signup')}
                         style={{

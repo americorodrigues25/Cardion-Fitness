@@ -33,7 +33,6 @@ export default function SignUp({ }) {
         <BackgroundImage
             source={require('~/assets/img/backgroundImage/imagemFundo3.png')}
         >
-
             <SafeAreaView className='w-full h-full'>
                 <View className="absolute top-0 left-0 w-full px-5 pt-16 z-10">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
