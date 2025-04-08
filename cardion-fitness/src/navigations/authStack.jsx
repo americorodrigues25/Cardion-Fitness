@@ -6,6 +6,7 @@ import UserType from '../screens/auth/userType';
 import Login from '../screens/auth/login';
 import SignUp from '../screens/auth/signUp';
 import ResetPassword from '~/screens/auth/resetPassword';
+import LoginPassword from '~/screens/auth/loginPassword';
 
 const Stack = createStackNavigator();
 
@@ -29,9 +30,14 @@ const AuthNavigation = () => {
                     component={Login}
                 />
                 <Stack.Screen
-                    name='signup'
+                    name='signUp'
                     options={{ headerShown: false }}
                     component={SignUp}
+                />
+                <Stack.Screen
+                    name='loginPassword'
+                    options={{ headerShown: false }}
+                    component={LoginPassword}
                 />
                 <Stack.Screen
                     name='resetPassword'

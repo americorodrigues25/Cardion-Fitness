@@ -2,7 +2,7 @@ import { SafeAreaView, View, Image, Text, TouchableOpacity, Alert } from 'react-
 import { useNavigation } from '@react-navigation/native';
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import BackgroundImage from '~/components/loadingBackgroundImage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -12,19 +12,26 @@ import { useGoogleAuth } from '../../hook/useGoogleAuth';
 import { useAuth } from '~/hook/useAuthentication';
 
 export default function Login() {
+    
     const [role, setRole] = useState('aluno'); // ou 'personal'
     const { promptAsync, loading, error, userRole } = useGoogleAuth(role);
     const navigation = useNavigation();
-    const { login, signUp, loading: loadingAuth, error:errorAuth } = useAuth();
+    const { login, signUp, loading: loadingAuth, error: errorAuth } = useAuth();
 
     const handleLogin = async () => {
         const user = await login(email, password);
         if (user) {
             // todo: remover alert, coloquei para teste
-          console.log("Login bem-sucedido!", user);
-          Alert.alert("Deu certo")
+            console.log("Login bem-sucedido!", user);
+            Alert.alert("Deu certo")
         }
-      };
+    };
+
+    useEffect(() => {
+        if (userRole) {
+            navigation.replace('home'); 
+        }
+    }, [userRole]);
 
     return (
         <BackgroundImage
@@ -44,7 +51,7 @@ export default function Login() {
                 </View>
 
                 <Text className="text-colorLight200 text-5xl font-semibold text-center my-10 px-10">
-                    Vamos entrar?
+                    Vamos entrar
                 </Text>
 
                 <View className="w-full px-10">
@@ -72,7 +79,7 @@ export default function Login() {
 
                 <View className='w-full items-center px-10'>
                     <ButtonViolet
-                        onPress={() => navigation.navigate('signup')}
+                        onPress={() => navigation.navigate('loginPassword')}
                         style={{
                             shadowColor: '#6943FF',
                             shadowOffset: { width: 0, height: 2 },
@@ -81,10 +88,10 @@ export default function Login() {
                             elevation: 12,
                         }}
                     >
-                        <ButtonTextViolet onPress={handleLogin}>Entrar com senha</ButtonTextViolet>
+                        <ButtonTextViolet>Entrar com senha</ButtonTextViolet>
                     </ButtonViolet>
                 </View>
-                <TouchableOpacity className='mt-20'>
+                <TouchableOpacity className='mt-20' onPress={() => navigation.navigate('signUp')}>
                     <Text className="text-colorLight200 text-base font-normal text-center">
                         Não tem uma conta? <Text className='text-colorViolet font-semibold'>Crie-a</Text>
                     </Text>

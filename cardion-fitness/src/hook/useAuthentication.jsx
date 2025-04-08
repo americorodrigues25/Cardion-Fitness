@@ -1,89 +1,90 @@
-import {getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    updateProfile,
-    signOut,
-    sendPasswordResetEmail
-} from 'firebase/auth'
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  sendPasswordResetEmail
+} from 'firebase/auth';
 
+import { doc, setDoc } from 'firebase/firestore';
+import { useState } from 'react';
 
-import {useState,useEffect} from 'react'
-
-//conexao
-import { db ,app,auth} from '../firebase/firebaseConfig'
-
+// conexão Firebase
+import { db, auth } from '../firebase/firebaseConfig';
 
 export const useAuth = () => {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-  
-    const signUp = async (email, password) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-        const user = userCredential.user;
+  const auth = getAuth();
 
-        await setDoc(doc(db, 'users', user.uid), {
-          uid: user.uid,
-          email: user.email,
-          role: role,
-          createdAt: new Date()
-        });
+  const signUp = async (email, password) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-        return user;
-      } catch (err) {
-        setError(err.message);
-        return null;
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    const login = async (email, password) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        return userCredential.user;
-      } catch (err) {
-        setError(err.message);
-        return null;
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    const logout = async () => {
-      try {
-        await signOut(auth);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-    
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: user.email,
+        role: 'user', 
+        createdAt: new Date()
+      });
 
-    const resetPassword = async (email) => {
-      setLoading(true);
-      setError(null);
-      try {
-        await sendPasswordResetEmail(auth, email);
-        return true;
-      } catch (err) {
-        setError(err.message);
-        return false;
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    return {
-      signUp,
-      login,
-      logout,
-      resetPassword,
-      loading,
-      error
-    };
+      return user;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const login = async (email, password) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      return userCredential.user;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await signOut(auth);
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
+  const resetPassword = async (email) => {
+    setLoading(true);
+    setError(null);
+    try {
+      auth.languageCode = 'pt';
+      await sendPasswordResetEmail(auth, email);
+      return true;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    signUp,
+    login,
+    logout,
+    resetPassword,
+    loading,
+    error
+  };
+};

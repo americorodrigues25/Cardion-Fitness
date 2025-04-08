@@ -9,9 +9,19 @@
     "experiments": {
       "tsconfigPaths": true
     },
+    "scheme": "cardion-fitness",
     "plugins": [
       "expo-font",
-      "expo-facebook"
+      "expo-facebook",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "googleServicesFile": "./src/assets/GoogleService-Info.plist"
+          }
+        }
+      ]
     ],
     "orientation": "portrait",
     "icon": "",
@@ -27,6 +37,7 @@
     "ios": {
       "supportsTablet": true,
       "newArchEnabled": true,
+      "bundleIdentifier": "com.cardion.ios",
       "infoPlist": {
         "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
         "SKAdNetworkItems": [
@@ -35,8 +46,15 @@
           },
           {
             "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
           }
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -44,15 +62,15 @@
         "foregroundImage": "",
         "backgroundColor": "#ffffff"
       },
-       "package": "cardion.android",
-       "googleSignIn": {
-  "certificateHash": "D6:CD:F9:2D:AC:DA:6B:CF:66:15:22:69:32:29:48:D3:32:77:12:AF"
-              },
+      "package": "cardion.android",
+      "googleSignIn": {
+        "certificateHash": "D6:CD:F9:2D:AC:DA:6B:CF:66:15:22:69:32:29:48:D3:32:77:12:AF"
+      },
       "newArchEnabled": true
     },
     "extra": {
       "eas": {
-        "projectId": "6581bcfd-31da-41a3-b160-7fabc91aace8"
+        "projectId": "cardion-95801"
       }
     },
     "owner": "marcosmartinsdelima"
