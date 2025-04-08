@@ -30,8 +30,11 @@ export default function SignUp({ }) {
         try {
             const user = await login(email, password);
             if (user) {
+                setEmail('');
+                setPassword('');
                 Alert.alert("Sucesso", "Login realizado com sucesso!");
-                // Aqui é pra gente colocar o navigation depois
+                // Se você usar AuthContext corretamente, pode até remover essa linha:
+                navigation.navigate('homeAluno');
             }
         } catch (err) {
             const errorCode = err?.code;
@@ -48,6 +51,7 @@ export default function SignUp({ }) {
             }
         }
     };
+
 
 
     return (
@@ -99,7 +103,7 @@ export default function SignUp({ }) {
                         <Text className="text-gray-300 text-lg">Lembrar</Text>
                     </View>
 
-                   
+
                     <View className='mt-8'>
                         <ButtonViolet onPress={handleLogin}>
                             <ButtonTextViolet>Entrar</ButtonTextViolet>

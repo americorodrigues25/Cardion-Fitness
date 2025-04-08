@@ -1,7 +1,7 @@
-import AuthStack from './src/navigations/authStack';
+import AppNavigation from '~/navigations/mainNavigation';
 
 import './global.css';
 
 export default function App() {
-  return <AuthStack />
+  return <AppNavigation />;
 }
