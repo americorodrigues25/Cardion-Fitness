@@ -6,12 +6,13 @@ const Stack = createStackNavigator();
 const AlunoNavigation = () => {
     return (
 
-
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen
                 name="homeAluno"
                 component={HomeAluno}
             />
-   
+        </Stack.Navigator>
+
 
 
     );

@@ -6,6 +6,8 @@ import Login from '../screens/auth/login';
 import SignUp from '../screens/auth/signUp';
 import ResetPassword from '~/screens/auth/resetPassword';
 import LoginPassword from '~/screens/auth/loginPassword';
+import HomeAluno from '~/screens/aluno/home';
+import HomePersonal from '~/screens/personal/home';
 
 const Stack = createStackNavigator();
 
@@ -41,6 +43,16 @@ const AuthNavigation = () => {
                 name='resetPassword'
                 options={{ headerShown: false }}
                 component={ResetPassword}
+            />
+            <Stack.Screen
+                name='homeAluno'
+                options={{ headerShown: false }}
+                component={HomeAluno}
+            />
+            <Stack.Screen
+                name='homePersonal'
+                options={{ headerShown: false }}
+                component={HomePersonal}
             />
         </Stack.Navigator>
     );

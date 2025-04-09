@@ -7,7 +7,7 @@ const PersonalNavigation = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="homePersonal" component={HomePersonal} />
-      {/* outras telas do personal */}
+
     </Stack.Navigator>
   );
 };

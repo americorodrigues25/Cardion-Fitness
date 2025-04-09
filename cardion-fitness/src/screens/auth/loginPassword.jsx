@@ -33,7 +33,6 @@ export default function SignUp({ }) {
                 setEmail('');
                 setPassword('');
                 Alert.alert("Sucesso", "Login realizado com sucesso!");
-                // Se você usar AuthContext corretamente, pode até remover essa linha:
                 navigation.navigate('homeAluno');
             }
         } catch (err) {
