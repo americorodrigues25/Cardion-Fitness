@@ -18,19 +18,50 @@ export const useAuth = () => {
 
   const auth = getAuth();
 
-  const signUp = async (email, password) => {
+  // criar conta 
+  const signUp = async (email, password,role = "aluno") => {
     setLoading(true);
     setError(null);
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      
+      if(role == 'aluno'){
 
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        email: user.email,
-        role: 'user', 
-        createdAt: new Date()
-      });
+        await setDoc(doc(db, role, user.uid), {
+          uid: user.uid,
+          email: user.email,
+          nome: null,
+          telefone: null,
+          dataNasc: null,
+          sexo: null,
+          peso: null,
+          altura: null,
+          objetivo: null,
+          xp: null,
+          nivel: null,
+          createdAt: new Date(),
+          updatedAt: null
+        });
+
+      }
+
+      else if(role == 'personal'){
+
+        await setDoc(doc(db, role, user.uid), {
+          uid: user.uid,
+          email: user.email,
+          nome: null,
+          telefone: null,
+          dataNasc: null,
+          sexo: null, 
+          createdAt: new Date(),
+          updatedAt: null
+        });
+
+      }
+     
 
       return user;
     } catch (err) {
@@ -41,6 +72,7 @@ export const useAuth = () => {
     }
   };
 
+  // login
   const login = async (email, password) => {
     setLoading(true);
     setError(null);
