@@ -9,6 +9,9 @@ import LoginPassword from '~/screens/auth/loginPassword';
 import HomeAluno from '~/screens/aluno/home';
 import HomePersonal from '~/screens/personal/home';
 
+import AlunoNavigation from './alunoStack';
+import PersonalNavigation from './personalStack';
+
 const Stack = createStackNavigator();
 
 const AuthNavigation = () => {
@@ -47,12 +50,12 @@ const AuthNavigation = () => {
             <Stack.Screen
                 name='homeAluno'
                 options={{ headerShown: false }}
-                component={HomeAluno}
+                component={AlunoNavigation}
             />
             <Stack.Screen
                 name='homePersonal'
                 options={{ headerShown: false }}
-                component={HomePersonal}
+                component={PersonalNavigation}
             />
         </Stack.Navigator>
     );
