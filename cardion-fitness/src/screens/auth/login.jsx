@@ -12,7 +12,7 @@ import { useGoogleAuth } from '../../hook/useGoogleAuth';
 import { useAuth } from '~/hook/useAuthentication';
 
 export default function Login() {
-    
+
     const [role, setRole] = useState('aluno'); // ou 'personal'
     const { promptAsync, loading, error, userRole } = useGoogleAuth(role);
     const navigation = useNavigation();
@@ -27,12 +27,6 @@ export default function Login() {
         }
     };
 
-    useEffect(() => {
-        if (userRole) {
-            navigation.replace('home'); 
-        }
-    }, [userRole]);
-
     return (
         <BackgroundImage
             source={require('~/assets/img/backgroundImage/imagemFundo3.png')}
@@ -41,7 +35,7 @@ export default function Login() {
 
                 <View className="flex-row items-center justify-between w-full px-5">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Icon name="arrow-back-ios-new" size={25} color="#FFFFFF" />
+                        <Image source={require('~/assets/img/btnVoltar.png')} className='w-5 h-7' />
                     </TouchableOpacity>
                     <Image
                         source={require('~/assets/img/logo/Logo1.png')}
