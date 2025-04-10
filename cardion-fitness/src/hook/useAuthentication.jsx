@@ -12,6 +12,8 @@ import { useState } from 'react';
 // conexão Firebase
 import { db, auth } from '../firebase/firebaseConfig';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export const useAuth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -19,15 +21,15 @@ export const useAuth = () => {
   const auth = getAuth();
 
   // criar conta 
-  const signUp = async (email, password,role = "aluno") => {
+  const signUp = async (email, password, role = "aluno") => {
     setLoading(true);
     setError(null);
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      
-      if(role == 'aluno'){
+
+      if (role == 'aluno') {
 
         await setDoc(doc(db, role, user.uid), {
           uid: user.uid,
@@ -61,7 +63,6 @@ export const useAuth = () => {
         });
 
       }
-     
 
       return user;
     } catch (err) {
@@ -72,12 +73,16 @@ export const useAuth = () => {
     }
   };
 
-  // login
-  const login = async (email, password) => {
+  const login = async (email, password, remember = false) => {
     setLoading(true);
     setError(null);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+      if (remember) {
+        await AsyncStorage.setItem('userLoggedIn', 'true');
+      }
+
       return userCredential.user;
     } catch (err) {
       setError(err.message);
@@ -89,6 +94,7 @@ export const useAuth = () => {
 
   const logout = async () => {
     try {
+      await AsyncStorage.removeItem('userLoggedIn');
       await signOut(auth);
     } catch (err) {
       setError(err.message);
