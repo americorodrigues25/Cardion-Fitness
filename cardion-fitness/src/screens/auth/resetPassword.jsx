@@ -1,4 +1,4 @@
-import { SafeAreaView, View, Text, TouchableOpacity, Alert } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, Alert, Image } from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
@@ -47,7 +47,7 @@ export default function ResetPassword() {
             <SafeAreaView className='w-full h-full flex-1 justify-center items-center'>
                 <View className="absolute top-0 left-0 w-full px-5 pt-16 z-10">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Icon name="arrow-back-ios-new" size={25} color="#FFFFFF" />
+                        <Image source={require('~/assets/img/btnVoltar.png')} className='w-5 h-7' />
                     </TouchableOpacity>
                 </View>
 
