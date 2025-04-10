@@ -1,20 +1,46 @@
 import { Image, ActivityIndicator, SafeAreaView } from "react-native";
 import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import BackgroundImage from '~/components/loadingBackgroundImage';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default function Splash({ navigation }) {
     const [loadingIsVisible, setLoadingIsVisible] = useState(false);
 
     useEffect(() => {
-        setTimeout(() => {
-            setLoadingIsVisible(true);
-        }, 2500);
+        const auth = getAuth();
 
-        setTimeout(() => {
+        const checkAuth = async () => {
+
+            await new Promise(resolve => setTimeout(resolve, 2500));
+            setLoadingIsVisible(true);
+
+
+            await new Promise(resolve => setTimeout(resolve, 2500));
+
+            try {
+                const remember = await AsyncStorage.getItem('userLoggedIn');
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user && remember === 'true') {
+                        { /*Buscamos o usuario...Porém depois precisa arrumar quando separar autenticações(Aluno/Personal)
+                            e seguir com as telas correspondentes*/ }
+                        navigation.replace('homeAluno');
+                    }
+                    else {
+                        navigation.replace('userType');
+                    }
+                });
+            } catch (err) {
+                console.log("Erro ao verificar autenticação:", err);
+                navigation.replace('userType');
+            }
+
             setLoadingIsVisible(false);
-            navigation.replace('userType');
-        }, 5000);
+        };
+
+        checkAuth();
     }, []);
 
     return (
