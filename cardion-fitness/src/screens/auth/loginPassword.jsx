@@ -33,7 +33,7 @@ export default function SignUp({ }) {
                 setEmail('');
                 setPassword('');
                 Alert.alert("Sucesso", "Login realizado com sucesso!");
-                navigation.navigate('homeAluno');
+                navigation.replace('homeAluno');
             }
         } catch (err) {
             const errorCode = err?.code;
@@ -60,7 +60,7 @@ export default function SignUp({ }) {
             <SafeAreaView className='w-full h-full flex-1 justify-center items-center'>
                 <View className="absolute top-0 left-0 w-full px-5 pt-16 z-10">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Icon name="arrow-back-ios-new" size={25} color="#FFFFFF" />
+                        <Image source={require('~/assets/img/btnVoltar.png')} className='w-5 h-7' />
                     </TouchableOpacity>
                 </View>
 
