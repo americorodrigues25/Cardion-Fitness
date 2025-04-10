@@ -20,9 +20,9 @@ export function useGoogleAuth(selectedRole = 'aluno') {
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId: '1069299101382-behgamrme4isdtaehm907m5g0sq5077f.apps.googleusercontent.com',
     androidClientId: '1069299101382-gu6chokrstihd2ou8hihg382fm2c9kfb.apps.googleusercontent.com',
-    webClientId: '1069299101382-behgamrme4isdtaehm907m5g0sq5077f.apps.googleusercontent.com',
     iosClientId: '1069299101382-gato9b5ej9larq0pq3b83efb5h21vtbk.apps.googleusercontent.com',
-    redirectUri: AuthSession.makeRedirectUri({ useProxy: true })
+    webClientId: '1069299101382-behgamrme4isdtaehm907m5g0sq5077f.apps.googleusercontent.com',
+  
   });
 
   const [loading, setLoading] = useState(false);
