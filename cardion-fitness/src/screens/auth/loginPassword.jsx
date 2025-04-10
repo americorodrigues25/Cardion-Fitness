@@ -15,7 +15,7 @@ export default function SignUp({ }) {
     const { login, signUp, loading: loadingAuth, error: errorAuth } = useAuth();
     const navigation = useNavigation();
     const [rememberMe, setRememberMe] = useState(false);
-    const [email, setEmail] = useState();
+    const [email, setEmail] = useState(false);
     const [password, setPassword] = useState();
     const [formError, setFormError] = useState('');
 
@@ -28,7 +28,7 @@ export default function SignUp({ }) {
         }
 
         try {
-            const user = await login(email, password);
+            const user = await login(email, password, rememberMe);
             if (user) {
                 setEmail('');
                 setPassword('');
