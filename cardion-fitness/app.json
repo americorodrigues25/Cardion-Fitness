@@ -52,6 +52,18 @@
           },
           {
             "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
           }
         ],
         "ITSAppUsesNonExemptEncryption": false
@@ -70,9 +82,15 @@
     },
     "extra": {
       "eas": {
-        "projectId": "cardion-95801"
+        "projectId": "6581bcfd-31da-41a3-b160-7fabc91aace8"
       }
     },
-    "owner": "marcosmartinsdelima"
+    "owner": "marcosmartinsdelima",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/6581bcfd-31da-41a3-b160-7fabc91aace8"
+    }
   }
 }
