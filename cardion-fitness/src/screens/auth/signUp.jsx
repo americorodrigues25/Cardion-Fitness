@@ -95,7 +95,7 @@ export default function SignUp({ }) {
             <SafeAreaView className='w-full h-full flex-1 justify-center items-center'>
                 <View className="absolute top-0 left-0 w-full px-5 pt-16 z-10">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Icon name="arrow-back-ios-new" size={25} color="#FFFFFF" />
+                        <Image source={require('~/assets/img/btnVoltar.png')} className='w-5 h-7' />
                     </TouchableOpacity>
                 </View>
 
@@ -139,19 +139,7 @@ export default function SignUp({ }) {
                             </Text>
                         )}
                     </View>
-
-                    <View className=" flex-row items-center gap-2 justify-center mt-10">
-                        <TouchableOpacity
-                            onPress={() => setRememberMe(!rememberMe)}
-                            activeOpacity={0.7}
-                            className="w-6 h-6 rounded-md border-2 border-colorViolet flex items-center justify-center"
-                        >
-                            {rememberMe && <View className="w-6 h-6 bg-colorViolet rounded-md" />}
-                        </TouchableOpacity>
-
-                        <Text className="text-gray-300 text-lg">Lembrar</Text>
-                    </View>
-
+                        
                     <View className='mt-8'>
                         <ButtonViolet onPress={handleSignUp}>
                             <ButtonTextViolet>Cadastrar</ButtonTextViolet>
