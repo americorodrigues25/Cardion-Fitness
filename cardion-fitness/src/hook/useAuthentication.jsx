@@ -21,7 +21,7 @@ export const useAuth = () => {
   const auth = getAuth();
 
   // criar conta 
-  const signUp = async (email, password, role = "aluno") => {
+  const signUp = async (email, password, role = "aluno", remember = false) => {
     setLoading(true);
     setError(null);
 
@@ -29,7 +29,11 @@ export const useAuth = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      if (role == 'aluno') {
+      if (remember) {
+        await AsyncStorage.setItem('userLoggedIn', 'true');
+      }
+
+      if (role === 'aluno') {
 
         await setDoc(doc(db, role, user.uid), {
           uid: user.uid,
@@ -49,7 +53,7 @@ export const useAuth = () => {
 
       }
 
-      else if(role == 'personal'){
+      else if(role === 'personal'){
 
         await setDoc(doc(db, role, user.uid), {
           uid: user.uid,
