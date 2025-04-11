@@ -1,6 +1,8 @@
 import { SafeAreaView, View, Image, Text, TouchableOpacity, Modal } from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 import { Input } from '~/components/input';
 import { InputPassword } from '~/components/inputPassword';
@@ -25,7 +27,7 @@ export default function SignUp({ }) {
     const handleSignUp = async () => {
         setFormError('');
 
-        if (!email || !password || !confirmPassword) {
+        if (!name || !email || !password || !confirmPassword) {
             setFormError("Por favor, preencha todos os campos.");
             return;
         }
@@ -36,14 +38,22 @@ export default function SignUp({ }) {
         }
 
         try {
-            const user = await signUp(email, password);
+            const user = await signUp(email, password, rememberMe);
             if (user) {
+                await AsyncStorage.setItem('userType', 'aluno');
+
+                if (rememberMe) {
+                    await AsyncStorage.setItem('userLoggedIn', 'true');
+                } else {
+                    await AsyncStorage.removeItem('userLoggedIn');
+                }
+
                 setShowModal(true);
                 setName('');
                 setEmail('');
                 setPassword('');
                 setConfirmPassword('');
-                setRememberMe(false)
+                navigation.replace('homeAluno');
             }
         } catch (err) {
             if (err.code === 'auth/email-already-in-use') {
@@ -80,12 +90,9 @@ export default function SignUp({ }) {
                         </Text>
 
                         <ButtonViolet
-                            onPress={() => {
-                                setShowModal(false);
-                                navigation.navigate('loginPassword');
-                            }}
+                            onPress={() => setShowModal(false)}
                         >
-                            <ButtonTextViolet>Ir para login</ButtonTextViolet>
+                            <ButtonTextViolet>Acessar</ButtonTextViolet>
                         </ButtonViolet>
                     </View>
                 </View>
@@ -139,7 +146,18 @@ export default function SignUp({ }) {
                             </Text>
                         )}
                     </View>
-                        
+
+                    <View className="flex-row items-center gap-2 justify-center mt-6">
+                        <TouchableOpacity
+                            onPress={() => setRememberMe(!rememberMe)}
+                            activeOpacity={0.7}
+                            className="w-6 h-6 rounded-md border-2 border-colorViolet flex items-center justify-center"
+                        >
+                            {rememberMe && <View className="w-6 h-6 bg-colorViolet rounded-md" />}
+                        </TouchableOpacity>
+                        <Text className="text-gray-300 text-lg">Lembrar</Text>
+                    </View>
+
                     <View className='mt-8'>
                         <ButtonViolet onPress={handleSignUp}>
                             <ButtonTextViolet>Cadastrar</ButtonTextViolet>
