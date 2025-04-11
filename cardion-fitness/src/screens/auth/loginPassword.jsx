@@ -6,7 +6,6 @@ import { Input } from '~/components/input';
 import { InputPassword } from '~/components/inputPassword';
 
 import BackgroundImage from '~/components/loadingBackgroundImage';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 // hook
 import { useAuth } from '~/hook/useAuthentication';
@@ -15,8 +14,8 @@ export default function SignUp({ }) {
     const { login, signUp, loading: loadingAuth, error: errorAuth } = useAuth();
     const navigation = useNavigation();
     const [rememberMe, setRememberMe] = useState(false);
-    const [email, setEmail] = useState(false);
-    const [password, setPassword] = useState();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [formError, setFormError] = useState('');
 
     const handleLogin = async () => {
