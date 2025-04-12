@@ -21,7 +21,7 @@ export const useAuth = () => {
   const auth = getAuth();
 
   // criar conta 
-  const signUp = async (email, password, remember = false) => {
+  const signUp = async (name,email, password, remember = false) => {
     setLoading(true);
     setError(null);
 
@@ -40,7 +40,7 @@ export const useAuth = () => {
         await setDoc(doc(db, 'aluno', user.uid), {
           uid: user.uid,
           email: user.email,
-          nome: null,
+          nome: name,
           telefone: null,
           dataNasc: null,
           sexo: null,
@@ -60,7 +60,7 @@ export const useAuth = () => {
         await setDoc(doc(db, 'personal', user.uid), {
           uid: user.uid,
           email: user.email,
-          nome: null,
+          nome: name,
           telefone: null,
           dataNasc: null,
           sexo: null, 
@@ -69,6 +69,8 @@ export const useAuth = () => {
         });
 
       }
+      
+      await AsyncStorage.setItem('uid',user.uid)
 
       return user;
     } catch (err) {
@@ -89,6 +91,8 @@ export const useAuth = () => {
         await AsyncStorage.setItem('userLoggedIn', 'true');
       }
 
+      await AsyncStorage.setItem('uid',userCredential.user.uid)
+
       return userCredential.user;
     } catch (err) {
       setError(err.message);
@@ -101,6 +105,9 @@ export const useAuth = () => {
   const logout = async () => {
     try {
       await AsyncStorage.removeItem('userLoggedIn');
+
+      await AsyncStorage.removeItem('uid')
+
       await signOut(auth);
     } catch (err) {
       setError(err.message);
