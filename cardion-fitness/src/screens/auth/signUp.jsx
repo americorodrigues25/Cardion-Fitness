@@ -38,7 +38,7 @@ export default function SignUp({ }) {
         }
 
         try {
-            const user = await signUp(email, password, rememberMe);
+            const user = await signUp(name,email, password, rememberMe);
             if (user) {
                 await AsyncStorage.setItem('userType', 'aluno');
 
