@@ -4,8 +4,33 @@ import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 
 import BackgroundImage from '~/components/loadingBackgroundImage';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function UserType() {
     const navigation = useNavigation();
+
+    const handleAluno = async () =>{
+        const role = await AsyncStorage.getItem('role')
+
+        if(role){
+            await AsyncStorage.removeItem('role')
+        }
+
+        await AsyncStorage.setItem('role', 'aluno');
+        navigation.navigate('login',)
+    }
+
+    const handlePersonal = async () =>{
+        const role = await AsyncStorage.getItem('role')
+
+        if(role){
+            await AsyncStorage.removeItem('role')
+        }
+
+        await AsyncStorage.setItem('role', 'personal');
+        navigation.navigate('login',)
+    }
+
     return (
         <BackgroundImage
             source={require('~/assets/img/backgroundImage/imagemFundo2.png')}
@@ -20,7 +45,7 @@ export default function UserType() {
 
                 <View className='w-full items-center mt-12 px-10'>
                     <ButtonViolet
-                        onPress={() => navigation.navigate('login')}
+                        onPress={() => handleAluno()}
                         style={{
                             shadowColor: '#6943FF',
                             shadowOffset: 0,
@@ -32,7 +57,7 @@ export default function UserType() {
                     </ButtonViolet>
 
                     <ButtonViolet
-                        onPress={() => navigation.navigate('login')}
+                        onPress={() => handlePersonal()}
                         style={{
                             shadowColor: '#6943FF',
                             shadowOffset: 0,
