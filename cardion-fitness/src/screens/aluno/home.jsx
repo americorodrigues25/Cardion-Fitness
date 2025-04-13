@@ -12,6 +12,7 @@ import { useGet } from '~/hook/crud/useGet';
 
 // ponto para refatorar, deixar mais legivel o trazer nome
 // para pegar o nome é so usar a funcao de getById e pegar a propriedade nome
+
 export default function Home({ navigation }) {
     const [nome,setNome] = useState();
     const {getById} = useGet()
@@ -68,6 +69,7 @@ export default function Home({ navigation }) {
     return (
         <View className='flex justify-center items-center w-full h-full'>
             <Text>Seja bem vindo(a) {nome}</Text>
+            <Text>Tela home aluno</Text>
 
             {/* Botão só pra fazer testes */}
             <TouchableOpacity
