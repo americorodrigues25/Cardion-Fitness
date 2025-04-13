@@ -6,8 +6,6 @@ import Login from '../screens/auth/login';
 import SignUp from '../screens/auth/signUp';
 import ResetPassword from '~/screens/auth/resetPassword';
 import LoginPassword from '~/screens/auth/loginPassword';
-import HomeAluno from '~/screens/aluno/home';
-import HomePersonal from '~/screens/personal/home';
 
 import AlunoNavigation from './alunoStack';
 import PersonalNavigation from './personalStack';
