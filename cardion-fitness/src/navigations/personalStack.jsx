@@ -1,13 +1,15 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import HomePersonal from '~/screens/personal/home';
+import PersonalDrawer from './personalDrawer';
 
 const Stack = createStackNavigator();
 
 const PersonalNavigation = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="homePersonal" component={HomePersonal} />
-
+      <Stack.Screen
+        name="homePersonal"
+        component={PersonalDrawer}
+      />
     </Stack.Navigator>
   );
 };
