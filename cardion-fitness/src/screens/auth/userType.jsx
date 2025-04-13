@@ -1,9 +1,7 @@
 import { View, Image, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
-
 import BackgroundImage from '~/components/loadingBackgroundImage';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function UserType() {
