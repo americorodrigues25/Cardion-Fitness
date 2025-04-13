@@ -1,5 +1,5 @@
 import { SafeAreaView, View, Image, Text, TouchableOpacity, Modal } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -23,6 +23,7 @@ export default function SignUp({ }) {
     const [confirmPassword, setConfirmPassword] = useState();
     const [formError, setFormError] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [role, setRole] = useState('');
 
     const handleSignUp = async () => {
         setFormError('');
@@ -38,7 +39,7 @@ export default function SignUp({ }) {
         }
 
         try {
-            const user = await signUp(name,email, password, rememberMe);
+            const user = await signUp(name, email, password, rememberMe);
             if (user) {
                 await AsyncStorage.setItem('userType', 'aluno');
 
@@ -67,6 +68,18 @@ export default function SignUp({ }) {
             }
         }
     };
+
+    { /*Esta pegando o nome da role e importando na tela*/ }
+    useEffect(() => {
+        const getRole = async () => {
+            const storedRole = await AsyncStorage.getItem('role');
+            if (storedRole) {
+                setRole(storedRole === 'aluno' ? 'Aluno' : 'Personal');
+            }
+        };
+
+        getRole();
+    }, []);
 
     return (
         <BackgroundImage
@@ -110,6 +123,10 @@ export default function SignUp({ }) {
                     <Text className="text-colorLight200 text-5xl font-semibold text-center">
                         Cadastrar conta
                     </Text>
+
+                    {role !== '' && (
+                        <Text className='text-lg mt-2 text-colorViolet text-center'>{role}</Text>
+                    )}
 
                     <View className='mt-20'>
                         <Input
