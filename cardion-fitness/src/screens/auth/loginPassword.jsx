@@ -1,6 +1,7 @@
 import { SafeAreaView, View, Image, Text, TouchableOpacity, Alert } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 import { Input } from '~/components/input';
 import { InputPassword } from '~/components/inputPassword';
@@ -17,6 +18,7 @@ export default function SignUp({ }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [formError, setFormError] = useState('');
+    const [role, setRole] = useState('');
 
     const handleLogin = async () => {
         setFormError('');
@@ -50,6 +52,18 @@ export default function SignUp({ }) {
         }
     };
 
+    { /*Esta pegando o nome da role e importando na tela*/ }
+    useEffect(() => {
+        const getRole = async () => {
+            const storedRole = await AsyncStorage.getItem('role');
+            if (storedRole) {
+                setRole(storedRole === 'aluno' ? 'Aluno' : 'Personal');
+            }
+        };
+
+        getRole();
+    }, []);
+
 
 
     return (
@@ -67,6 +81,10 @@ export default function SignUp({ }) {
                     <Text className="text-colorLight200 text-5xl font-semibold text-center">
                         Entrar na conta
                     </Text>
+
+                    {role !== '' && (
+                        <Text className='text-lg mt-2 text-colorViolet text-center'>{role}</Text>
+                    )}
 
                     <View className='mt-20'>
                         <Input
