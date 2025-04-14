@@ -6,7 +6,7 @@ import {
   sendPasswordResetEmail
 } from 'firebase/auth';
 
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc,query,limit,where,getDocs, collection } from 'firebase/firestore';
 import { useState } from 'react';
 
 // conexão Firebase
@@ -130,11 +130,46 @@ export const useAuth = () => {
     }
   };
 
+  const accountExists = async (email) =>{
+    const role = await AsyncStorage.getItem('role')
+
+    if(role == 'aluno'){
+      const consulta = query(
+        collection(db,'aluno'),
+        where('email',"==",`${email}`),
+        limit(1)
+      )
+
+      const resultado = await getDocs(consulta)
+
+      if(resultado.empty){
+        return false
+      }
+
+      return true
+    }
+
+    else if(role == 'personal'){
+      const consulta = query(
+        collection(db,'personal'),
+        where('email',"==",`${email}`),
+        limit(1)
+      )
+
+      const resultado = await getDocs(consulta)
+
+      if(resultado.empty){
+        return false
+      }
+      return true
+  }
+  }
   return {
     signUp,
     login,
     logout,
     resetPassword,
+    accountExists,
     loading,
     error
   };

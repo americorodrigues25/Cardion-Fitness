@@ -12,7 +12,7 @@ import BackgroundImage from '~/components/loadingBackgroundImage';
 import { useAuth } from '~/hook/useAuthentication';
 
 export default function SignUp({ }) {
-    const { login, signUp, loading: loadingAuth, error: errorAuth } = useAuth();
+    const { login, signUp,accountExists, loading: loadingAuth, error: errorAuth } = useAuth();
     const navigation = useNavigation();
     const [rememberMe, setRememberMe] = useState(false);
     const [email, setEmail] = useState('');
@@ -29,12 +29,24 @@ export default function SignUp({ }) {
         }
 
         try {
+            const contaExiste = await accountExists(email)
+            if(!contaExiste){
+                setFormError('Conta não encontrada');
+                return
+            }
+
             const user = await login(email, password, rememberMe);
             if (user) {
                 setEmail('');
                 setPassword('');
                 Alert.alert("Sucesso", "Login realizado com sucesso!");
-                navigation.replace('homeAluno');
+
+                const role = await AsyncStorage.getItem("role")
+                    if(role == 'aluno'){
+                        navigation.replace('homeAluno');
+                    }else{
+                        navigation.replace('homePersonal');
+                    }
             }
         } catch (err) {
             const errorCode = err?.code;

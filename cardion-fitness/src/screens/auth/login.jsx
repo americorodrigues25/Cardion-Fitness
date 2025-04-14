@@ -16,7 +16,7 @@ export default function Login() {
     const [role, setRole] = useState('aluno'); // ou 'personal'
     const { promptAsync, loading, error, userRole } = useGoogleAuth(role);
     const navigation = useNavigation();
-    const { login, signUp, loading: loadingAuth, error: errorAuth } = useAuth();
+    const { signUp,login , loading: loadingAuth, error: errorAuth } = useAuth();
 
     const handleLogin = async () => {
         const user = await login(email, password);
