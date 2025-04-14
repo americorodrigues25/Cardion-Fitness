@@ -1,14 +1,15 @@
-import { SafeAreaView, View, Image, Text, TouchableOpacity, Modal } from 'react-native';
+import { SafeAreaView, View, Image, Text, TouchableOpacity } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
+
 
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 import { Input } from '~/components/input';
 import { InputPassword } from '~/components/inputPassword';
 
 import BackgroundImage from '~/components/loadingBackgroundImage';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 // hook
 import { useAuth } from '~/hook/useAuthentication';
@@ -22,7 +23,6 @@ export default function SignUp({ }) {
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
     const [formError, setFormError] = useState('');
-    const [showModal, setShowModal] = useState(false);
     const [role, setRole] = useState('');
 
     const handleSignUp = async () => {
@@ -49,12 +49,21 @@ export default function SignUp({ }) {
                     await AsyncStorage.removeItem('userLoggedIn');
                 }
 
-                setShowModal(true);
+                Toast.show({
+                    type: 'success',
+                    text1: 'Conta criada com sucesso!',
+                    text2: 'Bem-vindo(a)! 🎉',
+                    position: 'top',
+                });
+
                 setName('');
                 setEmail('');
                 setPassword('');
                 setConfirmPassword('');
-                navigation.replace('homeAluno');
+
+                setTimeout(() => {
+                    navigation.replace('homeAluno');
+                }, 1500);
             }
         } catch (err) {
             if (err.code === 'auth/email-already-in-use') {
@@ -85,32 +94,6 @@ export default function SignUp({ }) {
         <BackgroundImage
             source={require('~/assets/img/backgroundImage/imagemFundo3.png')}
         >
-
-            <Modal
-                visible={showModal}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setShowModal(false)}
-            >
-                <View className="flex-1 items-center justify-center bg-black/70">
-                    <View className="bg-colorDark100 rounded-3xl p-10 w-10/12 items-center h-2/4 justify-center">
-                        <Icon name="check-circle" size={90} color="#6943ff" />
-                        <Text className="text-5xl font-semibold mb-4 mt-10 text-center text-colorViolet">
-                            Parabéns!
-                        </Text>
-                        <Text className="text-xl font-semibold mb-4 text-center text-colorLight200">
-                            Sua conta está pronta para uso
-                        </Text>
-
-                        <ButtonViolet
-                            onPress={() => setShowModal(false)}
-                        >
-                            <ButtonTextViolet>Acessar</ButtonTextViolet>
-                        </ButtonViolet>
-                    </View>
-                </View>
-            </Modal>
-
 
             <SafeAreaView className='w-full h-full flex-1 justify-center items-center'>
                 <View className="absolute top-0 left-0 w-full px-5 pt-16 z-10">

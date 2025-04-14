@@ -9,6 +9,9 @@ const AlunoNavigation = () => {
             <Stack.Screen
                 name="homeAluno"
                 component={AlunoDrawer}
+                options={{
+                    gestureEnabled: false, // esse aqui bloqueia o deslize para voltar no iOS, ver onde aplicar
+                }}
             />
         </Stack.Navigator>
     );

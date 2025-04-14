@@ -1,7 +1,9 @@
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { BackHandler } from 'react-native'; //esse é evento do botão voltar em Android
+import { useEffect, useState, useCallback } from 'react';
 import { getAuth, signOut } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
 
 //### aq referente a biometria e facial
 import * as LocalAuthentication from 'expo-local-authentication';
@@ -14,43 +16,44 @@ import { useGet } from '~/hook/crud/useGet';
 // para pegar o nome é so usar a funcao de getById e pegar a propriedade nome
 
 export default function Home({ navigation }) {
-    const [nome,setNome] = useState();
-    const {getById} = useGet()
-    const {deleteAccount} = useDelete()
+    const [nome, setNome] = useState();
+    const { getById } = useGet()
+    const { deleteAccount } = useDelete()
 
-    const trazerNome = async ()=>{
+    const trazerNome = async () => {
         const user = await getById()
         setNome(user.nome)
         Alert.alert(user.nome)
     }
 
-    useEffect(()=> { 
+    useEffect(() => {
         const fetchNome = async () => {
-            await trazerNome();};
+            await trazerNome();
+        };
         fetchNome();
-        },[])
-     
-    
-        
+    }, [])
+
+
+
     const autenticar = async () => {
         const compatibilidade = await LocalAuthentication.hasHardwareAsync();
         const biometriaCadastrada = await LocalAuthentication.isEnrolledAsync();
-    
+
         if (!compatibilidade || !biometriaCadastrada) {
-        Alert.alert('Biometria não configurada', 'Seu dispositivo não tem biometria ou ela não está ativada.');
-        return;
+            Alert.alert('Biometria não configurada', 'Seu dispositivo não tem biometria ou ela não está ativada.');
+            return;
         }
-    
+
         const resultado = await LocalAuthentication.authenticateAsync({
-        promptMessage: 'Autentique-se para continuar',
-        fallbackLabel: 'Usar senha',
+            promptMessage: 'Autentique-se para continuar',
+            fallbackLabel: 'Usar senha',
         });
-    
+
         if (resultado.success) {
             Alert.alert("ai")
             await deleteAccount()
         } else {
-        Alert.alert('Falha na autenticação');
+            Alert.alert('Falha na autenticação');
         }
     };
 
@@ -64,6 +67,21 @@ export default function Home({ navigation }) {
             Alert.alert('Erro ao sair:', error)
         }
     };
+
+    useFocusEffect(
+        useCallback(() => {
+            const onBackPress = () => {
+                // aqui é pra bloquear o botão de voltar no android, pro usuario não 
+                // conseguir voltar pro login depois de entrar na home
+                return true;
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () =>
+                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+        }, [])
+    );
 
 
     return (
@@ -79,9 +97,9 @@ export default function Home({ navigation }) {
                 <Text className='text-white font-bold'>Sair</Text>
             </TouchableOpacity>
 
-                        {/* Botão só pra fazer testes */}
-                        <TouchableOpacity
-                onPress={()=>autenticar()}
+            {/* Botão só pra fazer testes */}
+            <TouchableOpacity
+                onPress={() => autenticar()}
                 className='mt-5 bg-red-500 px-4 py-2 rounded'
             >
                 <Text className='text-white font-bold'>APAGAR CONTA</Text>
