@@ -61,8 +61,13 @@ export default function SignUp({ }) {
                 setPassword('');
                 setConfirmPassword('');
 
-                setTimeout(() => {
-                    navigation.replace('homeAluno');
+                setTimeout(async () => {
+                    const role = await AsyncStorage.getItem("role")
+                    if(role == 'aluno'){
+                        navigation.replace('homeAluno');
+                    }else{
+                        navigation.replace('homePersonal');
+                    }
                 }, 1500);
             }
         } catch (err) {
