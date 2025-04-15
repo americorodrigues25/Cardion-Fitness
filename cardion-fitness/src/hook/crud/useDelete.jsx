@@ -27,6 +27,8 @@ export const useDelete = () =>
             {
                 await deleteDoc(doc(db, role, uid));
                 await deleteUser(user);
+
+                await AsyncStorage.clear();
             } 
             catch (error) 
             {
