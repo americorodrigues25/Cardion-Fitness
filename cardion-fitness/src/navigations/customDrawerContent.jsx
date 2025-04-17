@@ -38,8 +38,8 @@ export default function CustomDrawerContent(props) {
     };
     return (
         <DrawerContentScrollView {...props}>
-            <View style={{ alignItems: 'center', paddingVertical: 20 }}>
-                <View style={{ position: 'relative' }}>
+            <View className='py-5 items-center'>
+                <View className='relative'>
                     <Image
                         source={require('~/assets/img/imgProfileDefault.png')}
                         className='w-48 h-48 rounded-full'
