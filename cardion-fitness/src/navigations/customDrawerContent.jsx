@@ -158,7 +158,7 @@ export default function CustomDrawerContent(props) {
         };}
           
     return (
-        <DrawerContentScrollView {...props}>
+        <DrawerContentScrollView {...props} className='bg-colorViolet flex-1'>
             <View className='py-5 items-center'>
                 <View className='relative'>
                     <Image
@@ -166,17 +166,17 @@ export default function CustomDrawerContent(props) {
                         source={ imageUrl
                             ? { uri: imageUrl }
                             : require('~/assets/img/imgProfileDefault.png')}
-                        className='w-48 h-48 rounded-full'
+                        className='w-40 h-40 rounded-full'
                     />
                     <TouchableOpacity
                         onPress={handleEditImage}
-                        className='absolute bottom-8 right-7 bg-colorLight200 rounded-full p-2'
+                        className='absolute bottom-0 right-2 bg-colorLight200 rounded-full p-2'
                     >
                         <Ionicons name="camera" size={25} color="#000" />
                     </TouchableOpacity>
                 </View>
 
-                <Text className='text-xl font-bold'>{nome}</Text>
+                <Text className='text-xl font-bold mt-5'>{nome}</Text>
             </View>
 
             <DrawerItemList {...props} />
