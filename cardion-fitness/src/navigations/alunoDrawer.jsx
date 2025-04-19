@@ -9,13 +9,16 @@ export default function AlunoDrawer() {
   return (
     <Drawer.Navigator
       screenOptions={{
-        headerShown: true,
+        headerShown: false,
         headerTitle: '',
         headerStyle: {
           elevation: 0,
           shadowOpacity: 0,
           borderBottomWidth: 0,
           backgroundColor: '#f2f2f2',
+        },
+        drawerStyle: {
+          backgroundColor: '#10131A',
         },
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
