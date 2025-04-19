@@ -1,7 +1,8 @@
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { BackHandler } from 'react-native'; //esse é evento do botão voltar em Android
 import { useEffect, useState, useCallback } from 'react';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getAuth, signOut } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -57,17 +58,6 @@ export default function Home({ navigation }) {
         }
     };
 
-    const handleLogout = async () => {
-        const auth = getAuth();
-        try {
-            await signOut(auth);
-            await AsyncStorage.removeItem('userLoggedIn');
-            navigation.replace('userType');
-        } catch (error) {
-            Alert.alert('Erro ao sair:', error)
-        }
-    };
-
     useFocusEffect(
         useCallback(() => {
             const onBackPress = () => {
@@ -85,25 +75,24 @@ export default function Home({ navigation }) {
 
 
     return (
-        <View className='flex justify-center items-center w-full h-full'>
-            <Text>Seja bem vindo(a) {nome}</Text>
-            <Text>Tela home aluno</Text>
+        <SafeAreaView className='flex-1 w-full h-full bg-colorBackground'>
+            <View className=''>
+                <View className="pt-5 px-5">
+                    <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                        <Ionicons name="menu" size={28} color="#6943FF" />
+                    </TouchableOpacity>
+                </View>
+                <Text>Seja bem vindo(a) {nome}</Text>
+                <Text>Tela home aluno</Text>
 
-            {/* Botão só pra fazer testes */}
-            <TouchableOpacity
-                onPress={handleLogout}
-                className='mt-5 bg-red-500 px-4 py-2 rounded'
-            >
-                <Text className='text-white font-bold'>Sair</Text>
-            </TouchableOpacity>
-
-            {/* Botão só pra fazer testes */}
-            <TouchableOpacity
-                onPress={() => autenticar()}
-                className='mt-5 bg-red-500 px-4 py-2 rounded'
-            >
-                <Text className='text-white font-bold'>APAGAR CONTA</Text>
-            </TouchableOpacity>
-        </View>
+                {/* Botão só pra fazer testes */}
+                <TouchableOpacity
+                    onPress={() => autenticar()}
+                    className='mt-5 bg-red-500 px-4 py-2 rounded'
+                >
+                    <Text className='text-white font-bold'>APAGAR CONTA</Text>
+                </TouchableOpacity>
+            </View>
+        </SafeAreaView>
     );
 };
