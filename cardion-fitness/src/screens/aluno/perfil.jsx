@@ -17,7 +17,9 @@ import { SERVER_URL } from '~/apiConfig/config';
 
 import { useGet } from '~/hook/crud/useGet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getAuth, signOut } from 'firebase/auth';
+// import { getAuth, signOut } from 'firebase/auth';
+
+import { useUpdate } from '~/hook/crud/useUpdate';
 
 export default function Perfil({ }) {
 
@@ -34,6 +36,28 @@ export default function Perfil({ }) {
     const [objetivo, setObjetivo] = useState();
     const { getById } = useGet()
     const [filename, setFilename] = useState()
+    const {updateDadosBasicos} = useUpdate();
+
+    const atualizarDados = async () => {
+        Alert.alert("chegeui aqui")
+        const data = {
+                dataNasc:dataNasc,
+                sexo: sexo,
+                peso: peso,
+                altura: altura,
+                objetivo:objetivo,
+                nome:nome,
+                telefone:telefone
+        }
+
+        const result = await updateDadosBasicos(data)
+
+        if(result){
+            Alert.alert("Dados Atualizados")
+        }else{
+            Alert.alert("Erro")
+        }
+    }
 
     const trazerDados = async () => {
         const user = await getById()
@@ -219,45 +243,53 @@ export default function Perfil({ }) {
                             placeholder='Nome'
                             placeholderTextColor='#5d5d5d'
                             value={nome}
+                            onChangeText={setNome}
                         />
                         <Input placeholder='E-mail'
                             placeholderTextColor='#5d5d5d'
                             value={email}
+                            onChangeText={setEmail}
                         />
                         <Input
                             placeholder='Telefone'
                             placeholderTextColor='#5d5d5d'
                             value={telefone}
+                            onChangeText={setTelefone}
 
                         />
                         <Input
                             placeholder='Data de Nascimento'
                             placeholderTextColor='#5d5d5d'
                             value={dataNasc}
+                            onChangeText={setDataNascimento}
                         />
                         <Input
                             placeholder='Sexo'
                             placeholderTextColor='#5d5d5d'
                             value={sexo}
+                            onChangeText={setSexo}
 
                         />
                         <Input placeholder='Peso'
                             placeholderTextColor='#5d5d5d'
                             value={peso}
+                            onChangeText={setPeso}
                         />
                         <Input
                             placeholder='Altura'
                             placeholderTextColor='#5d5d5d'
                             value={altura}
+                            onChangeText={setAltura}
 
                         />
                         <Input
                             placeholder='Objetivo'
                             placeholderTextColor='#5d5d5d'
                             value={objetivo}
+                            onChangeText={setObjetivo}
                         />
 
-                        <ButtonViolet>
+                        <ButtonViolet onPress={atualizarDados}>
                             <ButtonTextViolet>Salvar</ButtonTextViolet>
                         </ButtonViolet>
                     </View>
