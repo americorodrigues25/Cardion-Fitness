@@ -8,4 +8,5 @@ module.exports = {
   colorLight300: '#D4D4D8',
   colorInputs: '#171c26',
   colorViolet: '#6943FF',
+  colorBackground: '#10131A',
 };
