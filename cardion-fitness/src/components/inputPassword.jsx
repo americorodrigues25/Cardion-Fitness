@@ -6,7 +6,7 @@ import styled from '@emotion/native';
 const Container = styled.View`
   flex-direction: row;
   align-items: center;
-  background-color: #171c26;
+  background-color: #0E1621;
   border: 1.5px solid #27272A;
   border-radius: 16px;
   padding: 25px 40px;
