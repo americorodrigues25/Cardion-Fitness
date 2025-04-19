@@ -2,8 +2,8 @@ import styled from "@emotion/native";
 
 export const Input = styled.TextInput`
     width: 100%;
-    padding: 25px 40px;
-    background-color: #171c26;
+    padding: 20px 40px;
+    background-color: #0E1621;
     outline: none;
     border: 1.5px solid #27272A;
     border-radius: 16px;
