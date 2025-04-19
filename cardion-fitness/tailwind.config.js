@@ -13,8 +13,9 @@ module.exports = {
         colorDark400: '#000000',
         colorLight200: '#E4E4E7',
         colorLight300: '#D4D4D8',
-        colorInputs: '#171c26',
+        colorInputs: '#0E1621',
         colorViolet: '#6943FF',
+        colorBackground: '#10131A',
       },
       colors,
       fontFamily: {
