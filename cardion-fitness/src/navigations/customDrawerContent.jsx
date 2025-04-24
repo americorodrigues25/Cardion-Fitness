@@ -130,7 +130,7 @@ export default function CustomDrawerContent(props) {
                 </View>
 
                 <View className="px-10 mb-6">
-                    <TouchableOpacity onPress={handleLogout} className="flex-row items-center bg-red-600 rounded-full py-3 justify-center">
+                    <TouchableOpacity onPress={handleLogout} className="flex-row items-center bg-colorViolet rounded-full py-3 justify-center">
                         <Text className="text-colorLight200 text-base font-semibold text-center">SAIR DA CONTA</Text>
                     </TouchableOpacity>
                 </View>
