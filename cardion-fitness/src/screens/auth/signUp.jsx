@@ -63,9 +63,9 @@ export default function SignUp({ }) {
 
                 setTimeout(async () => {
                     const role = await AsyncStorage.getItem("role")
-                    if(role == 'aluno'){
+                    if (role == 'aluno') {
                         navigation.replace('homeAluno');
-                    }else{
+                    } else {
                         navigation.replace('homePersonal');
                     }
                 }, 1500);
@@ -101,45 +101,47 @@ export default function SignUp({ }) {
         >
 
             <SafeAreaView className='w-full h-full flex-1 justify-center items-center'>
-                <View className="absolute top-0 left-0 w-full px-5 pt-16 z-10">
+                <View className="absolute top-0 left-0 w-full px-5 pt-16 z-10 flex-row justify-between">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Image source={require('~/assets/img/btnVoltar.png')} className='w-5 h-7' />
+                        <Image source={require('~/assets/img/btnVoltar.png')} className='w-4 h-5' />
                     </TouchableOpacity>
+                    <Image source={require('~/assets/img/logo/Logo1.png')} className="w-28 h-14" resizeMode="contain" />
                 </View>
 
-                <View className='px-10 w-full'>
-                    <Text className="text-colorLight200 text-5xl font-semibold text-center">
-                        Cadastrar conta
-                    </Text>
 
+                <Text className="text-colorLight200 text-5xl font-semibold text-center">
+                    Crie sua conta
+                </Text>
+
+                <View className='px-10 w-full'>
                     {role !== '' && (
                         <Text className='text-lg mt-2 text-colorViolet text-center'>{role}</Text>
                     )}
 
-                    <View className='mt-20'>
+                    <View className='mt-10'>
                         <Input
-                            placeholder='Nome'
+                            placeholder='Digite seu nome'
                             placeholderTextColor='#5d5d5d'
                             value={name}
                             onChangeText={setName}
                         />
 
                         <Input
-                            placeholder='Email'
+                            placeholder='Digite seu e-mail'
                             placeholderTextColor='#5d5d5d'
                             value={email}
                             onChangeText={setEmail}
                         />
 
                         <InputPassword
-                            placeholder='Senha'
+                            placeholder='Digite sua senha'
                             placeholderTextColor='#5d5d5d'
                             value={password}
                             onChangeText={setPassword}
                         />
 
                         <InputPassword
-                            placeholder='Confirme sua senha'
+                            placeholder='Confirme a senha'
                             placeholderTextColor='#5d5d5d'
                             value={confirmPassword}
                             onChangeText={setConfirmPassword}
@@ -152,7 +154,7 @@ export default function SignUp({ }) {
                         )}
                     </View>
 
-                    <View className="flex-row items-center gap-2 justify-center mt-6">
+                    <View className="flex-row items-center gap-2 justify-center my-10">
                         <TouchableOpacity
                             onPress={() => setRememberMe(!rememberMe)}
                             activeOpacity={0.7}
@@ -160,11 +162,19 @@ export default function SignUp({ }) {
                         >
                             {rememberMe && <View className="w-6 h-6 bg-colorViolet rounded-md" />}
                         </TouchableOpacity>
-                        <Text className="text-gray-300 text-lg">Lembrar</Text>
+                        <Text className="text-gray-300 text-base">Lembrar</Text>
                     </View>
 
-                    <View className='mt-8'>
-                        <ButtonViolet onPress={handleSignUp}>
+                    <View className=''>
+                        <ButtonViolet onPress={handleSignUp}
+                            style={{
+                                shadowColor: '#6943FF',
+                                shadowOffset: { width: 0, height: 0 },
+                                shadowOpacity: 0.7,
+                                shadowRadius: 7,
+                                elevation: 12,
+                            }}
+                        >
                             <ButtonTextViolet>Cadastrar</ButtonTextViolet>
                         </ButtonViolet>
                     </View>

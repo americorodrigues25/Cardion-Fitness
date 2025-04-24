@@ -8,15 +8,15 @@ const Container = styled.View`
   align-items: center;
   background-color: #0E1621;
   border: 1.5px solid #27272A;
-  border-radius: 16px;
-  padding: 25px 40px;
-  margin-bottom: 16px;
+  border-radius: 15px;
+  padding: 22px 40px;
+  margin-bottom: 8px;
 `;
 
 const StyledInput = styled.TextInput`
   flex: 1;
-  color: white;
   font-size: 16px;
+  color: #e4e4e7;
 `;
 
 const ToggleButton = styled.TouchableOpacity`

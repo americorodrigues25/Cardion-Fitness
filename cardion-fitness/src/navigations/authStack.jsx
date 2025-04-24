@@ -2,7 +2,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import Splash from '../screens/shared/splash';
 import UserType from '../screens/auth/userType';
-import Login from '../screens/auth/login';
 import SignUp from '../screens/auth/signUp';
 import ResetPassword from '~/screens/auth/resetPassword';
 import LoginPassword from '~/screens/auth/loginPassword';
@@ -24,11 +23,6 @@ const AuthNavigation = () => {
                 name="userType"
                 options={{ headerShown: false }}
                 component={UserType}
-            />
-            <Stack.Screen
-                name='login'
-                options={{ headerShown: false }}
-                component={Login}
             />
             <Stack.Screen
                 name='signUp'

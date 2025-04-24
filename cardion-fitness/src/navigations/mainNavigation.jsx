@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import AuthStack from './authStack';
-import AlunoDrawer from './alunoDrawer';
-import PersonalDrawer from './personalDrawer';
 import AlunoNavigation from './alunoStack';
 import PersonalNavigation from './personalStack';
 
