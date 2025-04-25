@@ -22,7 +22,7 @@ export default function SignUp({ }) {
     const [formError, setFormError] = useState('');
     const [role, setRole] = useState('');
     const [nome, setNome] = useState();
-    const { getById } = useGet()
+    const { getById } = useGet();
 
 
     const trazerNome = async () => {
@@ -124,6 +124,12 @@ export default function SignUp({ }) {
                     <View className='mt-10'>
                         <Input
                             placeholder='Digite seu e-mail'
+                            keyboardType="email-address"       
+                            returnKeyType="next" 
+                            autoCapitalize="none" 
+                            autoCorrect={false}     
+                            textContentType="emailAddress"  
+                            accessibilityLabel="Campo de e-mail"
                             placeholderTextColor='#5d5d5d'
                             value={email}
                             onChangeText={setEmail}
@@ -131,6 +137,11 @@ export default function SignUp({ }) {
 
                         <InputPassword
                             placeholder='Digite sua senha'
+                            keyboardType="default"       
+                            autoCapitalize="none"    
+                            autoCorrect={false} 
+                            textContentType="password"     
+                            accessibilityLabel="Campo de senha"
                             placeholderTextColor='#5d5d5d'
                             value={password}
                             onChangeText={setPassword}
@@ -169,7 +180,6 @@ export default function SignUp({ }) {
                         </ButtonViolet>
                     </View>
 
-                    {/* Coloquei mais para cima apenas para teste */}
                     <TouchableOpacity className='mt-5' onPress={() => navigation.navigate('resetPassword')}>
                         <Text className="text-colorLight200 text-base font-normal text-center">
                             Esqueci minha <Text className='text-colorViolet font-semibold'>senha</Text>

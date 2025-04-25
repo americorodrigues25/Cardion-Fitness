@@ -61,6 +61,11 @@ export default function ResetPassword() {
                     <View className='mt-20'>
                         <Input
                             placeholder='Digite o e-mail de cadastro'
+                            keyboardType="email-address" 
+                            returnKeyType="next"    
+                            autoCapitalize="none"  
+                            autoCorrect={false}    
+                            textContentType="emailAddress"   
                             placeholderTextColor='#5d5d5d'
                             value={email}
                             onChangeText={setEmail}

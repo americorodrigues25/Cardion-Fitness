@@ -120,14 +120,23 @@ export default function SignUp({ }) {
 
                     <View className='mt-10'>
                         <Input
-                            placeholder='Digite seu nome'
+                            placeholder='Digite seu nome e sobrenome'
+                            keyboardType="default"
+                            autoCapitalize="words"
+                            maxLength={30}
                             placeholderTextColor='#5d5d5d'
                             value={name}
                             onChangeText={setName}
+                            autoCorrect={true}
                         />
 
                         <Input
                             placeholder='Digite seu e-mail'
+                            keyboardType="email-address"     
+                            returnKeyType="next"           
+                            autoCapitalize="none"       
+                            autoCorrect={false}     
+                            textContentType="emailAddress" 
                             placeholderTextColor='#5d5d5d'
                             value={email}
                             onChangeText={setEmail}
@@ -135,6 +144,10 @@ export default function SignUp({ }) {
 
                         <InputPassword
                             placeholder='Digite sua senha'
+                            keyboardType="default"       
+                            autoCapitalize="none"     
+                            autoCorrect={false}       
+                            textContentType="password"      
                             placeholderTextColor='#5d5d5d'
                             value={password}
                             onChangeText={setPassword}
@@ -142,6 +155,10 @@ export default function SignUp({ }) {
 
                         <InputPassword
                             placeholder='Confirme a senha'
+                            keyboardType="default"          
+                            autoCapitalize="none"        
+                            autoCorrect={false}       
+                            textContentType="password"     
                             placeholderTextColor='#5d5d5d'
                             value={confirmPassword}
                             onChangeText={setConfirmPassword}
