@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Image, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
@@ -234,18 +234,31 @@ export default function Perfil({ }) {
                             />
 
                             <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">E-mail:</Text>
-                            <Input
-                                placeholder="E-mail"
-                                keyboardType="email-address"
-                                returnKeyType="next"
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                textContentType="emailAddress"
-                                editable={false} 
-                                placeholderTextColor="#5d5d5d"
-                                value={email}
-                                onChangeText={setEmail}
-                            />
+                            <TouchableWithoutFeedback
+                                onPress={() =>
+                                    Toast.show({
+                                        type: 'error',
+                                        text1: 'Campo bloqueado',
+                                        text2: 'Não é possível editar o e-mail',
+                                        position: 'top',
+                                    })
+                                }
+                            >
+                                <View pointerEvents="box-only">
+                                    <Input
+                                        placeholder="E-mail"
+                                        keyboardType="email-address"
+                                        returnKeyType="next"
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                        textContentType="emailAddress"
+                                        editable={false}
+                                        placeholderTextColor="#5d5d5d"
+                                        value={email}
+                                        onChangeText={setEmail}
+                                    />
+                                </View>
+                            </TouchableWithoutFeedback>
 
                             <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Telefone:</Text>
                             <Input
