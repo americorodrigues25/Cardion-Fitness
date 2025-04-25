@@ -23,6 +23,7 @@ export default function SignUp({ }) {
     const [role, setRole] = useState('');
     const [nome, setNome] = useState();
     const { getById } = useGet();
+    const [campoFocado, setCampoFocado] = useState('');
 
 
     const trazerNome = async () => {
@@ -124,27 +125,38 @@ export default function SignUp({ }) {
                     <View className='mt-10'>
                         <Input
                             placeholder='Digite seu e-mail'
-                            keyboardType="email-address"       
-                            returnKeyType="next" 
-                            autoCapitalize="none" 
-                            autoCorrect={false}     
-                            textContentType="emailAddress"  
+                            keyboardType="email-address"
+                            returnKeyType="done"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            textContentType="emailAddress"
                             accessibilityLabel="Campo de e-mail"
                             placeholderTextColor='#5d5d5d'
                             value={email}
                             onChangeText={setEmail}
+                            onFocus={() => setCampoFocado('email')}
+                            onBlur={() => setCampoFocado('')}
+                            style={{
+                                borderColor: campoFocado === 'email' ? '#6943FF' : '#27272A',
+                            }}
                         />
 
                         <InputPassword
                             placeholder='Digite sua senha'
-                            keyboardType="default"       
-                            autoCapitalize="none"    
-                            autoCorrect={false} 
-                            textContentType="password"     
+                            keyboardType="default"
+                            returnKeyType="done"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            textContentType="password"
                             accessibilityLabel="Campo de senha"
                             placeholderTextColor='#5d5d5d'
                             value={password}
                             onChangeText={setPassword}
+                            onFocus={() => setCampoFocado('senha')}
+                            onBlur={() => setCampoFocado('')}
+                            style={{
+                                borderColor: campoFocado === 'senha' ? '#6943FF' : '#27272A',
+                            }}
                         />
 
                         {formError !== '' && (

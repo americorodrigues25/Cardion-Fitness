@@ -13,6 +13,7 @@ export default function ResetPassword() {
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [formError, setFormError] = useState('');
+    const [campoFocado, setCampoFocado] = useState('');
 
 
     const handleReset = async () => {
@@ -61,14 +62,19 @@ export default function ResetPassword() {
                     <View className='mt-20'>
                         <Input
                             placeholder='Digite o e-mail de cadastro'
-                            keyboardType="email-address" 
-                            returnKeyType="next"    
-                            autoCapitalize="none"  
-                            autoCorrect={false}    
-                            textContentType="emailAddress"   
+                            keyboardType="email-address"
+                            returnKeyType="done"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            textContentType="emailAddress"
                             placeholderTextColor='#5d5d5d'
                             value={email}
                             onChangeText={setEmail}
+                            onFocus={() => setCampoFocado('email')}
+                            onBlur={() => setCampoFocado('')}
+                            style={{
+                                borderColor: campoFocado === 'email' ? '#6943FF' : '#27272A',
+                            }}
                         />
                     </View>
 

@@ -5,7 +5,7 @@ import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 import { Input } from '~/components/input';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Toast from 'react-native-toast-message';
-import { TextInputMask } from 'react-native-masked-text';
+
 
 import { useNavigation } from '@react-navigation/native';
 
@@ -34,9 +34,11 @@ export default function Perfil({ }) {
     const [peso, setPeso] = useState();
     const [altura, setAltura] = useState();
     const [objetivo, setObjetivo] = useState();
-    const { getById } = useGet()
-    const [filename, setFilename] = useState()
+    const { getById } = useGet();
+    const [filename, setFilename] = useState();
     const { updateDadosBasicos } = useUpdate();
+    const [campoFocado, setCampoFocado] = useState('');
+
 
     const atualizarDados = async () => {
         const data = {
@@ -227,10 +229,16 @@ export default function Perfil({ }) {
                                 keyboardType="default"
                                 autoCapitalize="words"
                                 autoCorrect={true}
+                                returnKeyType="done"
                                 maxLength={30}
                                 placeholderTextColor="#5d5d5d"
                                 value={nome}
                                 onChangeText={setNome}
+                                onFocus={() => setCampoFocado('nome')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'nome' ? '#6943FF' : '#27272A',
+                                }}
                             />
 
                             <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">E-mail:</Text>
@@ -265,24 +273,36 @@ export default function Perfil({ }) {
                                 placeholder="(XX) XXXXX-XXXX"
                                 keyboardType="phone-pad"
                                 textContentType="telephoneNumber"
+                                returnKeyType="done"
                                 mask
                                 type="custom"
                                 options={{ mask: '(99) 99999-9999' }}
                                 placeholderTextColor="#5d5d5d"
                                 value={telefone}
                                 onChangeText={setTelefone}
+                                onFocus={() => setCampoFocado('telefone')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'telefone' ? '#6943FF' : '#27272A',
+                                }}
                             />
 
                             <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Data de nascimento:</Text>
                             <Input
                                 placeholder="(dd/mm/aaaa)"
                                 keyboardType="number-pad"
+                                returnKeyType="done"
                                 mask
                                 type="custom"
                                 options={{ mask: '99/99/9999' }}
                                 placeholderTextColor="#5d5d5d"
                                 value={dataNasc}
                                 onChangeText={setDataNascimento}
+                                onFocus={() => setCampoFocado('dataNascimento')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'dataNascimento' ? '#6943FF' : '#27272A',
+                                }}
                             />
 
                             <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Selecione um gênero:</Text>
@@ -307,34 +327,53 @@ export default function Perfil({ }) {
                             <Input
                                 placeholder="Digite seu peso"
                                 keyboardType="number-pad"
+                                returnKeyType="done"
                                 mask
                                 type="custom"
                                 options={{ mask: '99.99' }}
                                 placeholderTextColor="#5d5d5d"
                                 value={peso}
                                 onChangeText={setPeso}
+                                onFocus={() => setCampoFocado('peso')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'peso' ? '#6943FF' : '#27272A',
+                                }}
                             />
 
                             <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Altura:</Text>
                             <Input
                                 placeholder="Digite sua altura"
                                 keyboardType="number-pad"
+                                returnKeyType="done"
                                 mask
                                 type="custom"
                                 options={{ mask: '9.99' }}
                                 placeholderTextColor="#5d5d5d"
                                 value={altura}
                                 onChangeText={setAltura}
+                                onFocus={() => setCampoFocado('altura')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'altura' ? '#6943FF' : '#27272A',
+                                }}
                             />
 
                             <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Objetivo:</Text>
                             <Input
                                 placeholder="Objetivo"
                                 keyboardType="default"
+                                returnKeyType="done"
                                 maxLength={30}
                                 placeholderTextColor="#5d5d5d"
                                 value={objetivo}
-                                onChangeText={setObjetivo} />
+                                onChangeText={setObjetivo}
+                                onFocus={() => setCampoFocado('objetivo')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'objetivo' ? '#6943FF' : '#27272A',
+                                }}
+                            />
 
                             <View className="my-5">
                                 <ButtonViolet onPress={atualizarDados}>

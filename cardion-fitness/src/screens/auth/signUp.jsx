@@ -24,6 +24,7 @@ export default function SignUp({ }) {
     const [confirmPassword, setConfirmPassword] = useState();
     const [formError, setFormError] = useState('');
     const [role, setRole] = useState('');
+    const [campoFocado, setCampoFocado] = useState('');
 
     const handleSignUp = async () => {
         setFormError('');
@@ -123,45 +124,68 @@ export default function SignUp({ }) {
                             placeholder='Digite seu nome e sobrenome'
                             keyboardType="default"
                             autoCapitalize="words"
+                            returnKeyType="done"
                             maxLength={30}
                             placeholderTextColor='#5d5d5d'
                             value={name}
                             onChangeText={setName}
                             autoCorrect={true}
+                            onFocus={() => setCampoFocado('nome')}
+                            onBlur={() => setCampoFocado('')}
+                            style={{
+                                borderColor: campoFocado === 'nome' ? '#6943FF' : '#27272A',
+                            }}
                         />
 
                         <Input
                             placeholder='Digite seu e-mail'
-                            keyboardType="email-address"     
-                            returnKeyType="next"           
-                            autoCapitalize="none"       
-                            autoCorrect={false}     
-                            textContentType="emailAddress" 
+                            keyboardType="email-address"
+                            returnKeyType="done"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            textContentType="emailAddress"
                             placeholderTextColor='#5d5d5d'
                             value={email}
                             onChangeText={setEmail}
+                            onFocus={() => setCampoFocado('email')}
+                            onBlur={() => setCampoFocado('')}
+                            style={{
+                                borderColor: campoFocado === 'email' ? '#6943FF' : '#27272A',
+                            }}
                         />
 
                         <InputPassword
                             placeholder='Digite sua senha'
-                            keyboardType="default"       
-                            autoCapitalize="none"     
-                            autoCorrect={false}       
-                            textContentType="password"      
+                            keyboardType="default"
+                            autoCapitalize="none"
+                            returnKeyType="done"
+                            autoCorrect={false}
+                            textContentType="password"
                             placeholderTextColor='#5d5d5d'
                             value={password}
                             onChangeText={setPassword}
+                            onFocus={() => setCampoFocado('senha')}
+                            onBlur={() => setCampoFocado('')}
+                            style={{
+                                borderColor: campoFocado === 'senha' ? '#6943FF' : '#27272A',
+                            }}
                         />
 
                         <InputPassword
                             placeholder='Confirme a senha'
-                            keyboardType="default"          
-                            autoCapitalize="none"        
-                            autoCorrect={false}       
-                            textContentType="password"     
+                            keyboardType="default"
+                            autoCapitalize="none"
+                            returnKeyType="done"
+                            autoCorrect={false}
+                            textContentType="password"
                             placeholderTextColor='#5d5d5d'
                             value={confirmPassword}
                             onChangeText={setConfirmPassword}
+                            onFocus={() => setCampoFocado('senha')}
+                            onBlur={() => setCampoFocado('')}
+                            style={{
+                                borderColor: campoFocado === 'senha' ? '#6943FF' : '#27272A',
+                            }}
                         />
 
                         {formError !== '' && (
