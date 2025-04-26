@@ -1,6 +1,8 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import AlunoTabs from './alunoTabs';
 import Perfil from '~/screens/aluno/perfil';
+import HelSupport from '~/screens/shared/helpSupport';
+import Privacy from '~/screens/shared/privacyScreen';
 import CustomDrawerContent from './customDrawerContent';
 
 const Drawer = createDrawerNavigator();
@@ -30,6 +32,14 @@ export default function AlunoDrawer() {
       <Drawer.Screen
         name="Meu Perfil"
         component={Perfil}
+      />
+      <Drawer.Screen
+        name="Ajuda e Suporte"
+        component={HelSupport}
+      />
+      <Drawer.Screen
+        name="Politica de privacidade"
+        component={Privacy}
       />
     </Drawer.Navigator>
   );

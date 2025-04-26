@@ -84,11 +84,7 @@ export default function Login() {
                             <ButtonTextViolet>Entrar com senha</ButtonTextViolet>
                         </ButtonViolet>
                     </View>
-                    <TouchableOpacity className='mt-20' onPress={() => navigation.navigate('signUp')}>
-                        <Text className="text-colorLight200 text-base font-normal text-center">
-                            Não tem uma conta? <Text className='text-colorViolet font-semibold'>Crie-a</Text>
-                        </Text>
-                    </TouchableOpacity>
+
 
                 </SafeAreaView>
         </BackgroundImage>

@@ -1,9 +1,11 @@
-import { View, Text, TouchableOpacity, Alert, Image, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Image, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 import { Input } from '~/components/input';
-import { InputPassword } from '~/components/inputPassword';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Toast from 'react-native-toast-message';
+
 
 import { useNavigation } from '@react-navigation/native';
 
@@ -17,12 +19,10 @@ import { SERVER_URL } from '~/apiConfig/config';
 
 import { useGet } from '~/hook/crud/useGet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { getAuth, signOut } from 'firebase/auth';
 
 import { useUpdate } from '~/hook/crud/useUpdate';
 
 export default function Perfil({ }) {
-
     const navigation = useNavigation();
 
     const [imageUrl, setImageUrl] = useState(null);
@@ -34,27 +34,31 @@ export default function Perfil({ }) {
     const [peso, setPeso] = useState();
     const [altura, setAltura] = useState();
     const [objetivo, setObjetivo] = useState();
-    const { getById } = useGet()
-    const [filename, setFilename] = useState()
-    const {updateDadosBasicos} = useUpdate();
+    const { getById } = useGet();
+    const [filename, setFilename] = useState();
+    const { updateDadosBasicos } = useUpdate();
+    const [campoFocado, setCampoFocado] = useState('');
+
 
     const atualizarDados = async () => {
-        Alert.alert("chegeui aqui")
         const data = {
-                dataNasc:dataNasc,
-                sexo: sexo,
-                peso: peso,
-                altura: altura,
-                objetivo:objetivo,
-                nome:nome,
-                telefone:telefone
+            dataNasc: dataNasc,
+            sexo: sexo,
+            peso: peso,
+            altura: altura,
+            objetivo: objetivo,
+            nome: nome,
+            telefone: telefone
         }
 
         const result = await updateDadosBasicos(data)
 
-        if(result){
-            Alert.alert("Dados Atualizados")
-        }else{
+        if (result) {
+            Toast.show({
+                type: 'success',
+                text1: 'Dados atualizados com sucesso ! 🎉',
+            });
+        } else {
             Alert.alert("Erro")
         }
     }
@@ -69,7 +73,6 @@ export default function Perfil({ }) {
         setPeso(user.peso)
         setAltura(user.altura)
         setObjetivo(user.objetivo)
-        Alert.alert(user.nome)
     }
 
     useEffect(() => {
@@ -85,7 +88,7 @@ export default function Perfil({ }) {
 
         fetchImage();
         fetchNome();
-    }, [])
+    }, []);
 
     const handleEditImage = () => {
         Alert.alert(
@@ -133,18 +136,12 @@ export default function Perfil({ }) {
             });
 
             try {
-                // Envia a imagem para o servidor
                 const res = await axios.post(`${SERVER_URL}/upload`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
 
-                // Recebe a URL da imagem e o filename
                 setImageUrl(`${res.data.url}?${new Date().getTime()}`);
-
-
-                // Limpa o cache da imagem, forçando o Expo a recarregar
                 Asset.fromURI(res.data.url).downloadAsync();
-
             } catch (error) {
                 console.error('Erro no upload:', error);
             }
@@ -171,24 +168,17 @@ export default function Perfil({ }) {
             });
 
             try {
-                // Envia a imagem para o servidor
                 const res = await axios.post(`${SERVER_URL}/upload`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
 
-                // Recebe a URL da imagem e o filename
                 setImageUrl(`${res.data.url}?${new Date().getTime()}`);
-
-
-                // Limpa o cache da imagem, forçando o Expo a recarregar
                 Asset.fromURI(res.data.url).downloadAsync();
-
             } catch (error) {
                 console.error('Erro no upload:', error);
             }
         }
     };
-
 
     const removerFoto = async () => {
         try {
@@ -204,97 +194,196 @@ export default function Perfil({ }) {
     }
 
     return (
-        <ScrollView
-            bounces={false}
-            overScrollMode='never'
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flex: 1 }}
         >
-            <SafeAreaView className='flex-1 w-full h-full bg-colorBackground'>
-                <View className="pt-5 px-5">
-                    <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                        <Ionicons name="menu" size={28} color="#6943FF" />
-                    </TouchableOpacity>
-                </View>
-                <View className='px-10'>
-                    <View className="py-5 items-center">
-                        <View className="relative">
-                            <Image
-                                key={imageUrl}
-                                source={
-                                    imageUrl
-                                        ? { uri: imageUrl }
-                                        : require('~/assets/img/imgProfileDefault.png')
-                                }
-                                resizeMode="cover"
-                                className="w-40 h-40 rounded-full border-4 border-colorViolet"
-                            />
+            <SafeAreaView edges={['top']} className="flex-1 bg-colorBackground">
+                <ScrollView bounces={false} overScrollMode="never" contentContainerStyle={{ flexGrow: 1 }}>
+                    <View className="pt-5 px-5">
+                        <TouchableOpacity onPress={() => navigation.openDrawer()} className="flex-row">
+                            <Image source={require('~/assets/img/btnVoltar.png')} className="w-4 h-5" />
+                            <Text className="ml-2 text-colorLight200">Editar perfil</Text>
+                        </TouchableOpacity>
+                    </View>
 
-                            <TouchableOpacity
-                                onPress={handleEditImage}
-                                className="absolute bottom-0 right-2 bg-colorViolet rounded-full p-2"
-                            >
-                                <Ionicons name="camera" size={25} color="#000" />
-                            </TouchableOpacity>
+                    <View className="px-10 py-10">
+                        <View className="items-center">
+                            <View className="relative">
+                                <Image
+                                    key={imageUrl}
+                                    source={imageUrl ? { uri: imageUrl } : require('~/assets/img/imgProfileDefault.png')}
+                                    resizeMode="cover"
+                                    className="w-40 h-40 rounded-full"
+                                />
+                                <TouchableOpacity onPress={handleEditImage} className="absolute bottom-0 right-2 bg-colorViolet rounded-2xl p-2">
+                                    <FontAwesome name="pencil" size={25} color="#000" />
+                                </TouchableOpacity>
+                            </View>
                         </View>
 
-                        <Text className="text-2xl font-bold mt-5 text-colorLight200">{nome}</Text>
+                        <View className="mt-5">
+                            <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Nome:</Text>
+                            <Input
+                                placeholder="Digite seu nome e sobrenome"
+                                keyboardType="default"
+                                autoCapitalize="words"
+                                autoCorrect={true}
+                                returnKeyType="done"
+                                maxLength={30}
+                                placeholderTextColor="#5d5d5d"
+                                value={nome}
+                                onChangeText={setNome}
+                                onFocus={() => setCampoFocado('nome')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'nome' ? '#6943FF' : '#27272A',
+                                }}
+                            />
+
+                            <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">E-mail:</Text>
+                            <TouchableWithoutFeedback
+                                onPress={() =>
+                                    Toast.show({
+                                        type: 'error',
+                                        text1: 'Campo bloqueado',
+                                        text2: 'Não é possível editar o e-mail',
+                                        position: 'top',
+                                    })
+                                }
+                            >
+                                <View pointerEvents="box-only">
+                                    <Input
+                                        placeholder="E-mail"
+                                        keyboardType="email-address"
+                                        returnKeyType="next"
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                        textContentType="emailAddress"
+                                        editable={false}
+                                        placeholderTextColor="#5d5d5d"
+                                        value={email}
+                                        onChangeText={setEmail}
+                                    />
+                                </View>
+                            </TouchableWithoutFeedback>
+
+                            <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Telefone:</Text>
+                            <Input
+                                placeholder="(XX) XXXXX-XXXX"
+                                keyboardType="phone-pad"
+                                textContentType="telephoneNumber"
+                                returnKeyType="done"
+                                mask
+                                type="custom"
+                                options={{ mask: '(99) 99999-9999' }}
+                                placeholderTextColor="#5d5d5d"
+                                value={telefone}
+                                onChangeText={setTelefone}
+                                onFocus={() => setCampoFocado('telefone')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'telefone' ? '#6943FF' : '#27272A',
+                                }}
+                            />
+
+                            <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Data de nascimento:</Text>
+                            <Input
+                                placeholder="(dd/mm/aaaa)"
+                                keyboardType="number-pad"
+                                returnKeyType="done"
+                                mask
+                                type="custom"
+                                options={{ mask: '99/99/9999' }}
+                                placeholderTextColor="#5d5d5d"
+                                value={dataNasc}
+                                onChangeText={setDataNascimento}
+                                onFocus={() => setCampoFocado('dataNascimento')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'dataNascimento' ? '#6943FF' : '#27272A',
+                                }}
+                            />
+
+                            <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Selecione um gênero:</Text>
+                            <View className="flex justify-between px-12 py-[22px] gap-y-3 bg-colorInputs border-[1.5px] border-colorDark100 rounded-2xl mb-1">
+                                <TouchableOpacity onPress={() => setSexo('Masculino')} className="flex-row items-center">
+                                    <View className={`w-5 h-5 rounded-full border-2 ${sexo === 'Masculino' ? 'bg-colorViolet border-colorViolet' : 'border-colorLight200'}`}></View>
+                                    <Text className="ml-2 text-colorLight200 text-base">Masculino</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => setSexo('Feminino')} className="flex-row items-center">
+                                    <View className={`w-5 h-5 rounded-full border-2 ${sexo === 'Feminino' ? 'bg-colorViolet border-colorViolet' : 'border-colorLight200'}`}></View>
+                                    <Text className="ml-2 text-colorLight200 text-base">Feminino</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => setSexo('Outro')} className="flex-row items-center">
+                                    <View className={`w-5 h-5 rounded-full border-2 ${sexo === 'Outro' ? 'bg-colorViolet border-colorViolet' : 'border-colorLight200'}`}></View>
+                                    <Text className="ml-2 text-colorLight200 text-base">Outro</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Peso:</Text>
+                            <Input
+                                placeholder="Digite seu peso"
+                                keyboardType="number-pad"
+                                returnKeyType="done"
+                                mask
+                                type="custom"
+                                options={{ mask: '99.99' }}
+                                placeholderTextColor="#5d5d5d"
+                                value={peso}
+                                onChangeText={setPeso}
+                                onFocus={() => setCampoFocado('peso')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'peso' ? '#6943FF' : '#27272A',
+                                }}
+                            />
+
+                            <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Altura:</Text>
+                            <Input
+                                placeholder="Digite sua altura"
+                                keyboardType="number-pad"
+                                returnKeyType="done"
+                                mask
+                                type="custom"
+                                options={{ mask: '9.99' }}
+                                placeholderTextColor="#5d5d5d"
+                                value={altura}
+                                onChangeText={setAltura}
+                                onFocus={() => setCampoFocado('altura')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'altura' ? '#6943FF' : '#27272A',
+                                }}
+                            />
+
+                            <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Objetivo:</Text>
+                            <Input
+                                placeholder="Objetivo"
+                                keyboardType="default"
+                                returnKeyType="done"
+                                maxLength={30}
+                                placeholderTextColor="#5d5d5d"
+                                value={objetivo}
+                                onChangeText={setObjetivo}
+                                onFocus={() => setCampoFocado('objetivo')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'objetivo' ? '#6943FF' : '#27272A',
+                                }}
+                            />
+
+                            <View className="my-5">
+                                <ButtonViolet onPress={atualizarDados}>
+                                    <ButtonTextViolet>Salvar</ButtonTextViolet>
+                                </ButtonViolet>
+                            </View>
+                        </View>
                     </View>
-                    <View>
-                        <Input
-                            placeholder='Nome'
-                            placeholderTextColor='#5d5d5d'
-                            value={nome}
-                            onChangeText={setNome}
-                        />
-                        <Input placeholder='E-mail'
-                            placeholderTextColor='#5d5d5d'
-                            value={email}
-                            onChangeText={setEmail}
-                        />
-                        <Input
-                            placeholder='Telefone'
-                            placeholderTextColor='#5d5d5d'
-                            value={telefone}
-                            onChangeText={setTelefone}
-
-                        />
-                        <Input
-                            placeholder='Data de Nascimento'
-                            placeholderTextColor='#5d5d5d'
-                            value={dataNasc}
-                            onChangeText={setDataNascimento}
-                        />
-                        <Input
-                            placeholder='Sexo'
-                            placeholderTextColor='#5d5d5d'
-                            value={sexo}
-                            onChangeText={setSexo}
-
-                        />
-                        <Input placeholder='Peso'
-                            placeholderTextColor='#5d5d5d'
-                            value={peso}
-                            onChangeText={setPeso}
-                        />
-                        <Input
-                            placeholder='Altura'
-                            placeholderTextColor='#5d5d5d'
-                            value={altura}
-                            onChangeText={setAltura}
-
-                        />
-                        <Input
-                            placeholder='Objetivo'
-                            placeholderTextColor='#5d5d5d'
-                            value={objetivo}
-                            onChangeText={setObjetivo}
-                        />
-
-                        <ButtonViolet onPress={atualizarDados}>
-                            <ButtonTextViolet>Salvar</ButtonTextViolet>
-                        </ButtonViolet>
-                    </View>
-                </View>
+                </ScrollView>
             </SafeAreaView>
-        </ScrollView>
+        </KeyboardAvoidingView>
     );
-};
+}

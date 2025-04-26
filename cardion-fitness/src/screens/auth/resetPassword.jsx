@@ -5,7 +5,6 @@ import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 import { Input } from '~/components/input';
 
 import BackgroundImage from '~/components/loadingBackgroundImage';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { useAuth } from '~/hook/useAuthentication';
 
@@ -14,6 +13,7 @@ export default function ResetPassword() {
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [formError, setFormError] = useState('');
+    const [campoFocado, setCampoFocado] = useState('');
 
 
     const handleReset = async () => {
@@ -45,23 +45,36 @@ export default function ResetPassword() {
     return (
         <BackgroundImage source={require('~/assets/img/backgroundImage/imagemFundo3.png')}>
             <SafeAreaView className='w-full h-full flex-1 justify-center items-center'>
-                <View className="absolute top-0 left-0 w-full px-5 pt-16 z-10">
+                <View className="absolute top-0 left-0 w-full px-5 pt-16 z-10 flex-row justify-between">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Image source={require('~/assets/img/btnVoltar.png')} className='w-5 h-7' />
+                        <Image source={require('~/assets/img/btnVoltar.png')} className='w-4 h-5' />
                     </TouchableOpacity>
+                    <Image source={require('~/assets/img/logo/Logo1.png')} className="w-28 h-14" resizeMode="contain" />
                 </View>
 
-                <View className='px-10 w-full'>
-                    <Text className="text-colorLight200 text-5xl font-semibold text-center">
-                        Redefinir senha
-                    </Text>
 
-                    <View className='mt-20 mb-2'>
+                <Text className="text-colorLight200 text-5xl font-semibold text-center">
+                    Redefinir senha
+                </Text>
+
+                <View className='px-10 w-full'>
+
+                    <View className='mt-20'>
                         <Input
-                            placeholder='Email'
+                            placeholder='Digite o e-mail de cadastro'
+                            keyboardType="email-address"
+                            returnKeyType="done"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            textContentType="emailAddress"
                             placeholderTextColor='#5d5d5d'
                             value={email}
                             onChangeText={setEmail}
+                            onFocus={() => setCampoFocado('email')}
+                            onBlur={() => setCampoFocado('')}
+                            style={{
+                                borderColor: campoFocado === 'email' ? '#6943FF' : '#27272A',
+                            }}
                         />
                     </View>
 
@@ -69,8 +82,16 @@ export default function ResetPassword() {
                         <Text className="text-red-500 text-sm mb-5 text-center">{formError}</Text>
                     ) : null}
 
-                    <View className="flex-row items-center justify-center mt-10">
-                        <ButtonViolet onPress={handleReset} disabled={loading}>
+                    <View className="flex-row items-center justify-center mt-20">
+                        <ButtonViolet onPress={handleReset} disabled={loading}
+                            style={{
+                                shadowColor: '#6943FF',
+                                shadowOffset: { width: 0, height: 0 },
+                                shadowOpacity: 0.7,
+                                shadowRadius: 7,
+                                elevation: 12,
+                            }}
+                        >
                             <ButtonTextViolet>
                                 {loading ? 'Enviando...' : 'Enviar'}
                             </ButtonTextViolet>

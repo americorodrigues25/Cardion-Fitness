@@ -15,7 +15,7 @@ export default function UserType() {
         }
 
         await AsyncStorage.setItem('role', 'aluno');
-        navigation.navigate('login',)
+        navigation.navigate('loginPassword',)
     }
 
     const handlePersonal = async () =>{
@@ -26,7 +26,7 @@ export default function UserType() {
         }
 
         await AsyncStorage.setItem('role', 'personal');
-        navigation.navigate('login',)
+        navigation.navigate('loginPassword',)
     }
 
     return (
@@ -41,7 +41,7 @@ export default function UserType() {
                     className='w-6/12' style={{ resizeMode: 'contain' }}
                 />
 
-                <View className='w-full items-center mt-12 px-10'>
+                <View className='w-full items-center mt-10 px-12'>
                     <ButtonViolet
                         onPress={() => handleAluno()}
                         style={{
@@ -62,8 +62,9 @@ export default function UserType() {
                             shadowOpacity: 0.7,
                             shadowRadius: 7,
                             elevation: 12,
+                            marginTop: 15,
                         }}>
-                        <ButtonTextViolet>SOU PROFESSOR</ButtonTextViolet>
+                        <ButtonTextViolet>SOU PERSONAL</ButtonTextViolet>
                     </ButtonViolet>
                 </View>
 
