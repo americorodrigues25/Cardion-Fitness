@@ -53,6 +53,8 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "~0.19.13",
     "undefined": "expo-auth-session/providers/google",
+    "expo-print": "~14.0.3",
+    "expo-sharing": "~13.0.1",
     "expo-notifications": "~0.29.14",
     "expo-device": "~7.0.3"
   },

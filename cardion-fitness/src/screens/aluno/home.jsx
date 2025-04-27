@@ -13,6 +13,8 @@ import { useDelete } from '~/hook/crud/useDelete';
 
 import { useGet } from '~/hook/crud/useGet';
 
+import { gerarPdfUsuario } from '~/utils/gerarPdfUsuario';
+
 // ponto para refatorar, deixar mais legivel o trazer nome
 // para pegar o nome é so usar a funcao de getById e pegar a propriedade nome
 
@@ -20,9 +22,11 @@ export default function Home({ navigation }) {
     const [nome, setNome] = useState();
     const { getById } = useGet()
     const { deleteAccount } = useDelete()
+    const [usuario,setUsuario] = useState()
 
     const trazerNome = async () => {
         const user = await getById()
+        setUsuario(user)
         setNome(user.nome)
         Alert.alert(user.nome)
     }
@@ -91,6 +95,10 @@ export default function Home({ navigation }) {
                     className='mt-5 bg-red-500 px-4 py-2 rounded'
                 >
                     <Text className='text-white font-bold'>APAGAR CONTA</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => gerarPdfUsuario(usuario)}>
+                    <Text>Gerar PDF</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
