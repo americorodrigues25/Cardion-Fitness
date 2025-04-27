@@ -3,14 +3,36 @@ import { useNavigation } from '@react-navigation/native';
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 import BackgroundImage from '~/components/loadingBackgroundImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
+
+import * as Notifications from 'expo-notifications';
+import { configurarNotificacoes } from '~/services/notifications';
+
 
 export default function UserType() {
     const navigation = useNavigation();
 
-    const handleAluno = async () =>{
+    //solicita permissão de notificação
+    useEffect(() => {
+        const requestPermission = async () => {
+            const { status } = await Notifications.requestPermissionsAsync();
+            if (status === 'granted') {
+                console.log('Permissão ok');
+
+                //depois de o usuario permitir vai agendar as notificações
+                configurarNotificacoes();
+            } else {
+                console.log('Permissão negada');
+            }
+        };
+
+        requestPermission();
+    }, []);
+
+    const handleAluno = async () => {
         const role = await AsyncStorage.getItem('role')
 
-        if(role){
+        if (role) {
             await AsyncStorage.removeItem('role')
         }
 
@@ -18,10 +40,10 @@ export default function UserType() {
         navigation.navigate('loginPassword',)
     }
 
-    const handlePersonal = async () =>{
+    const handlePersonal = async () => {
         const role = await AsyncStorage.getItem('role')
 
-        if(role){
+        if (role) {
             await AsyncStorage.removeItem('role')
         }
 
