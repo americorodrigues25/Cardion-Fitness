@@ -1,4 +1,4 @@
-import { SafeAreaView, View, Image, Text, TouchableOpacity, Alert } from 'react-native';
+import { SafeAreaView, View, Image, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,8 +14,9 @@ import { useAuth } from '~/hook/useAuthentication';
 import { useGet } from '~/hook/crud/useGet';
 
 export default function SignUp({ }) {
-    const { login, signUp, accountExists, loading: loadingAuth, error: errorAuth } = useAuth();
+
     const navigation = useNavigation();
+    const { login, signUp, accountExists, loading: loadingAuth, error: errorAuth } = useAuth();
     const [rememberMe, setRememberMe] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -25,24 +26,21 @@ export default function SignUp({ }) {
     const { getById } = useGet();
     const [campoFocado, setCampoFocado] = useState('');
 
-
-    const trazerNome = async () => {
-        const user = await getById()
-        setNome(user.nome)
-    }
-
-    useEffect(() => {
-        const fetchNome = async () => {
-            await trazerNome();
-        };
-        fetchNome();
-    }, [])
+    const validarEmail = (email) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    };
 
     const handleLogin = async () => {
         setFormError('');
 
         if (!email || !password) {
             setFormError('Por favor, preencha todos os campos.');
+            return;
+        }
+
+        if (!validarEmail(email)) {
+            setFormError("E-mail inválido. Tente novamente.");
             return;
         }
 
@@ -103,113 +101,125 @@ export default function SignUp({ }) {
         <BackgroundImage
             source={require('~/assets/img/backgroundImage/imagemFundo3.png')}
         >
-            <SafeAreaView className='w-full h-full flex-1 justify-center items-center'>
-                <View className="absolute top-0 left-0 w-full px-5 pt-16 z-10 flex-row justify-between">
+            <SafeAreaView className='w-full h-full'>
+                <View className=" px-5 pt-5 flex-row justify-between">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image source={require('~/assets/img/btnVoltar.png')} className='w-4 h-5' />
                     </TouchableOpacity>
                     <Image source={require('~/assets/img/logo/Logo1.png')} className="w-28 h-14" resizeMode="contain" />
                 </View>
 
-                <View className='mt-12'>
-                    <Text className="text-colorLight200 text-5xl font-semibold text-center">
-                        Vamos entrar ?
-                    </Text>
-                </View>
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    className="flex-1"
+                >
+                    <ScrollView
+                        contentContainerStyle={{ paddingTop: 40, paddingBottom: 40 }}
+                        showsVerticalScrollIndicator={false}
+                        keyboardShouldPersistTaps="handled"
+                    >
 
-                <View className='px-10 w-full'>
-                    {role !== '' && (
-                        <Text className='text-lg mt-2 text-colorViolet text-center'>{role}</Text>
-                    )}
+                        <View className='mt-12'>
+                            <Text className="text-colorLight200 text-5xl font-semibold text-center">
+                                Vamos entrar ?
+                            </Text>
+                        </View>
 
-                    <View className='mt-10'>
-                        <Input
-                            placeholder='Digite seu e-mail'
-                            keyboardType="email-address"
-                            returnKeyType="done"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            textContentType="emailAddress"
-                            accessibilityLabel="Campo de e-mail"
-                            placeholderTextColor='#5d5d5d'
-                            value={email}
-                            onChangeText={setEmail}
-                            onFocus={() => setCampoFocado('email')}
-                            onBlur={() => setCampoFocado('')}
-                            style={{
-                                borderColor: campoFocado === 'email' ? '#6943FF' : '#27272A',
-                            }}
-                        />
+                        <View className='px-10 w-full'>
+                            {role !== '' && (
+                                <Text className='text-lg mt-2 text-colorViolet text-center'>{role}</Text>
+                            )}
 
-                        <InputPassword
-                            placeholder='Digite sua senha'
-                            keyboardType="default"
-                            returnKeyType="done"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            textContentType="password"
-                            accessibilityLabel="Campo de senha"
-                            placeholderTextColor='#5d5d5d'
-                            value={password}
-                            onChangeText={setPassword}
-                            onFocus={() => setCampoFocado('senha')}
-                            onBlur={() => setCampoFocado('')}
-                            style={{
-                                borderColor: campoFocado === 'senha' ? '#6943FF' : '#27272A',
-                            }}
-                        />
+                            <View className='mt-10'>
+                                <Input
+                                    placeholder='Digite seu e-mail'
+                                    keyboardType="email-address"
+                                    returnKeyType="done"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    textContentType="emailAddress"
+                                    accessibilityLabel="Campo de e-mail"
+                                    placeholderTextColor='#5d5d5d'
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    onFocus={() => setCampoFocado('email')}
+                                    onBlur={() => setCampoFocado('')}
+                                    style={{
+                                        borderColor: campoFocado === 'email' ? '#6943FF' : '#27272A',
+                                    }}
+                                />
 
-                        {formError !== '' && (
-                            <Text className="text-red-500 mt-4 text-center">{formError}</Text>
-                        )}
+                                <InputPassword
+                                    placeholder='Digite sua senha'
+                                    keyboardType="default"
+                                    returnKeyType="done"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    textContentType="password"
+                                    accessibilityLabel="Campo de senha"
+                                    placeholderTextColor='#5d5d5d'
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    onFocus={() => setCampoFocado('senha')}
+                                    onBlur={() => setCampoFocado('')}
+                                    style={{
+                                        borderColor: campoFocado === 'senha' ? '#6943FF' : '#27272A',
+                                    }}
+                                />
 
-                    </View>
+                                {formError !== '' && (
+                                    <Text className="text-red-500 mt-4 text-center">{formError}</Text>
+                                )}
 
-                    <View className=" flex-row items-center gap-2 justify-center my-10">
-                        <TouchableOpacity
-                            onPress={() => setRememberMe(!rememberMe)}
-                            activeOpacity={0.7}
-                            className="w-6 h-6 rounded-md border-2 border-colorViolet flex items-center justify-center"
-                        >
-                            {rememberMe && <View className="w-6 h-6 bg-colorViolet rounded-md" />}
-                        </TouchableOpacity>
+                            </View>
 
-                        <Text className="text-gray-300 text-base">Lembrar</Text>
-                    </View>
+                            <View className=" flex-row items-center gap-2 justify-center my-10">
+                                <TouchableOpacity
+                                    onPress={() => setRememberMe(!rememberMe)}
+                                    activeOpacity={0.7}
+                                    className="w-6 h-6 rounded-md border-2 border-colorViolet flex items-center justify-center"
+                                >
+                                    {rememberMe && <View className="w-6 h-6 bg-colorViolet rounded-md" />}
+                                </TouchableOpacity>
+
+                                <Text className="text-gray-300 text-base">Lembrar</Text>
+                            </View>
 
 
-                    <View className=''>
-                        <ButtonViolet onPress={handleLogin}
-                            style={{
-                                shadowColor: '#6943FF',
-                                shadowOffset: { width: 0, height: 0 },
-                                shadowOpacity: 0.7,
-                                shadowRadius: 7,
-                                elevation: 12,
-                            }}
-                        >
-                            <ButtonTextViolet>Entrar</ButtonTextViolet>
-                        </ButtonViolet>
-                    </View>
+                            <View className=''>
+                                <ButtonViolet onPress={handleLogin}
+                                    style={{
+                                        shadowColor: '#6943FF',
+                                        shadowOffset: { width: 0, height: 0 },
+                                        shadowOpacity: 0.7,
+                                        shadowRadius: 7,
+                                        elevation: 12,
+                                    }}
+                                >
+                                    <ButtonTextViolet>Entrar</ButtonTextViolet>
+                                </ButtonViolet>
+                            </View>
 
-                    <TouchableOpacity className='mt-5' onPress={() => navigation.navigate('resetPassword')}>
-                        <Text className="text-colorLight200 text-base font-normal text-center">
-                            Esqueci minha <Text className='text-colorViolet font-semibold'>senha</Text>
-                        </Text>
-                    </TouchableOpacity>
+                            <TouchableOpacity className='mt-5' onPress={() => navigation.navigate('resetPassword')}>
+                                <Text className="text-colorLight200 text-base font-normal text-center">
+                                    Esqueci minha <Text className='text-colorViolet font-semibold'>senha</Text>
+                                </Text>
+                            </TouchableOpacity>
 
-                    <View className="flex-row items-center mt-10">
-                        <View className="flex-1 h-[2px] bg-colorDark100" />
-                        <Text className="mx-2 text-colorLight200 text-3xl">ou</Text>
-                        <View className="flex-1 h-[2px] bg-colorDark100" />
-                    </View>
+                            <View className="flex-row items-center mt-10">
+                                <View className="flex-1 h-[2px] bg-colorDark100" />
+                                <Text className="mx-2 text-colorLight200 text-3xl">ou</Text>
+                                <View className="flex-1 h-[2px] bg-colorDark100" />
+                            </View>
 
-                    <TouchableOpacity className='mt-10' onPress={() => navigation.navigate('signUp')}>
-                        <Text className="text-colorLight200 text-base font-normal text-center">
-                            Não possui conta ? <Text className='text-colorViolet font-semibold'>Crie-a</Text>
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                            <TouchableOpacity className='mt-10' onPress={() => navigation.navigate('signUp')}>
+                                <Text className="text-colorLight200 text-base font-normal text-center">
+                                    Não possui conta ? <Text className='text-colorViolet font-semibold'>Crie-a</Text>
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </ScrollView>
+                </KeyboardAvoidingView>
             </SafeAreaView>
         </BackgroundImage>
     )
