@@ -27,6 +27,7 @@ export default function Perfil({ }) {
 
     const [imageUrl, setImageUrl] = useState(null);
     const [nome, setNome] = useState();
+    const [sobrenome, setSobrenome] = useState();
     const [email, setEmail] = useState();
     const [telefone, setTelefone] = useState();
     const [dataNasc, setDataNascimento] = useState();
@@ -48,6 +49,7 @@ export default function Perfil({ }) {
             altura: altura,
             objetivo: objetivo,
             nome: nome,
+            sobrenome: sobrenome,
             telefone: telefone
         }
 
@@ -66,6 +68,7 @@ export default function Perfil({ }) {
     const trazerDados = async () => {
         const user = await getById()
         setNome(user.nome)
+        setSobrenome(user.nome)
         setEmail(user.email)
         setTelefone(user.telefone)
         setDataNascimento(user.dataNasc)
@@ -225,7 +228,7 @@ export default function Perfil({ }) {
                         <View className="mt-5">
                             <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Nome:</Text>
                             <Input
-                                placeholder="Digite seu nome e sobrenome"
+                                placeholder="Digite seu nome"
                                 keyboardType="default"
                                 autoCapitalize="words"
                                 autoCorrect={true}
@@ -238,6 +241,24 @@ export default function Perfil({ }) {
                                 onBlur={() => setCampoFocado('')}
                                 style={{
                                     borderColor: campoFocado === 'nome' ? '#6943FF' : '#27272A',
+                                }}
+                            />
+
+                            <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Sobrenome:</Text>
+                            <Input
+                                placeholder="Digite seu sobrenome"
+                                keyboardType="default"
+                                autoCapitalize="words"
+                                autoCorrect={true}
+                                returnKeyType="done"
+                                maxLength={30}
+                                placeholderTextColor="#5d5d5d"
+                                value={sobrenome}
+                                onChangeText={setSobrenome}
+                                onFocus={() => setCampoFocado('sobrenome')}
+                                onBlur={() => setCampoFocado('')}
+                                style={{
+                                    borderColor: campoFocado === 'sobrenome' ? '#6943FF' : '#27272A',
                                 }}
                             />
 
