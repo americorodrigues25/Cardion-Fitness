@@ -5,6 +5,9 @@ export const ButtonViolet = styled.TouchableOpacity`
   padding: 20px 30px;
   border-radius: 999px;
   width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const ButtonTextViolet = styled.Text`
