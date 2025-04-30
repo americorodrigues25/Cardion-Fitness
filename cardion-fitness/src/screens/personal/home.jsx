@@ -1,29 +1,23 @@
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Alert, KeyboardAvoidingView, Platform, ScrollView, Image, TouchableOpacity, ImageBackground } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { BackHandler } from 'react-native'; //esse é evento do botão voltar em Android
 import { useEffect, useState, useCallback } from 'react';
-import { getAuth, signOut } from 'firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-//### aq referente a biometria e facial
-import * as LocalAuthentication from 'expo-local-authentication';
-
-import { useDelete } from '~/hook/crud/useDelete';
+import { useNavigation } from '@react-navigation/native';
 
 import { useGet } from '~/hook/crud/useGet';
 
-// ponto para refatorar, deixar mais legivel o trazer nome
-// para pegar o nome é so usar a funcao de getById e pegar a propriedade nome
-
-export default function Home({ navigation }) {
+export default function Home() {
+    const navigation = useNavigation();
     const [nome, setNome] = useState();
     const { getById } = useGet()
-    const { deleteAccount } = useDelete()
 
     const trazerNome = async () => {
         const user = await getById()
         setNome(user.nome)
-        Alert.alert(user.nome)
     }
 
     useEffect(() => {
@@ -32,39 +26,6 @@ export default function Home({ navigation }) {
         };
         fetchNome();
     }, [])
-
-    const autenticar = async () => {
-        const compatibilidade = await LocalAuthentication.hasHardwareAsync();
-        const biometriaCadastrada = await LocalAuthentication.isEnrolledAsync();
-
-        if (!compatibilidade || !biometriaCadastrada) {
-            Alert.alert('Biometria não configurada', 'Seu dispositivo não tem biometria ou ela não está ativada.');
-            return;
-        }
-
-        const resultado = await LocalAuthentication.authenticateAsync({
-            promptMessage: 'Autentique-se para continuar',
-            fallbackLabel: 'Usar senha',
-        });
-
-        if (resultado.success) {
-            Alert.alert("ai")
-            await deleteAccount()
-        } else {
-            Alert.alert('Falha na autenticação');
-        }
-    };
-
-    const handleLogout = async () => {
-        const auth = getAuth();
-        try {
-            await signOut(auth);
-            await AsyncStorage.removeItem('userLoggedIn');
-            navigation.replace('userType');
-        } catch (error) {
-            Alert.alert('Erro ao sair:', error)
-        }
-    };
 
     useFocusEffect(
         useCallback(() => {
@@ -83,25 +44,73 @@ export default function Home({ navigation }) {
 
 
     return (
-        <View className='flex justify-center items-center w-full h-full'>
-            <Text>Seja bem vindo(a) {nome}</Text>
-            <Text>Tela home personal </Text>
-
-            {/* Botão só pra fazer testes */}
-            <TouchableOpacity
-                onPress={handleLogout}
-                className='mt-5 bg-red-500 px-4 py-2 rounded'
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flex: 1 }}
+        >
+            <SafeAreaView
+                edges={['top', 'bottom']}
+                className='flex-1 bg-colorBackground pl-5 py-2'
             >
-                <Text className='text-white font-bold'>Sair</Text>
-            </TouchableOpacity>
+                <ScrollView
+                    bounces={false}
+                    overScrollMode="never"
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps="handled"
+                >
 
-            {/* Botão só pra fazer testes */}
-            <TouchableOpacity
-                onPress={() => autenticar()}
-                className='mt-5 bg-red-500 px-4 py-2 rounded'
-            >
-                <Text className='text-white font-bold'>APAGAR CONTA</Text>
-            </TouchableOpacity>
-        </View>
+                    <View className='flex-row items-center justify-between pr-5'>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Image source={require('~/assets/img/logo/Logo1.png')} className="w-24 h-12" resizeMode="contain" />
+                        </View>
+
+                        <View className='flex-row items-center gap-5'>
+                            <TouchableOpacity >
+                                <FontAwesome name="bell-o" size={23} color="#e4e4e7" />
+                            </TouchableOpacity>
+                            <TouchableOpacity >
+                                <MaterialCommunityIcons name="message-reply-text-outline" size={23} color="#e4e4e7" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    <View className='py-10'>
+                        <View className=''>
+                            <Text className='text-colorLight200 text-2xl font-semibold'>Bem vindo, {nome}!</Text>
+                            <Text className='text-base font-semibold text-colorLight200 px-5 py-5'>Seus alunos</Text>
+                        </View>
+
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                            <View className="flex-row gap-5">
+
+                                <TouchableOpacity onPress={() => navigation.navigate('VincularAluno')}
+                                    className="min-w-[300px] h-80">
+                                    <ImageBackground
+                                        source={require('~/assets/img/button-cards/mulherAcademia.png')}
+                                        className="h-full rounded-2xl overflow-hidden justify-end" resizeMode="cover"
+                                    >
+                                        <View className="bg-black/30 p-5">
+                                            <Text className="text-white text-3xl font-bold"> Adicionar{"\n"} aluno</Text>
+                                        </View>
+                                    </ImageBackground>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity className="min-w-[300px] h-80 mr-5">
+                                    <ImageBackground
+                                        source={require('~/assets/img/button-cards/homemAcademia.jpg')}
+                                        className="h-full rounded-2xl overflow-hidden justify-end" resizeMode="cover"
+                                    >
+                                        <View className="bg-black/30 p-5">
+                                            <Text className="text-white text-3xl font-bold">Grupo de{"\n"}alunos</Text>
+                                        </View>
+                                    </ImageBackground>
+                                </TouchableOpacity>
+                            </View>
+                        </ScrollView>
+                    </View>
+
+                </ScrollView>
+            </SafeAreaView>
+        </KeyboardAvoidingView>
     );
 }
