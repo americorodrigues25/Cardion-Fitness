@@ -21,12 +21,12 @@ export const useAuth = () => {
   const auth = getAuth();
 
   // criar conta 
-  const signUp = async (name,email, password, remember = false) => {
+  const signUp = async (name,email, password, sobrenome, remember = false) => {
     setLoading(true);
     setError(null);
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password, sobrenome);
       const user = userCredential.user;
 
       if (remember) {
@@ -41,6 +41,7 @@ export const useAuth = () => {
           uid: user.uid,
           email: user.email,
           nome: name,
+          sobrenome: sobrenome,
           telefone: null,
           dataNasc: null,
           sexo: null,
@@ -61,6 +62,7 @@ export const useAuth = () => {
           uid: user.uid,
           email: user.email,
           nome: name,
+          sobrenome: sobrenome,
           telefone: null,
           dataNasc: null,
           sexo: null, 
