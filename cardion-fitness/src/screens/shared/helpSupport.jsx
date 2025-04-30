@@ -1,20 +1,49 @@
-import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert, Modal, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 
 import { Linking } from "react-native";
-
 import { ButtonViolet } from "~/components/button";
-
 import { useNavigation } from '@react-navigation/native';
 
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { BackHandler } from "react-native";
 
+//### aq referente a biometria e facial
+import * as LocalAuthentication from 'expo-local-authentication';
+import { useDelete } from '~/hook/crud/useDelete';
+import { useGet } from '~/hook/crud/useGet';
 
 export default function HelSupport() {
-
     const navigation = useNavigation();
+    const { getById } = useGet();
+    const { deleteAccount } = useDelete();
+    const [showModal, setShowModal] = useState(false);
+    const [rating, setRating] = useState(4);
+
+    const autenticar = async () => {
+        const compatibilidade = await LocalAuthentication.hasHardwareAsync();
+        const biometriaCadastrada = await LocalAuthentication.isEnrolledAsync();
+
+        if (!compatibilidade || !biometriaCadastrada) {
+            Alert.alert('Biometria não configurada', 'Seu dispositivo não tem biometria ou ela não está ativada.');
+            return;
+        }
+
+        const resultado = await LocalAuthentication.authenticateAsync({
+            promptMessage: 'Autentique-se para continuar',
+            fallbackLabel: 'Usar senha',
+        });
+
+        if (resultado.success) {
+            Alert.alert("ai")
+            await deleteAccount()
+        } else {
+            Alert.alert('Falha na autenticação');
+        }
+    };
 
     useFocusEffect(
         useCallback(() => {
@@ -100,7 +129,7 @@ export default function HelSupport() {
                         <Text className="text-colorLight200 font-bold text-lg text-center">Sobre</Text>
                     </ButtonViolet>
 
-                    <ButtonViolet
+                    <ButtonViolet onPress={() => setShowModal(true)}
                         style={{
                             shadowColor: '#6943FF',
                             shadowOffset: 0,
@@ -110,12 +139,56 @@ export default function HelSupport() {
                         }}>
                         <Text className="text-colorLight200 font-bold text-lg text-center">Avaliação</Text>
                     </ButtonViolet>
+
                 </View>
 
                 <TouchableOpacity onPress={() => autenticar()} className="mt-20">
                     <Text className="text-red-600 font-bold text-lg">Excluir conta</Text>
                 </TouchableOpacity>
             </View>
+
+            <Modal transparent visible={showModal} animationType="slide">
+                <View className="flex-1 bg-black/80 justify-center items-center">
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === "ios" ? "padding" : "height"}
+                        className="w-full items-center flex-1 justify-center"
+                    >
+                        <View className="bg-colorDark200 w-10/12 p-5 rounded-2xl">
+                            <Text className="text-colorLight200 font-bold text-xl text-center mb-5">DEIXE SUA AVALIAÇÃO</Text>
+                            <Text className="text-colorLight200 text-center mb-4">Como estamos nos saindo?</Text>
+
+                            <View className="flex-row justify-center mb-5">
+                                {[1, 2, 3, 4, 5].map((i) => (
+                                    <TouchableOpacity key={i} onPress={() => setRating(i)}>
+                                        <FontAwesome
+                                            name={i <= rating ? "star" : "star-o"}
+                                            size={32}
+                                            color="#e6a800"
+                                            style={{ marginHorizontal: 8 }}
+                                        />
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+
+                            <TextInput
+                                placeholder="Comentar..."
+                                placeholderTextColor="#525252"
+                                className="bg-colorInputs text-colorLight200 p-3 rounded-xl mb-5 h-24"
+                                multiline
+                            />
+
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setShowModal(false);
+                                }}
+                                className="bg-colorViolet p-4 rounded-full mx-10"
+                            >
+                                <Text className="text-white font-bold text-center">ENVIAR</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </KeyboardAvoidingView>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 }
