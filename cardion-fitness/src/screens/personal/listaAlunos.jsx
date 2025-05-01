@@ -26,19 +26,17 @@ export default function Alunos() {
         setAlunosFiltrados(filtrados);
     }, [busca, alunos]);
 
-    // A função que faz a requisição para obter os alunos
     const fetchAlunos = async () => {
         const data = await getAllAlunosByPersonal();
         setAlunos(data || []);
     };
 
-    // Use a dependência 'isFocused' para garantir que a lista de alunos seja recarregada quando a tela for focada
     useFocusEffect(
         useCallback(() => {
             if (isFocused) {
-                fetchAlunos();  // Atualiza a lista de alunos quando a tela for focada
+                fetchAlunos();
             }
-        }, [isFocused]) // A função só será chamada quando a tela estiver focada
+        }, [isFocused])
     );
 
     return (
@@ -92,7 +90,7 @@ export default function Alunos() {
                         </View>
 
                         <View className="pt-20">
-                            {/*aqui para os nomes vinculados aparecer*/}
+
                             {alunosFiltrados.map((aluno) => (
                                 <TouchableOpacity key={aluno.id}>
                                     <Text className="text-colorLight200 text-base bg-colorInputs px-10 py-5 mb-2 rounded-xl border-colorDark100 border">

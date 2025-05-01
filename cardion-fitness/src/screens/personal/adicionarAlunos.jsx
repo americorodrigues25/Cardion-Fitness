@@ -46,8 +46,6 @@ export default function AdicionarAlunos() {
             return;
         }
 
-
-        //aqui pra testar um usuario fake, depois no handlePesquisar tem q colocar a chamada real do banco
         const users = await getAlunoByEmail(email)
         console.log(users)
         const user = users[0]
@@ -67,7 +65,7 @@ export default function AdicionarAlunos() {
             if (success) {
                 setEmail('');
             } else {
-                // Se não conseguir vincular porque já está vinculado, também limpa
+                
                 setEmail('');
             }
         } catch (error) {
