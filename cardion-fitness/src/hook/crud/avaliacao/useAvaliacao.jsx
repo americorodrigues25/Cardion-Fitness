@@ -1,53 +1,46 @@
 import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  sendPasswordResetEmail
-} from 'firebase/auth';
+  collection,
+  addDoc
+} from 'firebase/firestore';
 
-import { doc, setDoc,query,limit,where,getDocs, collection } from 'firebase/firestore';
 import { useState } from 'react';
-
-// conexão Firebase
-import { db, auth } from '../firebase/firebaseConfig';
-
+import { db } from '../../../firebase/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const useAuth = () => {
+export const useAvaliacao = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const auth = getAuth();
-
-  // criar avalicao, recebendo o nome do usuario, avalicao sendo um numero de 1 a 5, e um comentario opcional
-  const avaliar = async (name,avaliacao,comentario) => {
+  const avaliar = async (data) => {
     setLoading(true);
     setError(null);
 
     try {
+      const uid = await AsyncStorage.getItem('uid');
 
-      const uid = await AsyncStorage.getItem('uid')
-      
-        await setDoc(doc(db, 'avaliacao', uid), {
-          uid: user.uid,
-          name:name,
-          avalicao:avaliacao,
-          comentario: comentario,
-          createdAt: new Date(),
-          updatedAt: null
-        });
+      if (!uid) {
+        throw new Error('UID não encontrado no AsyncStorage.');
+      }
+
+      await addDoc(collection(db, 'avaliacao'), {
+        uid,
+        name: data.name,
+        avaliacao: data.avaliacao,
+        comentario: data.comentario,
+        createdAt: new Date(),
+        updatedAt: null
+      });
 
       return true;
     } catch (err) {
       setError(err.message);
-      throw err;
+      console.error("Erro ao enviar avaliação:", err);
+      return false;
     } finally {
       setLoading(false);
     }
   };
 
-  
   return {
     avaliar,
     loading,

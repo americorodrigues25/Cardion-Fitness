@@ -35,10 +35,35 @@ export const useUpdate = () =>
               });
               
             return true
-          }catch{
+          }catch(error){
+            console.log(error)
             return false
           }
         }
+
+
+        const updateDadosBasicosPersonal = async (data) =>{
+          const role = await AsyncStorage.getItem("role")
+          const uid = await AsyncStorage.getItem('uid')
+              
+        try{
+            // TODO: terminar de implementar
+            await updateDoc(doc(db, role, uid), {
+              nome:data.nome,
+              telefone:data.telefone,
+              dataNasc:data.dataNasc,
+              sexo: data.sexo,
+              peso: data.peso,
+              // xp: data.xp,
+              // nivel: data.nivel,
+            });
+            
+          return true
+        }catch(error){
+          console.log(error)
+          return false
+        }
+      }
     
-        return{updateDadosBasicos}
+        return{updateDadosBasicos,updateDadosBasicosPersonal}
     }

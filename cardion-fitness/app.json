@@ -11,17 +11,7 @@
     },
     "scheme": "cardion-fitness",
     "plugins": [
-      "expo-font",
-      "expo-facebook",
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useFrameworks": "static",
-            "googleServicesFile": "./src/assets/GoogleService-Info.plist"
-          }
-        }
-      ]
+      "expo-font"
     ],
     "orientation": "portrait",
     "icon": "",

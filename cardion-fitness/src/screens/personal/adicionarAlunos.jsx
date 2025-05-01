@@ -9,6 +9,10 @@ import { Input } from "~/components/input";
 
 import { useNavigation } from "@react-navigation/native"
 
+import { useGet } from "~/hook/crud/useGet";
+
+import { useVinculo } from "~/hook/crud/vincularAlunos/vincularAluno";
+
 export default function AdicionarAlunos() {
     const navigation = useNavigation();
 
@@ -18,6 +22,8 @@ export default function AdicionarAlunos() {
     const [modalVisible, setModalVisible] = useState(false);
     const [usuarioEncontrado, setUsuarioEncontrado] = useState(false);
     const [usuario, setUsuario] = useState(null);
+    const {getAlunoByEmail} = useGet();
+    const {vincularAluno} = useVinculo();
 
     const validarEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,6 +35,7 @@ export default function AdicionarAlunos() {
         setModalVisible(false);
         setUsuario(null);
         setEmail('');
+        setUsuarioEncontrado(false);
 
         if (!email) {
             setFormError("Por favor, preencha o campo de e-mail.");
@@ -42,16 +49,18 @@ export default function AdicionarAlunos() {
 
 
         //aqui pra testar um usuario fake, depois no handlePesquisar tem q colocar a chamada real do banco
-        const user = email === "gay@gmail.com"
-            ? { nome: "Marquim Dev", email: "gay@gmail.com" }
-            : null;
+        const users = await getAlunoByEmail(email)
+        console.log(users)
+        const user = users[0]
+
+        console.log(user)
 
         setUsuarioEncontrado(!!user);
         setUsuario(user);
         setModalVisible(true);
     };
 
-    const handleAdicionarUsuario = () => {
+    const handleAdicionarUsuario = async () => {
 
         Toast.show({
             type: 'success',
@@ -60,10 +69,18 @@ export default function AdicionarAlunos() {
         });
 
         //aqui é pra vincular o usuario
-
+        const result = await vincularAluno(usuario.uid)
         console.log("Deu certim:", usuario);
         setModalVisible(false);
     };
+
+
+    const limpar =() => {
+        setUsuario(null)
+        setEmail(null)
+        setUsuarioEncontrado(false);
+        setModalVisible(false);
+    }
 
     return (
         <KeyboardAvoidingView
@@ -147,7 +164,7 @@ export default function AdicionarAlunos() {
                                     <Text className="text-colorLight200 text-center">Adicionar usuário</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    onPress={() => setModalVisible(false)}
+                                    onPress={() => limpar()}
                                     className="bg-gray-400 p-3 rounded-full mx-10"
                                 >
                                     <Text className="text-colorLight200 text-center">Fechar</Text>
