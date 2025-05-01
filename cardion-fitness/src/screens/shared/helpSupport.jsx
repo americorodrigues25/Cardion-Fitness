@@ -15,6 +15,7 @@ import { BackHandler } from "react-native";
 import * as LocalAuthentication from 'expo-local-authentication';
 import { useDelete } from '~/hook/crud/useDelete';
 import { useGet } from '~/hook/crud/useGet';
+import { useAvaliacao } from "~/hook/crud/avaliacao/useAvaliacao";
 
 export default function HelSupport() {
     const navigation = useNavigation();
@@ -22,6 +23,32 @@ export default function HelSupport() {
     const { deleteAccount } = useDelete();
     const [showModal, setShowModal] = useState(false);
     const [rating, setRating] = useState(4);
+    const {avaliar} = useAvaliacao()
+    const [comentario,setComentario] =useState()
+
+
+    const criarAvaliacao = async () =>{
+        Alert.alert("cheguei aqui")
+        const user = await getById()
+        const nome = user.nome
+        
+        
+        const data = {
+            name:nome,
+            avaliacao:rating,
+            comentario: comentario, 
+        }
+
+        const resultado = await avaliar(data)
+        if(resultado){
+            Alert.alert("Avaliação enviada!")
+            setShowModal(false);
+        }else{
+            Alert.alert("Erro")
+            setShowModal(false);
+        }
+        
+    }
 
     const autenticar = async () => {
         const compatibilidade = await LocalAuthentication.hasHardwareAsync();
@@ -175,11 +202,13 @@ export default function HelSupport() {
                                 placeholderTextColor="#525252"
                                 className="bg-colorInputs text-colorLight200 p-3 rounded-xl mb-5 h-24"
                                 multiline
+                                value={comentario}
+                                onChangeText={setComentario}
                             />
 
                             <TouchableOpacity
                                 onPress={() => {
-                                    setShowModal(false);
+                                    criarAvaliacao()
                                 }}
                                 className="bg-colorViolet p-4 rounded-full mx-10"
                             >

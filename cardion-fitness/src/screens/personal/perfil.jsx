@@ -34,7 +34,7 @@ export default function Perfil({ }) {
     const [sexo, setSexo] = useState();
     const { getById } = useGet();
     const [filename, setFilename] = useState();
-    const { updateDadosBasicos } = useUpdate();
+    const { updateDadosBasicosPersonal } = useUpdate();
     const [campoFocado, setCampoFocado] = useState('');
 
     const atualizarDadosPersonal = async () => {
@@ -43,10 +43,13 @@ export default function Perfil({ }) {
             sexo: sexo,
             nome: nome,
             sobrenome: sobrenome,
-            telefone: telefone
+            telefone: telefone,
+            altura:null,
+            peso: null,
+            objetivo: null,
         }
 
-        const result = await updateDadosBasicos(data)
+        const result = await updateDadosBasicosPersonal(data)
         console.log("Dados sendo atualizados:", data);
 
         if (result) {

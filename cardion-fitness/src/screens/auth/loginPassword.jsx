@@ -52,12 +52,17 @@ export default function SignUp({ }) {
             }
 
             const user = await login(email, password, rememberMe);
+            
+            
             if (user) {
+                const referenciaUsuario = await getById()
+                const nomeUsuario = referenciaUsuario.nome
+                
                 setEmail('');
                 setPassword('');
                 Toast.show({
                     type: 'success',
-                    text1: `Olá, ${nome} !`,
+                    text1: `Olá, ${nomeUsuario} !`,
                     text2: `Que bom que voltou 🎉`,
                     position: 'top',
                 });
