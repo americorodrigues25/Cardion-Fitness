@@ -22,8 +22,8 @@ export default function AdicionarAlunos() {
     const [modalVisible, setModalVisible] = useState(false);
     const [usuarioEncontrado, setUsuarioEncontrado] = useState(false);
     const [usuario, setUsuario] = useState(null);
-    const {getAlunoByEmail} = useGet();
-    const {vincularAluno} = useVinculo();
+    const { getAlunoByEmail } = useGet();
+    const { vincularAluno } = useVinculo();
 
     const validarEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,7 +34,6 @@ export default function AdicionarAlunos() {
         setFormError('');
         setModalVisible(false);
         setUsuario(null);
-        setEmail('');
         setUsuarioEncontrado(false);
 
         if (!email) {
@@ -60,24 +59,32 @@ export default function AdicionarAlunos() {
         setModalVisible(true);
     };
 
+
     const handleAdicionarUsuario = async () => {
+        try {
+            const success = await vincularAluno(usuario.uid);
 
-        Toast.show({
-            type: 'success',
-            text1: 'Parabens ✅',
-            text2: 'Você tem um novo aluno vinculado ! 🎉',
-        });
-
-        //aqui é pra vincular o usuario
-        const result = await vincularAluno(usuario.uid)
-        console.log("Deu certim:", usuario);
-        setModalVisible(false);
+            if (success) {
+                setEmail('');
+            } else {
+                // Se não conseguir vincular porque já está vinculado, também limpa
+                setEmail('');
+            }
+        } catch (error) {
+            console.error("Erro ao vincular:", error.message);
+            Toast.show({
+                type: 'error',
+                text1: 'Erro ao tentar vincular',
+                text2: 'Tente novamente mais tarde.',
+            });
+        } finally {
+            setModalVisible(false);
+        }
     };
 
 
-    const limpar =() => {
+    const limpar = () => {
         setUsuario(null)
-        setEmail(null)
         setUsuarioEncontrado(false);
         setModalVisible(false);
     }
@@ -187,7 +194,7 @@ export default function AdicionarAlunos() {
                     </View>
                 </View>
             </Modal>
-            
+
         </KeyboardAvoidingView>
     )
 }
