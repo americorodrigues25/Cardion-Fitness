@@ -44,7 +44,7 @@ export default function Perfil({ }) {
             nome: nome,
             sobrenome: sobrenome,
             telefone: telefone,
-            altura:null,
+            altura: null,
             peso: null,
             objetivo: null,
         }
@@ -337,6 +337,12 @@ export default function Perfil({ }) {
                                     <Text className="ml-2 text-colorLight200 text-base">Outro</Text>
                                 </TouchableOpacity>
                             </View>
+
+                            <TouchableOpacity className='mt-5' onPress={() => navigation.navigate('updatePassword')}>
+                                <Text className="text-colorLight200 text-base font-normal text-center">
+                                    Atualizar minha <Text className='text-colorViolet font-semibold'>senha</Text>
+                                </Text>
+                            </TouchableOpacity>
 
                             <View className="my-5">
                                 <ButtonViolet onPress={atualizarDadosPersonal}>
