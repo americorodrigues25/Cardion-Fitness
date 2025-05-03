@@ -4,6 +4,7 @@ import UserType from '~/screens/auth/userType';
 import SignUp from '../screens/auth/signUp';
 import ResetPassword from '~/screens/auth/resetPassword';
 import LoginPassword from '~/screens/auth/loginPassword';
+import UpdatePassword from '~/screens/auth/updatePassword';
 import AdicionarAluno from '~/screens/personal/adicionarAlunos';
 
 const Stack = createStackNavigator();
@@ -38,10 +39,15 @@ const PersonalNavigation = () => {
         options={{ headerShown: false }}
         component={ResetPassword}
       />
-      <Stack.Screen 
-      name='VincularAluno'
-      options={{headerShown: false}}
-      component={AdicionarAluno}
+      <Stack.Screen
+        name='updatePassword'
+        options={{ headerShown: false }}
+        component={UpdatePassword}
+      />
+      <Stack.Screen
+        name='VincularAluno'
+        options={{ headerShown: false }}
+        component={AdicionarAluno}
       />
     </Stack.Navigator>
   );
