@@ -4,6 +4,8 @@ import Home from '../screens/personal/home';
 import Alunos from '~/screens/personal/listaAlunos';
 import Ajustes from '~/screens/personal/ajustes';
 
+import { SafeAreaView, Platform, StatusBar } from 'react-native';
+
 import { BlurView } from 'expo-blur';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -25,16 +27,17 @@ export default function PersonalTabs() {
                     borderTopColor: '#27272A',
                     backgroundColor: 'transparent',
                     position: 'absolute',
-                    elevation: 0, 
-                    paddingTop: 10,
+                    elevation: 0,
+                    paddingBottom: Platform.OS === 'android' ? 10 : 0,
+                    height: Platform.OS === 'android' ? 80 : 80,
                 },
                 tabBarLabelStyle: {
-                    fontSize: 10,
+                    fontSize: 9,
                     marginTop: 4,
                 },
                 tabBarBackground: () => (
                     <BlurView
-                        tint="dark" 
+                        tint="dark"
                         intensity={30}
                         style={{ flex: 1 }}
                     />
@@ -46,7 +49,7 @@ export default function PersonalTabs() {
                 component={Home}
                 options={{
                     tabBarIcon: ({ color, size }) => (
-                        <Entypo name="home" color={color} size={28} />
+                        <Entypo name="home" color={color} size={25} />
                     ),
                 }}
             />
@@ -55,7 +58,7 @@ export default function PersonalTabs() {
                 component={Alunos}
                 options={{
                     tabBarIcon: ({ color, size }) => (
-                        <FontAwesome5 name="users" color={color} size={size} />
+                        <FontAwesome5 name="users" color={color} size={22} />
                     ),
                 }}
             />
@@ -70,7 +73,7 @@ export default function PersonalTabs() {
                 }}
                 options={{
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="settings-sharp" color={color} size={size} />
+                        <Ionicons name="settings-sharp" color={color} size={22} />
                     ),
                 }}
             />
