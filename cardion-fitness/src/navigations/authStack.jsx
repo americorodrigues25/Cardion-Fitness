@@ -5,6 +5,7 @@ import UserType from '../screens/auth/userType';
 import SignUp from '../screens/auth/signUp';
 import ResetPassword from '~/screens/auth/resetPassword';
 import LoginPassword from '~/screens/auth/loginPassword';
+import UpdatePassword from '~/screens/auth/updatePassword';
 
 import AlunoNavigation from './alunoStack';
 import PersonalNavigation from './personalStack';
@@ -38,6 +39,11 @@ const AuthNavigation = () => {
                 name='resetPassword'
                 options={{ headerShown: false }}
                 component={ResetPassword}
+            />
+            <Stack.Screen
+                name='updatePassword'
+                options={{ headerShown: false }}
+                component={UpdatePassword}
             />
             <Stack.Screen
                 name='homeAluno'

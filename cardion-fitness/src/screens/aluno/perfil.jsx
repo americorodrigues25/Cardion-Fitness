@@ -197,11 +197,11 @@ export default function Perfil({ }) {
     }
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
-        >
-            <SafeAreaView edges={['top']} className="flex-1 bg-colorBackground">
+        <SafeAreaView edges={['top']} className="flex-1 bg-colorBackground">
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+            >
                 <ScrollView bounces={false} overScrollMode="never" contentContainerStyle={{ flexGrow: 1 }}>
                     <View className="pt-5 px-5">
                         <TouchableOpacity onPress={() => navigation.openDrawer()} className="flex-row">
@@ -404,7 +404,7 @@ export default function Perfil({ }) {
                         </View>
                     </View>
                 </ScrollView>
-            </SafeAreaView>
-        </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }

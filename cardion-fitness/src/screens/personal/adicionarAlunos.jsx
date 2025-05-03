@@ -22,8 +22,8 @@ export default function AdicionarAlunos() {
     const [modalVisible, setModalVisible] = useState(false);
     const [usuarioEncontrado, setUsuarioEncontrado] = useState(false);
     const [usuario, setUsuario] = useState(null);
-    const {getAlunoByEmail} = useGet();
-    const {vincularAluno} = useVinculo();
+    const { getAlunoByEmail } = useGet();
+    const { vincularAluno } = useVinculo();
 
     const validarEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,7 +34,6 @@ export default function AdicionarAlunos() {
         setFormError('');
         setModalVisible(false);
         setUsuario(null);
-        setEmail('');
         setUsuarioEncontrado(false);
 
         if (!email) {
@@ -47,8 +46,6 @@ export default function AdicionarAlunos() {
             return;
         }
 
-
-        //aqui pra testar um usuario fake, depois no handlePesquisar tem q colocar a chamada real do banco
         const users = await getAlunoByEmail(email)
         console.log(users)
         const user = users[0]
@@ -60,34 +57,42 @@ export default function AdicionarAlunos() {
         setModalVisible(true);
     };
 
+
     const handleAdicionarUsuario = async () => {
+        try {
+            const success = await vincularAluno(usuario.uid);
 
-        Toast.show({
-            type: 'success',
-            text1: 'Parabens ✅',
-            text2: 'Você tem um novo aluno vinculado ! 🎉',
-        });
+            if (success) {
+                setEmail('');
+            } else {
 
-        //aqui é pra vincular o usuario
-        const result = await vincularAluno(usuario.uid)
-        console.log("Deu certim:", usuario);
-        setModalVisible(false);
+                setEmail('');
+            }
+        } catch (error) {
+            console.error("Erro ao vincular:", error.message);
+            Toast.show({
+                type: 'error',
+                text1: 'Erro ao tentar vincular',
+                text2: 'Tente novamente mais tarde.',
+            });
+        } finally {
+            setModalVisible(false);
+        }
     };
 
 
-    const limpar =() => {
+    const limpar = () => {
         setUsuario(null)
-        setEmail(null)
         setUsuarioEncontrado(false);
         setModalVisible(false);
     }
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
-        >
-            <SafeAreaView edges={['top', 'bottom']} className='flex-1 bg-colorBackground'>
+        <SafeAreaView edges={['top', 'bottom']} className='flex-1 bg-colorBackground'>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+            >
                 <ScrollView
                     bounces={false}
                     overScrollMode="never"
@@ -139,55 +144,55 @@ export default function AdicionarAlunos() {
                         </View>
                     </View>
                 </ScrollView>
-            </SafeAreaView>
 
-            <Modal
-                visible={modalVisible}
-                animationType="slide"
-                transparent={true}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View className="flex-1 justify-center items-center bg-black/80">
-                    <View className="bg-colorDark200 p-6 rounded-lg w-10/12">
-                        {usuarioEncontrado ? (
-                            <>
-                                <MaterialCommunityIcons name="account-check" size={40} color="#10B981" className="self-center mb-3" />
-                                <Text className="text-center text-xl text-colorLight200 mb-4">
-                                    Usuário encontrado
-                                </Text>
-                                <Text className="text-center text-colorLight200 mb-1">Nome: {usuario.nome}</Text>
-                                <Text className="text-center text-colorLight200 mb-4">E-mail: {usuario.email}</Text>
-                                <TouchableOpacity
-                                    onPress={handleAdicionarUsuario}
-                                    className="bg-colorViolet p-3 rounded-full mb-2 mx-10"
-                                >
-                                    <Text className="text-colorLight200 text-center">Adicionar usuário</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => limpar()}
-                                    className="bg-gray-400 p-3 rounded-full mx-10"
-                                >
-                                    <Text className="text-colorLight200 text-center">Fechar</Text>
-                                </TouchableOpacity>
-                            </>
-                        ) : (
-                            <>
-                                <MaterialCommunityIcons name="account-cancel" size={40} color="#EF4444" className="self-center mb-3" />
-                                <Text className="text-center text-xl text-colorLight200 mb-4">
-                                    Nenhum usuário encontrado
-                                </Text>
-                                <TouchableOpacity
-                                    onPress={() => setModalVisible(false)}
-                                    className="bg-colorViolet p-3 rounded-full mx-10"
-                                >
-                                    <Text className="text-colorLight200 text-center">Fechar</Text>
-                                </TouchableOpacity>
-                            </>
-                        )}
+                <Modal
+                    visible={modalVisible}
+                    animationType="slide"
+                    transparent={true}
+                    onRequestClose={() => setModalVisible(false)}
+                >
+                    <View className="flex-1 justify-center items-center bg-black/80">
+                        <View className="bg-colorDark200 p-6 rounded-lg w-10/12">
+                            {usuarioEncontrado ? (
+                                <>
+                                    <MaterialCommunityIcons name="account-check" size={40} color="#10B981" className="self-center mb-3" />
+                                    <Text className="text-center text-xl text-colorLight200 mb-4">
+                                        Usuário encontrado
+                                    </Text>
+                                    <Text className="text-center text-colorLight200 mb-1">Nome: {usuario.nome}</Text>
+                                    <Text className="text-center text-colorLight200 mb-4">E-mail: {usuario.email}</Text>
+                                    <TouchableOpacity
+                                        onPress={handleAdicionarUsuario}
+                                        className="bg-colorViolet p-3 rounded-full mb-2 mx-10"
+                                    >
+                                        <Text className="text-colorLight200 text-center">Adicionar usuário</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() => limpar()}
+                                        className="bg-gray-400 p-3 rounded-full mx-10"
+                                    >
+                                        <Text className="text-colorLight200 text-center">Fechar</Text>
+                                    </TouchableOpacity>
+                                </>
+                            ) : (
+                                <>
+                                    <MaterialCommunityIcons name="account-cancel" size={40} color="#EF4444" className="self-center mb-3" />
+                                    <Text className="text-center text-xl text-colorLight200 mb-4">
+                                        Nenhum usuário encontrado
+                                    </Text>
+                                    <TouchableOpacity
+                                        onPress={() => setModalVisible(false)}
+                                        className="bg-colorViolet p-3 rounded-full mx-10"
+                                    >
+                                        <Text className="text-colorLight200 text-center">Fechar</Text>
+                                    </TouchableOpacity>
+                                </>
+                            )}
+                        </View>
                     </View>
-                </View>
-            </Modal>
-            
-        </KeyboardAvoidingView>
+                </Modal>
+
+            </KeyboardAvoidingView >
+        </SafeAreaView>
     )
 }

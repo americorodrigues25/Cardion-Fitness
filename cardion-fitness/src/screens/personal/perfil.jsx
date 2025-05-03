@@ -44,7 +44,7 @@ export default function Perfil({ }) {
             nome: nome,
             sobrenome: sobrenome,
             telefone: telefone,
-            altura:null,
+            altura: null,
             peso: null,
             objetivo: null,
         }
@@ -191,11 +191,11 @@ export default function Perfil({ }) {
     }
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
-        >
-            <SafeAreaView edges={['top']} className="flex-1 bg-colorBackground">
+        <SafeAreaView edges={['top']} className="flex-1 bg-colorBackground">
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+            >
                 <ScrollView bounces={false} overScrollMode="never" contentContainerStyle={{ flexGrow: 1 }}>
                     <View className="pt-5 px-5">
                         <TouchableOpacity onPress={() => navigation.openDrawer()} className="flex-row">
@@ -338,6 +338,12 @@ export default function Perfil({ }) {
                                 </TouchableOpacity>
                             </View>
 
+                            <TouchableOpacity className='mt-5' onPress={() => navigation.navigate('updatePassword')}>
+                                <Text className="text-colorLight200 text-base font-normal text-center">
+                                    Atualizar minha <Text className='text-colorViolet font-semibold'>senha</Text>
+                                </Text>
+                            </TouchableOpacity>
+
                             <View className="my-5">
                                 <ButtonViolet onPress={atualizarDadosPersonal}>
                                     <ButtonTextViolet>Salvar</ButtonTextViolet>
@@ -346,7 +352,7 @@ export default function Perfil({ }) {
                         </View>
                     </View>
                 </ScrollView>
-            </SafeAreaView>
-        </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }
