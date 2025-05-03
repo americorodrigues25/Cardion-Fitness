@@ -3,10 +3,13 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
 } from 'firebase/auth';
 
-import { doc, setDoc,query,limit,where,getDocs, collection } from 'firebase/firestore';
+import { doc, setDoc, query, limit, where, getDocs, collection } from 'firebase/firestore';
 import { useState } from 'react';
 
 // conexão Firebase
@@ -21,7 +24,7 @@ export const useAuth = () => {
   const auth = getAuth();
 
   // criar conta 
-  const signUp = async (name,email, password, sobrenome, remember = false) => {
+  const signUp = async (name, email, password, sobrenome, remember = false) => {
     setLoading(true);
     setError(null);
 
@@ -56,7 +59,7 @@ export const useAuth = () => {
 
       }
 
-      else if(role == 'personal'){
+      else if (role == 'personal') {
 
         await setDoc(doc(db, 'personal', user.uid), {
           uid: user.uid,
@@ -65,14 +68,14 @@ export const useAuth = () => {
           sobrenome: sobrenome,
           telefone: null,
           dataNasc: null,
-          sexo: null, 
+          sexo: null,
           createdAt: new Date(),
           updatedAt: null
         });
 
       }
-      
-      await AsyncStorage.setItem('uid',user.uid)
+
+      await AsyncStorage.setItem('uid', user.uid)
 
       return user;
     } catch (err) {
@@ -93,7 +96,7 @@ export const useAuth = () => {
         await AsyncStorage.setItem('userLoggedIn', 'true');
       }
 
-      await AsyncStorage.setItem('uid',userCredential.user.uid)
+      await AsyncStorage.setItem('uid', userCredential.user.uid)
 
       return userCredential.user;
     } catch (err) {
@@ -132,39 +135,64 @@ export const useAuth = () => {
     }
   };
 
-  const accountExists = async (email) =>{
+  const updatePasswordInterno = async (senhaAtual, novaSenha) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const user = auth.currentUser;
+
+      if (!user || !user.email) {
+        throw new Error('Usuário não autenticado.');
+      }
+
+      const credential = EmailAuthProvider.credential(user.email, senhaAtual);
+
+      await reauthenticateWithCredential(user, credential);
+      await updatePassword(user, novaSenha); 
+
+      return true;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const accountExists = async (email) => {
     const role = await AsyncStorage.getItem('role')
 
-    if(role == 'aluno'){
+    if (role == 'aluno') {
       const consulta = query(
-        collection(db,'aluno'),
-        where('email',"==",`${email}`),
+        collection(db, 'aluno'),
+        where('email', "==", `${email}`),
         limit(1)
       )
 
       const resultado = await getDocs(consulta)
 
-      if(resultado.empty){
+      if (resultado.empty) {
         return false
       }
 
       return true
     }
 
-    else if(role == 'personal'){
+    else if (role == 'personal') {
       const consulta = query(
-        collection(db,'personal'),
-        where('email',"==",`${email}`),
+        collection(db, 'personal'),
+        where('email', "==", `${email}`),
         limit(1)
       )
 
       const resultado = await getDocs(consulta)
 
-      if(resultado.empty){
+      if (resultado.empty) {
         return false
       }
       return true
-  }
+    }
   }
   return {
     signUp,
@@ -172,6 +200,7 @@ export const useAuth = () => {
     logout,
     resetPassword,
     accountExists,
+    updatePasswordInterno,
     loading,
     error
   };
