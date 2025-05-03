@@ -6,8 +6,22 @@ import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 import { Input } from '~/components/input';
 import { InputPassword } from '~/components/inputPassword';
 import Toast from 'react-native-toast-message';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+
+// Notifications.setNotificationHandler({
+//     handleNotification: async () => ({
+//       shouldShowAlert: true,
+//       shouldPlaySound: false,
+//       shouldSetBadge: false,
+//     }),
+//   });
 
 import BackgroundImage from '~/components/loadingBackgroundImage';
+
+import { enviarMensagem } from '~/utils/enviarNotificacao';
+
+import { SERVER_URL } from '~/apiConfig/config';
 
 // hook
 import { useAuth } from '~/hook/useAuthentication';
@@ -58,6 +72,9 @@ export default function SignUp({ }) {
                 const referenciaUsuario = await getById()
                 const nomeUsuario = referenciaUsuario.nome
                 
+                // registerPushNotificationsAsync(referenciaUsuario.uid);
+                enviarMensagem("Boas vindas",`Muito bom ter você aqui ${referenciaUsuario.nome}`)
+
                 setEmail('');
                 setPassword('');
                 Toast.show({
@@ -101,6 +118,39 @@ export default function SignUp({ }) {
 
         getRole();
     }, []);
+
+
+    
+    async function registerPushNotificationsAsync(userId) {
+        const savedToken = await AsyncStorage.getItem('expoPushToken');
+        let finalToken = savedToken;
+    
+        if (!savedToken) {
+          const { status: existingStatus } = await Notifications.getPermissionsAsync();
+          let finalStatus = existingStatus;
+    
+          if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+          }
+    
+          if (finalStatus !== 'granted') {
+            Alert.alert('Permissão negada para notificações');
+            return;
+          }
+    
+          const { data } = await Notifications.getExpoPushTokenAsync();
+          finalToken = data;
+          await AsyncStorage.setItem('expoPushToken', finalToken);
+        }
+    
+        // Envia para o backend
+        await fetch(`${SERVER_URL}/register-token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: finalToken, userId }),
+        });
+      }
 
     return (
         <BackgroundImage

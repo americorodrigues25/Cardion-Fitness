@@ -28,7 +28,7 @@ export default function Home({ navigation }) {
         const user = await getById()
         setUsuario(user)
         setNome(user.nome)
-        Alert.alert(user.nome)
+        
     }
 
     useEffect(() => {

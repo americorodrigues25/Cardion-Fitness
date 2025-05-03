@@ -3,6 +3,8 @@ const multer = require('multer');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
+const cron = require('node-cron');
 
 const SERVER_URL = require('./config.js');
 
@@ -69,6 +71,79 @@ app.delete('/image/:userId', ensureUserDir, (req, res) => {
 
   fs.unlinkSync(imagePath);
   res.json({ success: true });
+});
+
+
+// Salva token com userId
+app.post('/register-token', async (req, res) => {
+  const { token, userId } = req.body;
+  if (!token || !userId) return res.status(400).send('Dados inválidos');
+
+  try {
+    await db.collection('pushTokens').doc(userId).set({
+      token,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    res.send('Token salvo!');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Erro ao salvar token');
+  }
+});
+
+// Envia notificação para todos
+app.post('/send-notification/all', async (req, res) => {
+  const { title, body} = req.body;
+  const snapshot = await db.collection('pushTokens').get();
+  const tokens = snapshot.docs.map(doc => doc.data().token);
+
+  try {
+    await Promise.all(tokens.map(token =>
+      axios.post('https://exp.host/--/api/v2/push/send', {
+        to: token,
+        sound: 'default',
+        title,
+        body,
+      })
+    ));
+    res.send('Notificações enviadas!');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Erro ao enviar notificações');
+  }
+});
+
+// Envia notificação
+app.post('/send-notification', async (req, res) => {
+  const { title, body,token } = req.body;
+  try {
+    await axios.post('https://exp.host/--/api/v2/push/send', {
+        to: token,
+        sound: 'default',
+        title,
+        body,
+      })
+    
+    res.send('Notificações enviadas!');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Erro ao enviar notificações');
+  }
+});
+
+// Notificação diária às 9h
+cron.schedule('0 9 * * *', async () => {
+  const snapshot = await db.collection('pushTokens').get();
+  const tokens = snapshot.docs.map(doc => doc.data().token);
+
+  for (const token of tokens) {
+    await axios.post('https://exp.host/--/api/v2/push/send', {
+      to: token,
+      sound: 'default',
+      title: 'Lembrete Diário',
+      body: 'Já fez seu treino hoje? 💪',
+    });
+  }
 });
 
 app.listen(3001, () => console.log('Servidor rodando na porta 3001'));
