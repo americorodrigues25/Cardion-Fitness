@@ -17,12 +17,12 @@ export default function Alunos() {
 
     useEffect(() => {
         const termo = busca.toLowerCase();
-    
+
         const filtrados = alunos.filter((aluno) =>
             aluno.nome?.toLowerCase().includes(termo) ||
             aluno.email?.toLowerCase().includes(termo)
         );
-    
+
         setAlunosFiltrados(filtrados);
     }, [busca, alunos]);
 
@@ -40,13 +40,13 @@ export default function Alunos() {
     );
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
+        <SafeAreaView
+            edges={['top', 'bottom']}
+            className='flex-1 bg-colorBackground pl-5 py-2'
         >
-            <SafeAreaView
-                edges={['top', 'bottom']}
-                className='flex-1 bg-colorBackground pl-5 py-2'
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
             >
 
                 <ScrollView
@@ -82,7 +82,7 @@ export default function Alunos() {
                                 className="flex-1 text-colorLight200 text-lg h-10"
                                 value={busca}
                                 onChangeText={setBusca}
-                            
+
                             />
                             <TouchableOpacity>
                                 <Ionicons name="search" size={25} color="#E4E4E7" />
@@ -104,7 +104,7 @@ export default function Alunos() {
                     </View>
 
                 </ScrollView>
-            </SafeAreaView>
-        </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }

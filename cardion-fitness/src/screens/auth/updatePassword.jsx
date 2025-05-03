@@ -55,9 +55,9 @@ export default function AtualizarSenha() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-colorBackground">
+        <SafeAreaView edges={['top']} className="flex-1 bg-colorBackground">
             <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
                 <ScrollView
@@ -79,6 +79,12 @@ export default function AtualizarSenha() {
                             <InputPassword
                                 placeholder="Senha atual"
                                 secureTextEntry
+                                keyboardType="default"
+                                returnKeyType="done"
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                textContentType="password"
+                                accessibilityLabel="Campo de senha atual"
                                 value={senhaAtual}
                                 onChangeText={setSenhaAtual}
                                 onFocus={() => setCampoFocado('senhaAtual')}
@@ -91,6 +97,12 @@ export default function AtualizarSenha() {
                             <InputPassword
                                 placeholder="Nova senha"
                                 secureTextEntry
+                                keyboardType="default"
+                                returnKeyType="done"
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                textContentType="password"
+                                accessibilityLabel="Campo para digitar nova senha"
                                 value={novaSenha}
                                 onChangeText={setNovaSenha}
                                 onFocus={() => setCampoFocado('novaSenha')}
@@ -103,6 +115,12 @@ export default function AtualizarSenha() {
                             <InputPassword
                                 placeholder="Confirmar nova senha"
                                 secureTextEntry
+                                keyboardType="default"
+                                returnKeyType="done"
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                textContentType="password"
+                                accessibilityLabel="Campo para digitar nova senha "
                                 value={confirmarSenha}
                                 onChangeText={setConfirmarSenha}
                                 onFocus={() => setCampoFocado('novaSenha2')}
@@ -130,6 +148,6 @@ export default function AtualizarSenha() {
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </SafeAreaView >
     )
 };

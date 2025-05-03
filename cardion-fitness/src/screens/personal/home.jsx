@@ -44,13 +44,13 @@ export default function Home() {
 
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
+        <SafeAreaView
+            edges={['top', 'bottom']}
+            className='flex-1 bg-colorBackground pl-5 py-2'
         >
-            <SafeAreaView
-                edges={['top', 'bottom']}
-                className='flex-1 bg-colorBackground pl-5 py-2'
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
             >
                 <ScrollView
                     bounces={false}
@@ -110,7 +110,7 @@ export default function Home() {
                     </View>
 
                 </ScrollView>
-            </SafeAreaView>
-        </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }

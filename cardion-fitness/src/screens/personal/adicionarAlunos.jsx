@@ -65,7 +65,7 @@ export default function AdicionarAlunos() {
             if (success) {
                 setEmail('');
             } else {
-                
+
                 setEmail('');
             }
         } catch (error) {
@@ -88,11 +88,11 @@ export default function AdicionarAlunos() {
     }
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
-        >
-            <SafeAreaView edges={['top', 'bottom']} className='flex-1 bg-colorBackground'>
+        <SafeAreaView edges={['top', 'bottom']} className='flex-1 bg-colorBackground'>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+            >
                 <ScrollView
                     bounces={false}
                     overScrollMode="never"
@@ -144,55 +144,55 @@ export default function AdicionarAlunos() {
                         </View>
                     </View>
                 </ScrollView>
-            </SafeAreaView>
 
-            <Modal
-                visible={modalVisible}
-                animationType="slide"
-                transparent={true}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View className="flex-1 justify-center items-center bg-black/80">
-                    <View className="bg-colorDark200 p-6 rounded-lg w-10/12">
-                        {usuarioEncontrado ? (
-                            <>
-                                <MaterialCommunityIcons name="account-check" size={40} color="#10B981" className="self-center mb-3" />
-                                <Text className="text-center text-xl text-colorLight200 mb-4">
-                                    Usuário encontrado
-                                </Text>
-                                <Text className="text-center text-colorLight200 mb-1">Nome: {usuario.nome}</Text>
-                                <Text className="text-center text-colorLight200 mb-4">E-mail: {usuario.email}</Text>
-                                <TouchableOpacity
-                                    onPress={handleAdicionarUsuario}
-                                    className="bg-colorViolet p-3 rounded-full mb-2 mx-10"
-                                >
-                                    <Text className="text-colorLight200 text-center">Adicionar usuário</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => limpar()}
-                                    className="bg-gray-400 p-3 rounded-full mx-10"
-                                >
-                                    <Text className="text-colorLight200 text-center">Fechar</Text>
-                                </TouchableOpacity>
-                            </>
-                        ) : (
-                            <>
-                                <MaterialCommunityIcons name="account-cancel" size={40} color="#EF4444" className="self-center mb-3" />
-                                <Text className="text-center text-xl text-colorLight200 mb-4">
-                                    Nenhum usuário encontrado
-                                </Text>
-                                <TouchableOpacity
-                                    onPress={() => setModalVisible(false)}
-                                    className="bg-colorViolet p-3 rounded-full mx-10"
-                                >
-                                    <Text className="text-colorLight200 text-center">Fechar</Text>
-                                </TouchableOpacity>
-                            </>
-                        )}
+                <Modal
+                    visible={modalVisible}
+                    animationType="slide"
+                    transparent={true}
+                    onRequestClose={() => setModalVisible(false)}
+                >
+                    <View className="flex-1 justify-center items-center bg-black/80">
+                        <View className="bg-colorDark200 p-6 rounded-lg w-10/12">
+                            {usuarioEncontrado ? (
+                                <>
+                                    <MaterialCommunityIcons name="account-check" size={40} color="#10B981" className="self-center mb-3" />
+                                    <Text className="text-center text-xl text-colorLight200 mb-4">
+                                        Usuário encontrado
+                                    </Text>
+                                    <Text className="text-center text-colorLight200 mb-1">Nome: {usuario.nome}</Text>
+                                    <Text className="text-center text-colorLight200 mb-4">E-mail: {usuario.email}</Text>
+                                    <TouchableOpacity
+                                        onPress={handleAdicionarUsuario}
+                                        className="bg-colorViolet p-3 rounded-full mb-2 mx-10"
+                                    >
+                                        <Text className="text-colorLight200 text-center">Adicionar usuário</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() => limpar()}
+                                        className="bg-gray-400 p-3 rounded-full mx-10"
+                                    >
+                                        <Text className="text-colorLight200 text-center">Fechar</Text>
+                                    </TouchableOpacity>
+                                </>
+                            ) : (
+                                <>
+                                    <MaterialCommunityIcons name="account-cancel" size={40} color="#EF4444" className="self-center mb-3" />
+                                    <Text className="text-center text-xl text-colorLight200 mb-4">
+                                        Nenhum usuário encontrado
+                                    </Text>
+                                    <TouchableOpacity
+                                        onPress={() => setModalVisible(false)}
+                                        className="bg-colorViolet p-3 rounded-full mx-10"
+                                    >
+                                        <Text className="text-colorLight200 text-center">Fechar</Text>
+                                    </TouchableOpacity>
+                                </>
+                            )}
+                        </View>
                     </View>
-                </View>
-            </Modal>
+                </Modal>
 
-        </KeyboardAvoidingView>
+            </KeyboardAvoidingView >
+        </SafeAreaView>
     )
 }
