@@ -15,7 +15,7 @@ export default function BackgroundImage({ children, source }) {
         {children}
 
         {!imageLoaded && (
-          <View style={StyleSheet.absoluteFill} className="bg-colorInputs justify-center items-center">
+          <View style={StyleSheet.absoluteFill} className="bg-colorBackground justify-center items-center">
             <ActivityIndicator size="large" color="#6943FF" />
           </View>
         )}
