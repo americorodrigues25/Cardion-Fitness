@@ -25,8 +25,8 @@ export default function HelSupport() {
     const [showModal, setShowModal] = useState(false);
     const [showModalQuestions, setShowModalQuestions] = useState(false)
     const [rating, setRating] = useState(4);
-    const { avaliar } = useAvaliacao();
-    const [comentario, setComentario] = useState();
+    const { avaliar } = useAvaliacao()
+    const [comentario, setComentario] = useState()
     const [openIndex, setOpenIndex] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -73,7 +73,6 @@ export default function HelSupport() {
         setShowModalQuestions(false);
     };
 
-
     const criarAvaliacao = async () => {
         Alert.alert("cheguei aqui")
         const user = await getById()
@@ -112,7 +111,6 @@ export default function HelSupport() {
         });
 
         if (resultado.success) {
-            Alert.alert("ai")
             await deleteAccount()
         } else {
             Alert.alert('Falha na autenticação');

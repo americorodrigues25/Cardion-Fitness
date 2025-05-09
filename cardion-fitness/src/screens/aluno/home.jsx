@@ -71,7 +71,6 @@ export default function Home({ navigation }) {
         });
 
         if (resultado.success) {
-            Alert.alert("ai")
             await deleteAccount()
         } else {
             Alert.alert('Falha na autenticação');

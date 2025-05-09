@@ -26,7 +26,7 @@ export const useAvaliacao = () => {
         uid,
         name: data.name,
         avaliacao: data.avaliacao,
-        comentario: data.comentario,
+        comentario: data?.comentario ?? null,
         createdAt: new Date(),
         updatedAt: null
       });
