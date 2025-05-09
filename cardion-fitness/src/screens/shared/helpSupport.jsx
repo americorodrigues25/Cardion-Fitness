@@ -28,7 +28,6 @@ export default function HelSupport() {
 
 
     const criarAvaliacao = async () =>{
-        Alert.alert("cheguei aqui")
         const user = await getById()
         const nome = user.nome
         
@@ -65,7 +64,6 @@ export default function HelSupport() {
         });
 
         if (resultado.success) {
-            Alert.alert("ai")
             await deleteAccount()
         } else {
             Alert.alert('Falha na autenticação');

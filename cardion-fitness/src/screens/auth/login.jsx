@@ -21,9 +21,6 @@ export default function Login() {
     const handleLogin = async () => {
         const user = await login(email, password);
         if (user) {
-            // todo: remover alert, coloquei para teste
-            console.log("Login bem-sucedido!", user);
-            Alert.alert("Deu certo")
         }
     };
 
