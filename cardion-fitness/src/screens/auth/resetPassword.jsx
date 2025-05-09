@@ -1,4 +1,4 @@
-import { SafeAreaView, View, Text, TouchableOpacity, Alert, Image } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, Alert, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
@@ -44,60 +44,66 @@ export default function ResetPassword() {
 
     return (
         <BackgroundImage source={require('~/assets/img/backgroundImage/imagemFundo3.png')}>
-            <SafeAreaView className='w-full h-full flex-1 justify-center items-center'>
-                <View className="absolute top-0 left-0 w-full px-5 pt-16 z-10 flex-row justify-between">
+            <SafeAreaView className='w-full h-full'>
+                <View className=" px-5 pt-5 flex-row justify-between">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image source={require('~/assets/img/btnVoltar.png')} className='w-4 h-5' />
                     </TouchableOpacity>
                     <Image source={require('~/assets/img/logo/Logo1.png')} className="w-28 h-14" resizeMode="contain" />
                 </View>
 
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    className="flex-1">
 
-                <Text className="text-colorLight200 text-5xl font-semibold text-center">
-                    Redefinir senha
-                </Text>
+                    <View className='justify-center flex-1'>
+                        <Text className="text-colorLight200 text-5xl font-semibold text-center">
+                            Redefinir senha
+                        </Text>
 
-                <View className='px-10 w-full'>
+                        <View className='px-10 w-full'>
 
-                    <View className='mt-20'>
-                        <Input
-                            placeholder='Digite o e-mail de cadastro'
-                            keyboardType="email-address"
-                            returnKeyType="done"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            textContentType="emailAddress"
-                            placeholderTextColor='#5d5d5d'
-                            value={email}
-                            onChangeText={setEmail}
-                            onFocus={() => setCampoFocado('email')}
-                            onBlur={() => setCampoFocado('')}
-                            style={{
-                                borderColor: campoFocado === 'email' ? '#6943FF' : '#27272A',
-                            }}
-                        />
+                            <View className='mt-20'>
+                                <Input
+                                    placeholder='Digite o e-mail de cadastro'
+                                    keyboardType="email-address"
+                                    returnKeyType="done"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    textContentType="emailAddress"
+                                    placeholderTextColor='#5d5d5d'
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    onFocus={() => setCampoFocado('email')}
+                                    onBlur={() => setCampoFocado('')}
+                                    style={{
+                                        borderColor: campoFocado === 'email' ? '#6943FF' : '#27272A',
+                                    }}
+                                />
+                            </View>
+
+                            {formError ? (
+                                <Text className="text-red-500 text-sm mb-5 text-center">{formError}</Text>
+                            ) : null}
+
+                            <View className="flex-row items-center justify-center mt-20">
+                                <ButtonViolet onPress={handleReset} disabled={loading}
+                                    style={{
+                                        shadowColor: '#6943FF',
+                                        shadowOffset: { width: 0, height: 0 },
+                                        shadowOpacity: 0.7,
+                                        shadowRadius: 7,
+                                        elevation: 12,
+                                    }}
+                                >
+                                    <ButtonTextViolet>
+                                        {loading ? 'Enviando...' : 'Enviar'}
+                                    </ButtonTextViolet>
+                                </ButtonViolet>
+                            </View>
+                        </View>
                     </View>
-
-                    {formError ? (
-                        <Text className="text-red-500 text-sm mb-5 text-center">{formError}</Text>
-                    ) : null}
-
-                    <View className="flex-row items-center justify-center mt-20">
-                        <ButtonViolet onPress={handleReset} disabled={loading}
-                            style={{
-                                shadowColor: '#6943FF',
-                                shadowOffset: { width: 0, height: 0 },
-                                shadowOpacity: 0.7,
-                                shadowRadius: 7,
-                                elevation: 12,
-                            }}
-                        >
-                            <ButtonTextViolet>
-                                {loading ? 'Enviando...' : 'Enviar'}
-                            </ButtonTextViolet>
-                        </ButtonViolet>
-                    </View>
-                </View>
+                </KeyboardAvoidingView>
             </SafeAreaView>
         </BackgroundImage>
     );

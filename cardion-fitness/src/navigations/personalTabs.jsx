@@ -23,13 +23,13 @@ export default function PersonalTabs() {
                 tabBarActiveTintColor: '#6943FF',
                 tabBarInactiveTintColor: '#E4E4E7',
                 tabBarStyle: {
-                    borderTopWidth: 0.5,
+                    borderTopWidth: 0,
                     borderTopColor: '#27272A',
                     backgroundColor: 'transparent',
                     position: 'absolute',
                     elevation: 0,
                     paddingBottom: Platform.OS === 'android' ? 10 : 0,
-                    height: Platform.OS === 'android' ? 80 : 80,
+                    height: Platform.OS === 'android' ? 70 : 70,
                 },
                 tabBarLabelStyle: {
                     fontSize: 9,

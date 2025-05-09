@@ -9,7 +9,6 @@ const Container = styled.View`
   background-color: #0E1621;
   border: 1.5px solid #27272A;
   border-radius: 15px;
-  padding: 22px 40px;
   margin-bottom: 8px;
 `;
 
@@ -17,10 +16,11 @@ const StyledInput = styled.TextInput`
   flex: 1;
   font-size: 16px;
   color: #e4e4e7;
+  padding: 22px 40px;
 `;
 
 const ToggleButton = styled.TouchableOpacity`
-  padding-left: 8px;
+  padding-right: 25px;
 `;
 
 export function InputPassword({ value, onChangeText, placeholder, placeholderTextColor = '#5d5d5d' }) {
