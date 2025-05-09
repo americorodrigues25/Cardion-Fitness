@@ -1,10 +1,11 @@
-import { View, Text, Alert, KeyboardAvoidingView, Platform, ScrollView, Image, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, Alert, KeyboardAvoidingView, Platform, ScrollView, Image, TouchableOpacity, ImageBackground, Linking, Modal, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { BackHandler } from 'react-native'; //esse é evento do botão voltar em Android
 import { useEffect, useState, useCallback } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { useIsFocused } from '@react-navigation/native';
 
 import { useNavigation } from '@react-navigation/native';
 
@@ -13,7 +14,52 @@ import { useGet } from '~/hook/crud/useGet';
 export default function Home() {
     const navigation = useNavigation();
     const [nome, setNome] = useState();
-    const { getById } = useGet()
+    const { getById } = useGet();
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [selectedAluno, setSelectedAluno] = useState(null);
+    const [alunos, setAlunos] = useState([]);
+    const { getAllAlunosByPersonal } = useGet();
+    const isFocused = useIsFocused();
+    const [busca, setBusca] = useState('');
+    const [alunosFiltrados, setAlunosFiltrados] = useState([]);
+
+    useEffect(() => {
+        const termo = busca.toLowerCase();
+
+        const filtrados = alunos.filter((aluno) =>
+            aluno.nome?.toLowerCase().includes(termo) ||
+            aluno.email?.toLowerCase().includes(termo)
+        );
+
+        setAlunosFiltrados(filtrados);
+    }, [busca, alunos]);
+
+    const fetchAlunos = async () => {
+        const data = await getAllAlunosByPersonal();
+        setAlunos(data || []);
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            if (isFocused) {
+                fetchAlunos();
+            }
+        }, [isFocused])
+    );
+
+    const abrirWhatsapp = () => {
+        const numero = '5511999999999'; // troque pelo número do aluno
+        const url = `https://wa.me/${numero}`;
+
+        Linking.canOpenURL(url)
+            .then((supported) => {
+                if (supported) {
+                    Linking.openURL(url);
+                } else {
+                    Alert.alert('Erro', 'Não foi possível abrir o WhatsApp');
+                }
+            });
+    };
 
     const trazerNome = async () => {
         const user = await getById()
@@ -68,7 +114,7 @@ export default function Home() {
                             <TouchableOpacity >
                                 <FontAwesome name="bell-o" size={23} color="#e4e4e7" />
                             </TouchableOpacity>
-                            <TouchableOpacity >
+                            <TouchableOpacity onPress={() => setShowMessageModal(true)}>
                                 <MaterialCommunityIcons name="message-reply-text-outline" size={23} color="#e4e4e7" />
                             </TouchableOpacity>
                         </View>
@@ -109,8 +155,91 @@ export default function Home() {
                         </ScrollView>
                     </View>
 
+                    <Modal transparent visible={showMessageModal} animationType="fade">
+                        <View className="flex-1 justify-center items-center bg-black/80 px-6">
+                            <View className="bg-colorDark200 rounded-2xl p-6 w-full max-h-[80%]">
+
+                                {!selectedAluno ? (
+                                    <>
+                                        <Text className="text-xl font-bold text-center mb-4 text-colorLight200">
+                                            Deseja conversar com algum aluno?
+                                        </Text>
+
+                                        <TextInput
+                                            placeholder="Busque o aluno"
+                                            placeholderTextColor="#A1A1AA"
+                                            className="bg-colorDark100 text-colorLight200 px-4 py-4 rounded-xl mb-4"
+                                            value={busca}
+                                            onChangeText={setBusca}
+                                        />
+
+                                        <ScrollView className="mb-4">
+                                            {alunosFiltrados.length === 0 ? (
+                                                <Text className="text-center text-colorLight300">Nenhum aluno encontrado.</Text>
+                                            ) : (
+                                                alunosFiltrados.map((aluno, index) => (
+                                                    <TouchableOpacity
+                                                        key={index}
+                                                        className="py-3 px-4 border-b border-colorDark100"
+                                                        onPress={() => setSelectedAluno(aluno)}
+                                                    >
+                                                        <Text className="text-lg text-colorLight300">{aluno.nome}</Text>
+                                                    </TouchableOpacity>
+                                                ))
+                                            )}
+                                        </ScrollView>
+
+                                        <TouchableOpacity
+                                            className="bg-colorViolet py-3 rounded-full items-center mt-2"
+                                            onPress={() => {
+                                                setShowMessageModal(false)
+                                                setBusca('')
+                                                setSelectedAluno(null)
+                                            }}
+                                        >
+                                            <Text className="text-colorLight200 font-bold">Cancelar</Text>
+                                        </TouchableOpacity>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Text className="text-xl font-bold text-center mb-10 text-colorLight200">
+                                            Deseja ir para o WhatsApp de {selectedAluno.nome}?
+                                        </Text>
+
+                                        <View className="flex-row justify-between gap-4">
+                                            <TouchableOpacity
+                                                className="flex-1 bg-colorViolet py-3 rounded-full items-center"
+                                                onPress={() => {
+                                                    const numero = selectedAluno.whatsapp?.replace(/\D/g, '');
+                                                    if (numero) {
+                                                        const url = `https://wa.me/55${numero}`;
+                                                        Linking.openURL(url);
+                                                    } else {
+                                                        Alert.alert("Erro", "Número de WhatsApp inválido.");
+                                                    }
+                                                    setShowMessageModal(false);
+                                                    setSelectedAluno(null);
+                                                    setBusca('');
+                                                }}
+                                            >
+                                                <Text className="text-white font-bold">Sim</Text>
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity
+                                                className="flex-1 bg-gray-300 py-3 rounded-full items-center"
+                                                onPress={() => setSelectedAluno(null)}
+                                            >
+                                                <Text className="text-gray-800 font-bold">Não</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </>
+                                )}
+                            </View>
+                        </View>
+                    </Modal>
+
                 </ScrollView>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </SafeAreaView >
     );
 }

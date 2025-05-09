@@ -79,7 +79,7 @@ export default function Alunos() {
                                 placeholderTextColor="#5d5d5d"
                                 returnKeyType="search"
                                 autoCapitalize="words"
-                                className="flex-1 text-colorLight200 text-lg h-10"
+                                className="flex-1 text-colorLight200 text-lg h-auto"
                                 value={busca}
                                 onChangeText={setBusca}
 
@@ -89,7 +89,7 @@ export default function Alunos() {
                             </TouchableOpacity>
                         </View>
 
-                        <View className="pt-20">
+                        <View className="py-10">
 
                             {alunosFiltrados.map((aluno) => (
                                 <TouchableOpacity key={aluno.id}>
