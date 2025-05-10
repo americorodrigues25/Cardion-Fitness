@@ -19,6 +19,8 @@ import { useGet } from '~/hook/crud/useGet';
 
 import { gerarPdfUsuario } from '~/utils/gerarPdfUsuario';
 
+import { useRealizarSessaoTreino } from '~/hook/crud/treino/sessoesTreino/useRealizarSessaoTreino';
+
 // ponto para refatorar, deixar mais legivel o trazer nome
 // para pegar o nome é so usar a funcao de getById e pegar a propriedade nome
 
@@ -27,23 +29,32 @@ export default function Home({ navigation }) {
     const { getById } = useGet()
     const { deleteAccount } = useDelete()
     const [usuario, setUsuario] = useState()
+    const {realizarSessao} = useRealizarSessaoTreino()
 
     //sessões de treinos realizadas
     const totalSessoes = 40;
     const [sessoes, setSessoes] = useState(0);
     const progresso = sessoes / totalSessoes;
 
-    const marcarSessao = () => {
+    const marcarSessao = async () => {
+        const sessao =  await realizarSessao()
+        if(!sessao) return
+
         if (sessoes < totalSessoes) {
             setSessoes(prev => prev + 1);
 
         }
+
+        
     };
 
     const trazerNome = async () => {
         const user = await getById()
         setUsuario(user)
         setNome(user.nome)
+        if(user.sessoesRealizadas != null){
+            setSessoes(user.sessoesRealizadas.qtd)
+        }
         
     }
 
