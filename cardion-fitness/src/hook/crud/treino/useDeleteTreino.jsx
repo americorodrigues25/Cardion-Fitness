@@ -2,7 +2,7 @@ import { doc, setDoc,query,limit,where,getDocs, collection,addDoc,deleteDoc } fr
 import { useState } from 'react';
 
 // conexão Firebase
-import { db, auth } from '../firebase/firebaseConfig';
+import { db, auth } from '../../../firebase/firebaseConfig';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
