@@ -2,7 +2,7 @@ import {
   getAuth,
 } from 'firebase/auth';
 
-import { doc, getDoc, getDocs, collection, query, where } from 'firebase/firestore';
+import { doc, getDoc, getDocs, collection, query, where,orderBy } from 'firebase/firestore';
 import { useState } from 'react';
 
 // conexão Firebase
