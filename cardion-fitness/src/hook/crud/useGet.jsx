@@ -2,7 +2,7 @@ import {
   getAuth,
 } from 'firebase/auth';
 
-import { doc, getDoc, getDocs, collection, query, where } from 'firebase/firestore';
+import { doc, getDoc, getDocs, collection, query, where,orderBy } from 'firebase/firestore';
 import { useState } from 'react';
 
 // conexão Firebase
@@ -101,5 +101,64 @@ export const useGet = () => {
     return alunos;
   }
 
-  return { getById, getAll, getAllAlunosByPersonal, getAlunoByEmail }
+
+  
+  // Trazer dados do aluno pelo id dele, nesse caso chamado de detalhe do aluno
+  const getAlunoById = async (idAluno) => {
+
+    const docRef = doc(db, 'aluno', idAluno);
+    const docSnap = await getDoc(docRef);
+
+    const user = docSnap.data()
+
+    return user
+  }
+
+
+    // Trazer dados do aluno pelo id dele, nesse caso chamado de detalhe do aluno
+  const getPersonalById = async (idPersonal) => {
+
+    const docRef = doc(db, 'personal', idPersonal);
+    const docSnap = await getDoc(docRef);
+
+    const personal = docSnap.data()
+
+    return personal
+  }
+
+
+  // Trazer o personal do aluno, na tela do aluno nesse caso
+  const getPersonalDoAluno = async () => {
+
+    const idAluno = await AsyncStorage.getItem('uid')
+
+    const vinculoRef = collection(db, 'vinculos');
+    const q = query(vinculoRef, where('idAluno', '==', idAluno));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) return
+
+    const doc = querySnapshot.docs[0];
+    const data = doc.data();
+
+    const docRef = doc(db, 'personal', data.idPersonal);
+    const docSnap = await getDoc(docRef);
+
+    const personal = docSnap.data()
+
+    return personal
+  }
+
+
+  const buscarAlunosOrdenadosPorPontos = async () => {
+  const q = query(collection(db, 'aluno'), orderBy('pontos', 'desc'));
+  const querySnapshot = await getDocs(q);
+
+  return querySnapshot.docs.map(doc => ({
+    id: doc.id,
+    nome: doc.data().nome,
+    pontos: doc.data().pontos
+  }));
+  };
+  return { getById, getAll, getAllAlunosByPersonal, getAlunoByEmail,getAlunoById, getPersonalById,getPersonalDoAluno,buscarAlunosOrdenadosPorPontos}
 }
