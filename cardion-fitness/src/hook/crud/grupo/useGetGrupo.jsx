@@ -6,7 +6,7 @@ import {
     import { useState } from 'react';
     
     // conexão Firebase
-    import { db, auth } from '../../firebase/firebaseConfig';
+   import { db } from '~/firebase/firebaseConfig';
     
     
     export const useGetGrupo = () =>
