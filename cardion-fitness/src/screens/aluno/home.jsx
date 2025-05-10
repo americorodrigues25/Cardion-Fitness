@@ -5,6 +5,8 @@ import { useEffect, useState, useCallback } from 'react';
 
 import ProgressBar from 'react-native-progress/Bar';
 
+import DashboardGraficoAlunos from '~/components/dashboardAlunoPontos';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { getAuth, signOut } from 'firebase/auth';
@@ -20,6 +22,8 @@ import { useGet } from '~/hook/crud/useGet';
 import { gerarPdfUsuario } from '~/utils/gerarPdfUsuario';
 
 import { useRealizarSessaoTreino } from '~/hook/crud/treino/sessoesTreino/useRealizarSessaoTreino';
+
+
 
 // ponto para refatorar, deixar mais legivel o trazer nome
 // para pegar o nome é so usar a funcao de getById e pegar a propriedade nome
@@ -162,7 +166,9 @@ export default function Home({ navigation }) {
                             <Text className="text-center text-white font-semibold">Marcar sessão concluída</Text>
                         </TouchableOpacity>
                     </View>
+
                 </View>
+                    <DashboardGraficoAlunos/>
             </View>
         </SafeAreaView>
     );
