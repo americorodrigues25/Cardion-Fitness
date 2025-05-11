@@ -21,6 +21,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 
 import { useCreateTreino } from '~/hook/crud/treino/useCreateTreino';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function NovoTreino() {
     const navigation = useNavigation();
@@ -49,13 +50,17 @@ export default function NovoTreino() {
             return;
         }
 
+        const idPersonal = await AsyncStorage.getItem("uid")
+
         const treinoData = {
+            idPersonal: idPersonal,
             idAluno: idAluno,
             nome: novoTreino.nome,
             tipo: novoTreino.tipo,
             dia: novoTreino.dia,
             sessoes: novoTreino.sessoes,
-            exercicios: [],
+            exercicios: exercicios,
+            criadoEm: new Date()
         };
 
         try {
