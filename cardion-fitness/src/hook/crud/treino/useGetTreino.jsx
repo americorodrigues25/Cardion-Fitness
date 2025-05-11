@@ -2,7 +2,7 @@ import {
     getAuth,
     } from 'firebase/auth';
     
-    import { doc, getDoc,getDocs ,collection, query, where } from 'firebase/firestore';
+    import { doc, getDoc,getDocs ,collection, query, where,orderBy } from 'firebase/firestore';
     import { useState } from 'react';
     
     // conexão Firebase
@@ -30,7 +30,7 @@ import { db, auth } from '../../../firebase/firebaseConfig';
         const getAllTreinosByIdAluno = async (idAluno) =>{
 
             const treinosRef = collection(db, 'treino');
-            const q = query(treinosRef, where('idAluno', '==', idAluno));
+            const q = query(treinosRef, where('idAluno', '==', idAluno),  orderBy('criadoEm', 'asc') );
             const querySnapshot = await getDocs(q);
         
             const treinos = [];
