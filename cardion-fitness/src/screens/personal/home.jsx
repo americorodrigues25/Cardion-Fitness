@@ -47,20 +47,6 @@ export default function Home() {
         }, [isFocused])
     );
 
-    const abrirWhatsapp = () => {
-        const numero = '5511999999999'; // troque pelo número do aluno
-        const url = `https://wa.me/${numero}`;
-
-        Linking.canOpenURL(url)
-            .then((supported) => {
-                if (supported) {
-                    Linking.openURL(url);
-                } else {
-                    Alert.alert('Erro', 'Não foi possível abrir o WhatsApp');
-                }
-            });
-    };
-
     const trazerNome = async () => {
         const user = await getById()
         setNome(user.nome)
@@ -173,21 +159,25 @@ export default function Home() {
                                             onChangeText={setBusca}
                                         />
 
-                                        <ScrollView className="mb-4">
-                                            {alunosFiltrados.length === 0 ? (
-                                                <Text className="text-center text-colorLight300">Nenhum aluno encontrado.</Text>
-                                            ) : (
-                                                alunosFiltrados.map((aluno, index) => (
-                                                    <TouchableOpacity
-                                                        key={index}
-                                                        className="py-3 px-4 border-b border-colorDark100"
-                                                        onPress={() => setSelectedAluno(aluno)}
-                                                    >
-                                                        <Text className="text-lg text-colorLight300">{aluno.nome}</Text>
-                                                    </TouchableOpacity>
-                                                ))
-                                            )}
-                                        </ScrollView>
+                                        {alunos.length === 0 ? (
+                                            <Text className="text-center text-colorLight300 mb-4">Nenhum aluno cadastrado ainda.</Text>
+                                        ) : (
+                                            <ScrollView className="mb-4">
+                                                {alunosFiltrados.length === 0 ? (
+                                                    <Text className="text-center text-colorLight300">Nenhum aluno encontrado.</Text>
+                                                ) : (
+                                                    alunosFiltrados.map((aluno, index) => (
+                                                        <TouchableOpacity
+                                                            key={index}
+                                                            className="py-3 px-4 border-b border-colorDark100"
+                                                            onPress={() => setSelectedAluno(aluno)}
+                                                        >
+                                                            <Text className="text-lg text-colorLight300">{aluno.nome}</Text>
+                                                        </TouchableOpacity>
+                                                    ))
+                                                )}
+                                            </ScrollView>
+                                        )}
 
                                         <TouchableOpacity
                                             className="bg-colorViolet py-3 rounded-full items-center mt-2"
@@ -202,36 +192,53 @@ export default function Home() {
                                     </>
                                 ) : (
                                     <>
-                                        <Text className="text-xl font-bold text-center mb-10 text-colorLight200">
-                                            Deseja ir para o WhatsApp de {selectedAluno.nome}?
-                                        </Text>
+                                        {selectedAluno.telefone ? (
+                                            <>
+                                                <Text className='text-xl font-bold text-center mb-10 text-colorLight200'>
+                                                    {selectedAluno.telefone}
+                                                </Text>
+                                                <Text className="text-xl font-bold text-center mb-10 text-colorLight200">
+                                                    Deseja ir para o WhatsApp de {selectedAluno.nome}?
+                                                </Text>
+                                            </>
+                                        ) : (
+                                            <Text className="text-xl font-bold text-center mb-10 text-colorLight200">
+                                                Nenhum número cadastrado para {selectedAluno.nome}.
+                                            </Text>
+                                        )}
 
-                                        <View className="flex-row justify-between gap-4">
-                                            <TouchableOpacity
-                                                className="flex-1 bg-colorViolet py-3 rounded-full items-center"
-                                                onPress={() => {
-                                                    const numero = selectedAluno.whatsapp?.replace(/\D/g, '');
-                                                    if (numero) {
-                                                        const url = `https://wa.me/55${numero}`;
+                                        {selectedAluno.telefone ? (
+                                            <View className="flex-row justify-between gap-4">
+                                                <TouchableOpacity
+                                                    className="flex-1 bg-colorViolet py-3 rounded-full items-center"
+                                                    onPress={() => {
+                                                        const telefone = selectedAluno.telefone?.replace(/\D/g, '');
+                                                        const url = `https://wa.me/55${telefone}`;
                                                         Linking.openURL(url);
-                                                    } else {
-                                                        Alert.alert("Erro", "Número de WhatsApp inválido.");
-                                                    }
-                                                    setShowMessageModal(false);
-                                                    setSelectedAluno(null);
-                                                    setBusca('');
-                                                }}
-                                            >
-                                                <Text className="text-white font-bold">Sim</Text>
-                                            </TouchableOpacity>
+                                                        setShowMessageModal(false);
+                                                        setSelectedAluno(null);
+                                                        setBusca('');
+                                                    }}
+                                                >
+                                                    <Text className="text-white font-bold">Sim</Text>
+                                                </TouchableOpacity>
 
+                                                <TouchableOpacity
+                                                    className="flex-1 bg-gray-300 py-3 rounded-full items-center"
+                                                    onPress={() => setSelectedAluno(null)}
+                                                >
+                                                    <Text className="text-gray-800 font-bold">Não</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        ) : (
                                             <TouchableOpacity
-                                                className="flex-1 bg-gray-300 py-3 rounded-full items-center"
+                                                className="bg-gray-300 py-3 rounded-full items-center"
                                                 onPress={() => setSelectedAluno(null)}
                                             >
-                                                <Text className="text-gray-800 font-bold">Não</Text>
+                                                <Text className="text-gray-800 font-bold">Voltar</Text>
                                             </TouchableOpacity>
-                                        </View>
+                                        )}
+
                                     </>
                                 )}
                             </View>
