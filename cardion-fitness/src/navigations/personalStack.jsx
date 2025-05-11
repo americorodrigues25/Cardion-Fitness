@@ -6,6 +6,9 @@ import ResetPassword from '~/screens/auth/resetPassword';
 import LoginPassword from '~/screens/auth/loginPassword';
 import UpdatePassword from '~/screens/auth/updatePassword';
 import AdicionarAluno from '~/screens/personal/adicionarAlunos';
+import DetalhesAlunos from '~/screens/personal/detalhesAlunos';
+import CriarTreino from '~/screens/personal/criarTreinos';
+import NovoTreino from '~/screens/personal/novoTreino';
 
 const Stack = createStackNavigator();
 
@@ -48,6 +51,21 @@ const PersonalNavigation = () => {
         name='VincularAluno'
         options={{ headerShown: false }}
         component={AdicionarAluno}
+      />
+      <Stack.Screen
+        name='detalhesAlunos'
+        options={{ headerShown: false }}
+        component={DetalhesAlunos}
+      />
+      <Stack.Screen
+        name='criarTreinos'
+        options={{ headerShown: false }}
+        component={CriarTreino}
+      />
+      <Stack.Screen
+        name='novoTreino'
+        options={{ headerShown: false }}
+        component={NovoTreino}
       />
     </Stack.Navigator>
   );
