@@ -35,9 +35,9 @@ export const useCreateTreino = () => {
 
       if(role != "personal") return false
       
-      const docId = `${idAluno}_${uid}`
+      
 
-      await setDoc(doc(db, 'treino',docId),treino);
+      await addDoc(collection(db, 'treino'),treino);
       
       return true;
     } catch (err) {
