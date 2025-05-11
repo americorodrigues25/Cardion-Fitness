@@ -196,7 +196,7 @@ export default function Perfil({ }) {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
-                <ScrollView bounces={false} overScrollMode="never" contentContainerStyle={{ flexGrow: 1 }}>
+                <ScrollView bounces={false} overScrollMode="never" showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
                     <View className="pt-5 px-5">
                         <TouchableOpacity onPress={() => navigation.openDrawer()} className="flex-row">
                             <Image source={require('~/assets/img/btnVoltar.png')} className="w-4 h-5" />

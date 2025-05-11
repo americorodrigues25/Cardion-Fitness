@@ -26,7 +26,7 @@ const DashboardGraficoAlunos = () => {
     return (
       <ActivityIndicator
         size="large"
-        color="#8B5CF6"
+        color="#6943FF"
         style={{ marginTop: 20 }}
       />
     );
@@ -34,7 +34,7 @@ const DashboardGraficoAlunos = () => {
 
   if (dados.length === 0) {
     return (
-      <Text style={{ textAlign: 'center', marginTop: 20, color: '#fff' }}>
+      <Text style={{ textAlign: 'center', marginTop: 20, color: '#E4E4E7' }}>
         Nenhum dado disponível.
       </Text>
     );
@@ -68,7 +68,7 @@ const DashboardGraficoAlunos = () => {
           backgroundGradientFrom: '#1F2937',
           backgroundGradientTo: '#1F2937',
           decimalPlaces: 0,
-          color: () => '#8B5CF6',
+          color: () => '#6943FF',
           labelColor: () => '#F9FAFB',
           propsForBackgroundLines: {
             stroke: '#374151',

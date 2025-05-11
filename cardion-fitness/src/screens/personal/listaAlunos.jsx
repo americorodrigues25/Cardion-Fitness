@@ -4,11 +4,15 @@ import { useState, useCallback, useEffect } from "react";
 import { useGet } from "~/hook/crud/useGet";
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
+import { useNavigation } from "@react-navigation/native";
+
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 export default function Alunos() {
+    const navigation = useNavigation();
+
     const [alunos, setAlunos] = useState([]);
     const { getAllAlunosByPersonal } = useGet();
     const isFocused = useIsFocused();
@@ -92,7 +96,10 @@ export default function Alunos() {
                         <View className="py-10">
 
                             {alunosFiltrados.map((aluno) => (
-                                <TouchableOpacity key={aluno.id}>
+                                <TouchableOpacity
+                                    key={aluno.id}
+                                    onPress={() => navigation.navigate('detalhesAlunos', { aluno })}
+                                >
                                     <Text className="text-colorLight200 text-base bg-colorInputs px-10 py-5 mb-2 rounded-xl border-colorDark100 border">
                                         {aluno.nome || aluno.email}
                                     </Text>
