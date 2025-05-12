@@ -11,38 +11,25 @@ export const useEditTreino = () => {
   const [error, setError] = useState(null);
 
     //FLUXO <PERSONAL>   
-  const EditarTreinoAluno = async (idAluno,treino) => {
+  const EditarTreinoAluno = async (idTreino,treino) => {
     setLoading(true);
     setError(null);
 
-
-    // treino devera ter o seguinte conteudo:
-    //  treino :{
-    //  idPersonal,
-    // idAluno,
-    // nome,
-    // descricao
-    // nivelDificuldade
-    // dataInicio
-    // previsaoTermino
-    // exercicios: [{}]
-    // }
+    // o objeto do treino deve vir completo, com tudo, porque caso alguma propriedade esteja faltando, ira ser nula no banco
     try {
       
       const role = await AsyncStorage.getItem('role')
-      const uid = await AsyncStorage.getItem('uid')
 
       if(role != "personal") return false
       
-      const docId = `${idAluno}_${uid}`
 
-      await updateDoc(doc(db, 'treino',docId),treino);
+      await updateDoc(doc(db, 'treino',idTreino),treino);
       
 
-      return user;
+      return treino;
     } catch (err) {
       setError(err.message);
-      throw err;
+      return null;
     } finally {
       setLoading(false);
     }
