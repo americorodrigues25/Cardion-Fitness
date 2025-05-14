@@ -12,24 +12,20 @@ export const useDeleteTreino = () => {
 
     //FLUXO <PERSONAL>   
     // deletar treino 
-  const deletarTreinoAluno = async (idAluno) => {
+  const deletarTreinoAluno = async (idTreino) => {
     setLoading(true);
     setError(null);
 
     try {
      
       const role = await AsyncStorage.getItem('role')
-      const uid = await AsyncStorage.getItem('uid')
 
       if(role != "personal") return false
      
-      const docId = `${idAluno}_${uid}`
-
-      await deleteDoc(doc(db, 'treino',docId));
+      await deleteDoc(doc(db, 'treino',idTreino));
       
       return true
 
-      return user;
     } catch (err) {
       setError(err.message);
       throw err;

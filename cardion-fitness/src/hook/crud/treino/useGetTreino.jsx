@@ -14,11 +14,9 @@ import { db, auth } from '../../../firebase/firebaseConfig';
     {
        
         // pegar um
-        const getTreino = async (idAluno,idPersonal) =>{
-    
-            const docId = `${idAluno}_${idPersonal}`
+        const getTreino = async (idTreino) =>{
 
-            const docRef = doc(db,"treino" , docId);
+            const docRef = doc(db,"treino" , idTreino);
             const docSnap = await getDoc(docRef);
     
             const treino = docSnap.data()
