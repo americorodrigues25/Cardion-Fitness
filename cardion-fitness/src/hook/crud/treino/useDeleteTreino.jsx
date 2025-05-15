@@ -1,48 +1,39 @@
-import { doc, setDoc,query,limit,where,getDocs, collection,addDoc,deleteDoc } from 'firebase/firestore';
+import { doc, deleteDoc } from 'firebase/firestore';
 import { useState } from 'react';
-
-// conexão Firebase
-import { db, auth } from '../../../firebase/firebaseConfig';
-
+import { db } from '../../../firebase/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const useDeleteTreino = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-    //FLUXO <PERSONAL>   
-    // deletar treino 
-  const deletarTreinoAluno = async (idAluno) => {
+  const deletarTreinoAluno = async (idTreino) => {
     setLoading(true);
     setError(null);
 
     try {
-     
-      const role = await AsyncStorage.getItem('role')
-      const uid = await AsyncStorage.getItem('uid')
+      const role = await AsyncStorage.getItem('role');
+      const uid = await AsyncStorage.getItem('uid');
 
-      if(role != "personal") return false
-     
-      const docId = `${idAluno}_${uid}`
+      if (role !== 'personal' || !uid) {
+        setError('Acesso negado: Você não tem permissão para excluir este treino.');
+        return false;
+      }
 
-      await deleteDoc(doc(db, 'treino',docId));
+      await deleteDoc(doc(db, 'treino', idTreino));
       
-      return true
-
-      return user;
+      return true; 
     } catch (err) {
-      setError(err.message);
-      throw err;
+      setError(err.message); 
+      return false;
     } finally {
       setLoading(false);
     }
   };
 
-
-  
   return {
     deletarTreinoAluno,
     loading,
-    error
+    error,
   };
 };
