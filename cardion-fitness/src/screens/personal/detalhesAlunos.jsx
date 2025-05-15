@@ -32,7 +32,10 @@ export default function DetalhesAlunos() {
                 text1: 'Aluno desvinculado com sucesso ✅',
             });
 
-            navigation.goBack();
+            setTimeout(() => {
+                navigation.goBack();
+            }, 100);
+
         } catch (error) {
             Toast.show({
                 type: 'error',
@@ -132,12 +135,15 @@ export default function DetalhesAlunos() {
                                 <Text className="text-colorLight200 font-bold text-base pl-3">Editar treino</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity className="flex-row items-center">
+                            <TouchableOpacity
+                                className="flex-row items-center">
                                 <FontAwesome name="trophy" size={25} color="#E4E4E7" />
                                 <Text className="text-colorLight200 font-bold text-base pl-3">Ver conquistas</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity className="flex-row items-center">
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate('Avaliacoes', { idAluno: aluno.id })}
+                                className="flex-row items-center">
                                 <FontAwesome5 name="clipboard-list" size={25} color="#E4E4E7" />
                                 <Text className="text-colorLight200 font-bold text-base pl-3">Avaliação</Text>
                             </TouchableOpacity>
