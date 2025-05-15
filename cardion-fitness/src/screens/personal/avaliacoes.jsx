@@ -3,10 +3,16 @@ import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platfor
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Entypo from 'react-native-vector-icons/Entypo'
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+
+import { GerarPdfAvaliacao } from '~/utils/gerarPdfAvaliacao';
 
 export default function AvaliacaoScreen() {
     const navigation = useNavigation();
+    const route = useRoute();
+    console.log('params recebidos:', route.params);
+    const { idAluno } = route.params || {};
+    console.log('idAluno:', idAluno);
 
     const handleAvaliacao = (avaliacao) => {
         navigation.navigate('DetalhesAvaliacao', { avaliacao });
@@ -42,11 +48,19 @@ export default function AvaliacaoScreen() {
 
                         <TouchableOpacity
                             className="flex-row items-center bg-colorViolet rounded-full py-3 justify-center"
-                            onPress={() => navigation.navigate('CriarAvaliacao')}
+                            onPress={() => navigation.navigate('CriarAvaliacao', { idAluno })}
                         >
                             <View className="flex-row items-center gap-x-1">
                                 <Entypo name="plus" size={20} color="#E4E4E7" />
                                 <Text className="text-colorLight200 text-base font-semibold">Criar novo treino</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            className="flex-row items-center bg-red-500 rounded-full py-3 justify-center mt-10"
+                        >
+                            <View className="text-center">
+                                <Text className="text-colorLight200 text-base font-semibold">Gerar PDF</Text>
                             </View>
                         </TouchableOpacity>
                     </View>

@@ -2,6 +2,7 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Alert } from 'react-native';
 
+<<<<<<< HEAD
 export async function gerarPdfAvaliacao(avaliacao) {
   try {
     const htmlContent = `
@@ -34,6 +35,19 @@ export async function gerarPdfAvaliacao(avaliacao) {
 
     const { uri } = await Print.printToFileAsync({
       html: htmlContent, 
+=======
+export async function GerarPdfAvaliacao() {
+  try {
+    const htmlContent = `
+      <h1>Avaliação</h1>
+      <p><strong>Nome:</strong> ${nome}</p>
+      <p><strong>Peso:</strong> ${peso ?? 'Não informado'}</p>
+      <p><strong>Altura:</strong> ${altura ?? 'Não informado'}</p>
+    `;
+
+    const { uri } = await Print.printToFileAsync({
+      html: htmlContent,
+>>>>>>> 96d11e2 (t)
       base64: false,
     });
 

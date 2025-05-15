@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Modal, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useCreateAvaliacaoFisica } from '~/hook/crud/avaliacaoFisica/useCreateAvaliacaoFisica';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Toast from 'react-native-toast-message';
 
@@ -21,77 +23,111 @@ const Input = ({ label, keyboardType = 'default', className = '', value, onChang
 );
 
 export default function CriarAvaliacao() {
+    const route = useRoute();
+    const { idAluno } = route.params || {};
+    console.log('idAluno:', idAluno);
+
     const navigation = useNavigation();
-
-    const [peso, setPeso] = useState('');
-    const [altura, setAltura] = useState('');
-    const [idade, setIdade] = useState('');
-    const [sexo, setSexo] = useState('default');
-    const [metodoCalculo, setMetodoCalculo] = useState('imc');
-
-    const [cintura, setCintura] = useState('');
-    const [quadril, setQuadril] = useState('');
-    const [pescoco, setPescoco] = useState('');
-
-    const [imc, setImc] = useState('');
-    const [percentualGordura, setPercentualGordura] = useState('');
-    const [massaMagra, setMassaMagra] = useState('');
-    const [massaGorda, setMassaGorda] = useState('');
-
     const [modalVisible, setModalVisible] = useState(false);
 
-    const handleSalvar = () => {
-        Toast.show({
-            type: 'success',
-            text1: 'Sucesso!',
-            text2: 'Avaliação adicionada. ✅'
-        });
-        navigation.goBack();
+    const [avaliacao, setAvaliacao] = useState({
+        idAluno: '',
+        idPersonal: '',
+        nome: '',
+        idade: '',
+        sexo: 'default',
+        cintura: '',
+        quadril: '',
+        peitoral: '',
+        abdomen: '',
+        bracoRelaxado: '',
+        bracoContraido: '',
+        antebraco: '',
+        pescoco: '',
+        coxa: '',
+        panturrilha: '',
+        metodoCalculo: 'imc',
+        peso: '',
+        altura: '',
+        imc: '',
+        percentualGordura: '',
+        massaMagra: '',
+        massaGorda: '',
+    });
+
+    const { criarAvaliacaoFisica, loading } = useCreateAvaliacaoFisica();
+
+    const salvarAvaliacao = async () => {
+        const avaliacaoData = {
+            ...avaliacao,
+            idAluno,
+            idPersonal,
+            criadoEm: new Date(),
+        };
+
+        try {
+            await criarAvaliacaoFisica(avaliacaoData);
+            Toast.show({
+                type: 'success',
+                text1: 'Sucesso!',
+                text2: 'Avaliação adicionada ✅',
+            });
+            navigation.goBack();
+        } catch (err) {
+            Toast.show({
+                type: 'error',
+                text1: 'Erro ao salvar avaliação',
+                text2: err.message,
+            });
+            console.log(err);
+        }
     };
 
     useEffect(() => {
-        const pesoNum = parseFloat(peso.replace(',', '.'));
-        const alturaNum = parseFloat(altura.replace(',', '.'));
-        const idadeNum = parseInt(idade);
-        const cinturaNum = parseFloat(cintura.replace(',', '.'));
-        const quadrilNum = parseFloat(quadril.replace(',', '.'));
-        const pescocoNum = parseFloat(pescoco.replace(',', '.'));
+        const pesoNum = parseFloat(avaliacao.peso.replace(',', '.'));
+        const alturaNum = parseFloat(avaliacao.altura.replace(',', '.'));
+        const idadeNum = parseInt(avaliacao.idade);
+        const cinturaNum = parseFloat(avaliacao.cintura.replace(',', '.'));
+        const quadrilNum = parseFloat(avaliacao.quadril.replace(',', '.'));
+        const pescocoNum = parseFloat(avaliacao.pescoco.replace(',', '.'));
 
-        if (pesoNum > 0 && alturaNum > 0 && idadeNum > 0 && (sexo === 'masculino' || sexo === 'feminino')) {
+        if (pesoNum > 0 && alturaNum > 0 && idadeNum > 0 && (avaliacao.sexo === 'masculino' || avaliacao.sexo === 'feminino')) {
             const imcCalc = pesoNum / (alturaNum * alturaNum);
-            setImc(imcCalc.toFixed(2));
+            const imc = imcCalc.toFixed(2);
 
             let percGorduraCalc = 0;
-
-            if (metodoCalculo === 'imc') {
-                const sexoNum = sexo === 'masculino' ? 1 : 0;
+            if (avaliacao.metodoCalculo === 'imc') {
+                const sexoNum = avaliacao.sexo === 'masculino' ? 1 : 0;
                 percGorduraCalc = 1.2 * imcCalc + 0.23 * idadeNum - 10.8 * sexoNum - 5.4;
-            }
-
-            if (metodoCalculo === 'navy') {
-                if (sexo === 'masculino' && cinturaNum > 0 && pescocoNum > 0) {
+            } else if (avaliacao.metodoCalculo === 'navy') {
+                if (avaliacao.sexo === 'masculino' && cinturaNum > 0 && pescocoNum > 0) {
                     percGorduraCalc = 86.010 * Math.log10(cinturaNum - pescocoNum) - 70.041 * Math.log10(alturaNum * 100) + 36.76;
-                }
-                if (sexo === 'feminino' && cinturaNum > 0 && pescocoNum > 0 && quadrilNum > 0) {
+                } else if (avaliacao.sexo === 'feminino' && cinturaNum > 0 && pescocoNum > 0 && quadrilNum > 0) {
                     percGorduraCalc = 163.205 * Math.log10(cinturaNum + quadrilNum - pescocoNum) - 97.684 * Math.log10(alturaNum * 100) - 78.387;
                 }
             }
 
-            const percGorduraFinal = Math.max(0, percGorduraCalc);
-            setPercentualGordura(percGorduraFinal.toFixed(2));
+            const percentualGordura = Math.max(0, percGorduraCalc).toFixed(2);
+            const massaGorda = (pesoNum * (percentualGordura / 100)).toFixed(2);
+            const massaMagra = (pesoNum - pesoNum * (percentualGordura / 100)).toFixed(2);
 
-            const massaGordaCalc = pesoNum * (percGorduraFinal / 100);
-            const massaMagraCalc = pesoNum - massaGordaCalc;
-
-            setMassaGorda(massaGordaCalc.toFixed(2));
-            setMassaMagra(massaMagraCalc.toFixed(2));
+            setAvaliacao((prev) => ({
+                ...prev,
+                imc,
+                percentualGordura,
+                massaGorda,
+                massaMagra,
+            }));
         } else {
-            setImc('');
-            setPercentualGordura('');
-            setMassaGorda('');
-            setMassaMagra('');
+            setAvaliacao((prev) => ({
+                ...prev,
+                imc: '',
+                percentualGordura: '',
+                massaGorda: '',
+                massaMagra: '',
+            }));
         }
-    }, [peso, altura, sexo, idade, metodoCalculo, cintura, quadril, pescoco]);
+    }, [avaliacao.peso, avaliacao.altura, avaliacao.idade, avaliacao.sexo, avaliacao.metodoCalculo, avaliacao.cintura, avaliacao.quadril, avaliacao.pescoco]);
 
     return (
         <SafeAreaView edges={["top"]} className="flex-1 bg-colorBackground">
@@ -116,16 +152,16 @@ export default function CriarAvaliacao() {
                         <View className="bg-gray-100 px-3 py-4 mb-4 rounded-xl border border-gray-200 shadow-sm">
                             <Text className="text-lg font-semibold mb-2">Dados pessoais</Text>
                             <View className="flex-row justify-between gap-x-3">
-                                <Input label="Nome" className="flex-1" />
-                                <Input label="Idade" keyboardType="numeric" className="flex-1" value={idade} onChangeText={setIdade} />
+                                <Input label="Nome" value={avaliacao.nome} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, nome: text }))} />
+                                <Input label="Idade" keyboardType="numeric" value={avaliacao.idade} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, idade: text }))} />
                             </View>
 
                             <View className="mb-3">
                                 <Text className="text-base text-gray-700 mb-1">Sexo</Text>
                                 <View className="border border-gray-300 rounded-lg bg-white">
                                     <Picker
-                                        selectedValue={sexo}
-                                        onValueChange={(itemValue) => setSexo(itemValue)}
+                                        selectedValue={avaliacao.sexo}
+                                        onValueChange={(itemValue) => setAvaliacao((prev) => ({ ...prev, sexo: itemValue }))}
                                     >
                                         <Picker.Item label="Escolha um gênero" value="default" color="#9ca3af" enabled={false} />
                                         <Picker.Item label="Masculino" value="masculino" />
@@ -138,28 +174,28 @@ export default function CriarAvaliacao() {
                         <View className="bg-gray-100 px-3 py-4 mb-4 rounded-xl border border-gray-200 shadow-sm">
                             <Text className="text-lg font-semibold mb-2">Perímetros</Text>
                             <View className="flex-row justify-between gap-x-3">
-                                <Input label="Cintura (cm)" keyboardType="numeric" className="flex-1" value={cintura} onChangeText={setCintura} />
-                                <Input label="Quadril (cm)" keyboardType="numeric" className="flex-1" value={quadril} onChangeText={setQuadril} />
+                                <Input label="Cintura (cm)" keyboardType="numeric" value={avaliacao.cintura} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, cintura: text }))} />
+                                <Input label="Quadril (cm)" keyboardType="numeric" value={avaliacao.quadril} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, quadril: text }))} />
                             </View>
 
                             <View className="flex-row justify-between gap-x-3">
-                                <Input label="Peitoral (cm)" keyboardType="numeric" className="flex-1" />
-                                <Input label="Abdômen (cm)" keyboardType="numeric" className="flex-1" />
+                                <Input label="Peitoral (cm)" keyboardType="numeric" value={avaliacao.peitoral} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, peitoral: text }))} />
+                                <Input label="Abdômen (cm)" keyboardType="numeric" value={avaliacao.abdomen} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, abdomen: text }))} />
                             </View>
 
                             <View className="flex-row justify-between gap-x-3">
-                                <Input label="Braço Relaxado (cm)" keyboardType="numeric" className="flex-1" />
-                                <Input label="Braço Contraido (cm)" keyboardType="numeric" className="flex-1" />
+                                <Input label="Braço Relaxado (cm)" keyboardType="numeric" value={avaliacao.bracoRelaxado} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, bracoRelaxado: text }))} />
+                                <Input label="Braço Contraído (cm)" keyboardType="numeric" value={avaliacao.bracoContraido} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, bracoContraido: text }))} />
                             </View>
 
                             <View className="flex-row justify-between gap-x-3">
-                                <Input label="Antebraço (cm)" keyboardType="numeric" className="flex-1" />
-                                <Input label="Pescoço (cm)" keyboardType="numeric" className="flex-1" value={pescoco} onChangeText={setPescoco} />
+                                <Input label="Antebraço (cm)" keyboardType="numeric" value={avaliacao.antebraco} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, antebraco: text }))} />
+                                <Input label="Pescoço (cm)" keyboardType="numeric" value={avaliacao.pescoco} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, pescoco: text }))} />
                             </View>
 
                             <View className="flex-row justify-between gap-x-3">
-                                <Input label="Coxa (cm)" keyboardType="numeric" className="flex-1" />
-                                <Input label="Panturrilha (cm)" keyboardType="numeric" className="flex-1" />
+                                <Input label="Coxa (cm)" keyboardType="numeric" value={avaliacao.coxa} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, coxa: text }))} />
+                                <Input label="Panturrilha (cm)" keyboardType="numeric" value={avaliacao.panturrilha} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, panturrilha: text }))} />
                             </View>
                         </View>
 
@@ -172,11 +208,11 @@ export default function CriarAvaliacao() {
                             </View>
                             <View className="border border-gray-300 rounded-lg bg-white">
                                 <Picker
-                                    selectedValue={metodoCalculo}
-                                    onValueChange={(itemValue) => setMetodoCalculo(itemValue)}
+                                    selectedValue={avaliacao.metodoCalculo}
+                                    onValueChange={(itemValue) => setAvaliacao((prev) => ({ ...prev, metodoCalculo: itemValue }))}
                                 >
-                                    <Picker.Item label="IMC (Deurenberg)" value="imc" />
-                                    <Picker.Item label="Marinha dos EUA" value="navy" />
+                                    <Picker.Item label="IMC" value="imc" />
+                                    <Picker.Item label="Marinha (US Navy)" value="navy" />
                                 </Picker>
                             </View>
                         </View>
@@ -184,16 +220,18 @@ export default function CriarAvaliacao() {
                         <View className="bg-gray-100 px-3 py-4 mb-6 rounded-xl border border-gray-200 shadow-sm">
                             <Text className="text-lg font-semibold mb-2">Resultados</Text>
 
-                            <Input label="Peso (kg)" keyboardType="numeric" value={peso} onChangeText={setPeso} />
-                            <Input label="Altura (m)" keyboardType="numeric" value={altura} onChangeText={setAltura} />
-                            <Input label="IMC" value={imc} keyboardType="numeric" editable={false} />
-                            <Input label="Percentual de gordura (%)" value={percentualGordura} keyboardType="numeric" editable={false} />
-                            <Input label="Massa magra (kg)" value={massaMagra} keyboardType="numeric" editable={false} />
-                            <Input label="Massa gorda (kg)" value={massaGorda} keyboardType="numeric" editable={false} />
+                            <Input label="Peso (kg)" keyboardType="numeric" value={avaliacao.peso} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, peso: text }))} />
+                            <Input label="Altura (m)" keyboardType="numeric" value={avaliacao.altura} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, altura: text }))} />
+                            <Input label="IMC" keyboardType="numeric" editable={false} value={avaliacao.imc} />
+                            <Input label="% Gordura" keyboardType="numeric" editable={false} value={avaliacao.percentualGordura} />
+                            <Input label="Massa Gorda (kg)" keyboardType="numeric" editable={false} value={avaliacao.massaGorda} />
+                            <Input label="Massa Magra (kg)" keyboardType="numeric" editable={false} value={avaliacao.massaMagra} />
                         </View>
 
-                        <TouchableOpacity onPress={handleSalvar} className="bg-colorViolet rounded-full py-3">
-                            <Text className="text-white text-center text-lg font-bold">Salvar</Text>
+                        <TouchableOpacity onPress={salvarAvaliacao} disabled={loading} className="bg-colorViolet py-3 rounded-full">
+                            <Text className="text-white text-center text-lg font-semibold">
+                                {loading ? 'Salvando...' : 'Salvar Avaliação'}
+                            </Text>
                         </TouchableOpacity>
                     </View>
 
