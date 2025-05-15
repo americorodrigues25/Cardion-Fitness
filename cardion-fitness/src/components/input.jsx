@@ -5,7 +5,7 @@ import styled from '@emotion/native';
 
 const StyledInput = styled.TextInput`
   width: 100%;
-  padding: 22px 40px;
+  padding: 20px 40px;
   background-color: #0E1621;
   border: 1.5px solid #27272A;
   border-radius: 16px;
