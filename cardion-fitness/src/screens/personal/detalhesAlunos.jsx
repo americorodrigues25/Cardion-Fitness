@@ -142,7 +142,7 @@ export default function DetalhesAlunos() {
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                 onPress={() => navigation.navigate('Avaliacoes')}
+                                onPress={() => navigation.navigate('Avaliacoes', { idAluno: aluno.id })}
                                 className="flex-row items-center">
                                 <FontAwesome5 name="clipboard-list" size={25} color="#E4E4E7" />
                                 <Text className="text-colorLight200 font-bold text-base pl-3">Avaliação</Text>
