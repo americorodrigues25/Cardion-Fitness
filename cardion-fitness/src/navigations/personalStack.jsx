@@ -9,6 +9,9 @@ import AdicionarAluno from '~/screens/personal/adicionarAlunos';
 import DetalhesAlunos from '~/screens/personal/detalhesAlunos';
 import CriarTreino from '~/screens/personal/criarTreinos';
 import NovoTreino from '~/screens/personal/novoTreino';
+import Avaliacoes from '~/screens/personal/avaliacoes';
+import CriarAvaliacao from '~/screens/personal/criarAvaliacao';
+import DetalhesAvaliacao from '~/screens/personal/detalhesAvaliacao';
 
 const Stack = createStackNavigator();
 
@@ -66,6 +69,21 @@ const PersonalNavigation = () => {
         name='novoTreino'
         options={{ headerShown: false }}
         component={NovoTreino}
+      />
+      <Stack.Screen
+        name='Avaliacoes'
+        options={{ headerShown: false }}
+        component={Avaliacoes}
+      />
+      <Stack.Screen
+        name="CriarAvaliacao"
+        options={{ headerShown: false }}
+        component={CriarAvaliacao}
+      />
+      <Stack.Screen
+        name="DetalhesAvaliacao"
+        options={{ headerShown: false }}
+        component={DetalhesAvaliacao}
       />
     </Stack.Navigator>
   );
