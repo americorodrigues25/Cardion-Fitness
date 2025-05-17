@@ -1,4 +1,4 @@
-import { doc, updateDoc,increment,getDoc ,arrayUnion  } from 'firebase/firestore';
+import { doc, updateDoc,increment,getDoc ,arrayUnion,getDocs  } from 'firebase/firestore';
 // conexão Firebase
 import { db } from '~/firebase/firebaseConfig';
 
@@ -71,5 +71,59 @@ export const useConquistas = () =>
            
         }
 
-        return{aplicarConquistaPendente}
+        const buscarConquistasDoAluno = async (idAluno) =>{
+            const alunoRef = doc(db, 'aluno',idAluno);
+            const alunoSnap = await getDoc(alunoRef);
+
+            if (!alunoSnap.exists()) {
+            console.log('Aluno não encontrado');
+            return [];
+            }
+
+
+            const { conquistas: idsConquistas } = alunoSnap.data();
+
+            if (!idsConquistas || idsConquistas.length === 0) {
+                return []; // Nenhuma conquista associada
+            }
+
+            const conquistasRef = collection(db, 'conquistas');
+            const q = query(conquistasRef, where('__name__', 'in', idsConquistas));
+            const querySnap = await getDocs(q);
+
+            const conquistas = querySnap.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+            }));
+
+            return conquistas;
+        }
+
+        const buscarConquistasNaoDesbloqueadas = async (uid) =>{
+            const alunoRef = doc(db, 'aluno', uid);
+            const alunoSnap = await getDoc(alunoRef);
+
+            if (!alunoSnap.exists()) {
+            console.log('Aluno não encontrado');
+            return [];
+            }
+
+            const alunoConquistas = alunoSnap.data().conquistas || [];
+
+            
+            const conquistasRef = collection(db, 'conquistas');
+            const conquistasSnap = await getDocs(conquistasRef);
+
+            
+            const conquistasNaoAdquiridas = conquistasSnap.docs
+            .filter(doc => !alunoConquistas.includes(doc.id))
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            return conquistasNaoAdquiridas;
+        }
+
+        return{aplicarConquistaPendente,buscarConquistasDoAluno,buscarConquistasNaoDesbloqueadas}
     }
