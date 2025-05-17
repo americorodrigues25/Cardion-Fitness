@@ -311,8 +311,6 @@ export default function NovoTreino() {
 
                         </View>
 
-
-                        { /*salva o treino no banco, teoricamente precisa ir para a tela anterior essa informações */}
                         <TouchableOpacity onPress={salvarTreino} className="py-4 rounded-lg">
                             <Text className="text-center text-colorViolet font-bold text-lg">Salvar treino</Text>
                         </TouchableOpacity>

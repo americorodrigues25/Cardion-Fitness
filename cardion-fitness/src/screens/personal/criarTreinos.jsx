@@ -28,6 +28,8 @@ export default function CriarTreino() {
     const [modalVisible, setModalVisible] = useState(false);
     const [treinoEditando, setTreinoEditando] = useState(null);
 
+    const [treinoSelecionado, setTreinoSelecionado] = useState(null);
+    const [mostrarModal, setMostrarModal] = useState(false);
 
     const handleEditarTreino = async () => {
         if (!treinoEditando?.id) {
@@ -144,14 +146,15 @@ export default function CriarTreino() {
                                     <View className='ml-5'>
                                         <Text className='text-colorLight300 text-xl mb-1'>Sessões realizadas</Text>
                                         <Text className="text-colorViolet text-3xl">
-                                            20 { /* só p teste, depois colocar "sessoes realizadas" */}
-                                            <Text className="text-gray-500 text-xl"> / {treino.sessoes}</Text>
+
+                                            {treino.sessoesRealizadas?.qtd ?? 0}
+                                            <Text className="text-gray-500 text-xl"> / {treino.sessoes ?? 0}</Text>
                                         </Text>
 
                                     </View>
                                     <Progress.Bar
                                         progress={
-                                            (treino.sessoes || 1)
+                                            (treino.sessoesRealizadas?.qtd ?? 0) / (treino.sessoes || 1)
                                         }
                                         width={null}
                                         height={10}
@@ -222,8 +225,10 @@ export default function CriarTreino() {
 
 
                                                 <TouchableOpacity
-                                                    onPress={() => handleDeleteTreino(treino.id || idx)}
-                                                    className=""
+                                                    onPress={() => {
+                                                        setTreinoSelecionado(treino.id || idx);
+                                                        setMostrarModal(true);
+                                                    }}
                                                 >
                                                     <View className="flex-row items-center gap-x-1">
                                                         <Feather name="trash-2" size={20} color="#E4E4E7" />
@@ -429,6 +434,38 @@ export default function CriarTreino() {
                                     </View>
                                 </View>
                             </ScrollView>
+                        </View>
+                    </Modal>
+
+                    <Modal
+                        animationType="fade"
+                        transparent={true}
+                        visible={mostrarModal}
+                        onRequestClose={() => setMostrarModal(false)}
+                    >
+                        <View className="flex-1 justify-center items-center bg-black/80 px-6">
+                            <View className="bg-colorDark100 rounded-2xl w-full p-6">
+                                <Text className="text-colorLight200 text-lg font-bold mb-4">
+                                    Deseja realmente deletar este treino?
+                                </Text>
+
+                                <View className="flex-row justify-end gap-x-10">
+                                    <TouchableOpacity
+                                        onPress={() => setMostrarModal(false)}
+                                    >
+                                        <Text className="text-colorViolet text-lg font-semibold">Cancelar</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        onPress={async () => {
+                                            await handleDeleteTreino(treinoSelecionado);
+                                            setMostrarModal(false);
+                                        }}
+                                    >
+                                        <Text className="text-red-600 font-semibold text-lg">Deletar</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
                         </View>
                     </Modal>
 

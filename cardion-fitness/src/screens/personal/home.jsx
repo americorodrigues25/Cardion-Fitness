@@ -78,7 +78,7 @@ export default function Home() {
     return (
         <SafeAreaView
             edges={['top', 'bottom']}
-            className='flex-1 bg-colorBackground pl-5 py-2'
+            className='flex-1 bg-colorBackground px-5 py-2'
         >
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -91,7 +91,7 @@ export default function Home() {
                     keyboardShouldPersistTaps="handled"
                 >
 
-                    <View className='flex-row items-center justify-between pr-5'>
+                    <View className='flex-row items-center justify-between'>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image source={require('~/assets/img/logo/Logo1.png')} className="w-24 h-12" resizeMode="contain" />
                         </View>
@@ -109,36 +109,41 @@ export default function Home() {
                     <View className='py-10'>
                         <View className=''>
                             <Text className='text-colorLight200 text-2xl font-semibold'>Bem vindo, {nome}!</Text>
-                            <Text className='text-base font-semibold text-colorLight200 px-5 py-5'>Seus alunos</Text>
+                            <Text className='text-lg font-semibold text-gray-400 pt-5 pb-2 px-3'>Seus alunos</Text>
                         </View>
 
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            <View className="flex-row gap-5">
 
-                                <TouchableOpacity onPress={() => navigation.navigate('VincularAluno')}
-                                    className="min-w-[300px] h-80">
-                                    <ImageBackground
-                                        source={require('~/assets/img/button-cards/mulherAcademia.png')}
-                                        className="h-full rounded-2xl overflow-hidden justify-end" resizeMode="cover"
-                                    >
-                                        <View className="bg-black/30 p-5">
-                                            <Text className="text-white text-3xl font-bold"> Adicionar{"\n"} aluno</Text>
-                                        </View>
-                                    </ImageBackground>
-                                </TouchableOpacity>
+                        <View className="flex-1 justify-center items-center px-3">
+                            <TouchableOpacity onPress={() => navigation.navigate('VincularAluno')}
+                                className="w-full h-80">
+                                <ImageBackground
+                                    source={require('~/assets/img/button-cards/mulherAcademia.png')}
+                                    className="h-full rounded-2xl overflow-hidden justify-end" resizeMode="cover"
+                                >
+                                    <View className="bg-black/30 p-5">
+                                        <Text className="text-white text-3xl font-bold"> Adicionar{"\n"} Aluno</Text>
+                                    </View>
+                                </ImageBackground>
+                            </TouchableOpacity>
+                        </View>
 
-                                <TouchableOpacity className="min-w-[300px] h-80 mr-5">
-                                    <ImageBackground
-                                        source={require('~/assets/img/button-cards/homemAcademia.jpg')}
-                                        className="h-full rounded-2xl overflow-hidden justify-end" resizeMode="cover"
-                                    >
-                                        <View className="bg-black/30 p-5">
-                                            <Text className="text-white text-3xl font-bold">Grupo de{"\n"}alunos</Text>
-                                        </View>
-                                    </ImageBackground>
-                                </TouchableOpacity>
-                            </View>
-                        </ScrollView>
+                        <View className=''>
+                            <Text className='text-lg font-semibold text-gray-400 pt-5 pb-2 px-3'>Seus treinos</Text>
+                        </View>
+
+                        <View className="flex-1 justify-center items-center px-3">
+                            <TouchableOpacity onPress={() => navigation.navigate('CriarTreinoAluno')}
+                                className="w-full h-80">
+                                <ImageBackground
+                                    source={require('~/assets/img/button-cards/homemAcademia.jpg')}
+                                    className="h-full rounded-2xl overflow-hidden justify-end" resizeMode="cover"
+                                >
+                                    <View className="bg-black/30 p-5">
+                                        <Text className="text-white text-3xl font-bold"> Criar{"\n"} Treinos</Text>
+                                    </View>
+                                </ImageBackground>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
                     <Modal transparent visible={showMessageModal} animationType="fade">

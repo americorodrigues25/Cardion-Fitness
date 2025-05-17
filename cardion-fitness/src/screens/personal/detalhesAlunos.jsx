@@ -132,7 +132,7 @@ export default function DetalhesAlunos() {
                                 <FontAwesome6
                                     name="dumbbell" size={25} color="#E4E4E7"
                                 />
-                                <Text className="text-colorLight200 font-bold text-base pl-3">Editar treino</Text>
+                                <Text className="text-colorLight200 font-bold text-base pl-3">Treinos</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity

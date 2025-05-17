@@ -1,38 +1,51 @@
-import { View, KeyboardAvoidingView, Platform, ScrollView, Image, TouchableOpacity, TextInput, Text, ActivityIndicator } from "react-native";
+import {
+    View,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Image,
+    TouchableOpacity,
+    TextInput,
+    Text,
+    ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useCallback, useEffect } from "react";
 import { useGet } from "~/hook/crud/useGet";
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-
 import { useNavigation } from "@react-navigation/native";
-
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export default function Alunos() {
+export default function CriarTreinoAluno() {
     const navigation = useNavigation();
-
     const [alunos, setAlunos] = useState([]);
     const { getAllAlunosByPersonal } = useGet();
     const isFocused = useIsFocused();
     const [busca, setBusca] = useState('');
     const [alunosFiltrados, setAlunosFiltrados] = useState([]);
     const [carregando, setCarregando] = useState(true);
-
     const [paginaAtual, setPaginaAtual] = useState(1);
     const itensPorPagina = 5;
 
+    const totalPaginas = Math.ceil(alunosFiltrados.length / itensPorPagina);
+    const inicio = (paginaAtual - 1) * itensPorPagina;
+    const fim = inicio + itensPorPagina;
+    const alunosPaginados = alunosFiltrados.slice(inicio, fim);
+
+    const mudarPagina = (novaPagina) => {
+        if (novaPagina >= 1 && novaPagina <= totalPaginas) {
+            setPaginaAtual(novaPagina);
+        }
+    };
+
     useEffect(() => {
         const termo = busca.toLowerCase();
-
         const filtrados = alunos.filter((aluno) =>
             aluno.nome?.toLowerCase().includes(termo) ||
             aluno.email?.toLowerCase().includes(termo)
         );
-
         setAlunosFiltrados(filtrados);
-        setPaginaAtual(1); // volta para a página 1 sempre que filtrar
+        setPaginaAtual(1);
     }, [busca, alunos]);
 
     const fetchAlunos = async () => {
@@ -50,18 +63,6 @@ export default function Alunos() {
         }, [isFocused])
     );
 
-    const totalPaginas = Math.ceil(alunosFiltrados.length / itensPorPagina);
-    const alunosPaginados = alunosFiltrados.slice(
-        (paginaAtual - 1) * itensPorPagina,
-        paginaAtual * itensPorPagina
-    );
-
-    const mudarPagina = (novaPagina) => {
-        if (novaPagina >= 1 && novaPagina <= totalPaginas) {
-            setPaginaAtual(novaPagina);
-        }
-    };
-
     return (
         <SafeAreaView edges={['top', 'bottom']} className='flex-1 bg-colorBackground pl-5 py-2'>
             <KeyboardAvoidingView
@@ -74,22 +75,15 @@ export default function Alunos() {
                     contentContainerStyle={{ flexGrow: 1 }}
                     keyboardShouldPersistTaps="handled"
                 >
-
-                    <View className='flex-row items-center justify-between pr-5'>
+                    <View className="pt-5 px-5 flex-row justify-between">
+                        <TouchableOpacity onPress={() => navigation.goBack()} className="flex-row">
+                            <Image source={require('~/assets/img/btnVoltar.png')} className="w-4 h-5" />
+                            <Text className="ml-2 text-colorLight200">Criar treinos</Text>
+                        </TouchableOpacity>
                         <Image source={require('~/assets/img/logo/Logo1.png')} className="w-24 h-12" resizeMode="contain" />
-
-                        <View className='flex-row items-center gap-5'>
-                            <TouchableOpacity>
-                                <FontAwesome name="bell-o" size={23} color="#e4e4e7" />
-                            </TouchableOpacity>
-                            <TouchableOpacity>
-                                <MaterialCommunityIcons name="message-reply-text-outline" size={23} color="#e4e4e7" />
-                            </TouchableOpacity>
-                        </View>
                     </View>
 
-                    <View className='py-20 px-10'>
-
+                    <View className='py-10 px-10'>
                         <View className="flex-row justify-between items-center border-b border-colorDark100 px-4 pb-1">
                             <TextInput
                                 placeholder="pesquisar"
@@ -105,7 +99,9 @@ export default function Alunos() {
                             </TouchableOpacity>
                         </View>
 
-                        <View className="py-10">
+                        <Text className="text-colorLight200 my-10 text-center">Para qual aluno deseja criar o treino ?</Text>
+
+                        <View className="">
                             {carregando ? (
                                 <View className="items-center justify-center">
                                     <ActivityIndicator size="large" color="#6943FF" />
@@ -114,7 +110,7 @@ export default function Alunos() {
                                 alunosPaginados.map((aluno) => (
                                     <TouchableOpacity
                                         key={aluno.id}
-                                        onPress={() => navigation.navigate('detalhesAlunos', { aluno })}
+                                        onPress={() => navigation.navigate('criarTreinos', { idAluno: aluno.id })}
                                     >
                                         <Text className="text-colorLight200 text-base bg-colorInputs px-10 py-5 mb-2 rounded-xl border-colorDark100 border">
                                             {aluno.nome || aluno.email}
@@ -122,40 +118,39 @@ export default function Alunos() {
                                     </TouchableOpacity>
                                 ))
                             )}
-                        </View>
 
-                        {totalPaginas > 1 && (
-                            <View className="flex-row justify-center items-center gap-2 mt-5">
-                                <TouchableOpacity
-                                    onPress={() => mudarPagina(paginaAtual - 1)}
-                                    disabled={paginaAtual === 1}
-                                    className="px-3 py-1 rounded bg-colorInputs"
-                                >
-                                    <Text className="text-colorLight200">{'<'}</Text>
-                                </TouchableOpacity>
-
-                                {Array.from({ length: totalPaginas }).map((_, index) => (
+                            {/* Paginação */}
+                            {totalPaginas > 1 && (
+                                <View className="flex-row justify-center items-center gap-2 mt-5">
                                     <TouchableOpacity
-                                        key={index}
-                                        onPress={() => mudarPagina(index + 1)}
-                                        className={`px-3 py-1 rounded ${paginaAtual === index + 1 ? 'bg-colorViolet' : 'bg-colorInputs'}`}
+                                        onPress={() => mudarPagina(paginaAtual - 1)}
+                                        disabled={paginaAtual === 1}
+                                        className="px-3 py-1 rounded bg-colorInputs"
                                     >
-                                        <Text className="text-colorLight200">{index + 1}</Text>
+                                        <Text className="text-colorLight200">{'<'}</Text>
                                     </TouchableOpacity>
-                                ))}
 
-                                <TouchableOpacity
-                                    onPress={() => mudarPagina(paginaAtual + 1)}
-                                    disabled={paginaAtual === totalPaginas}
-                                    className="px-3 py-1 rounded bg-colorInputs"
-                                >
-                                    <Text className="text-colorLight200">{'>'}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        )}
+                                    {Array.from({ length: totalPaginas }).map((_, index) => (
+                                        <TouchableOpacity
+                                            key={index}
+                                            onPress={() => mudarPagina(index + 1)}
+                                            className={`px-3 py-1 rounded ${paginaAtual === index + 1 ? 'bg-colorViolet' : 'bg-colorInputs'}`}
+                                        >
+                                            <Text className="text-colorLight200">{index + 1}</Text>
+                                        </TouchableOpacity>
+                                    ))}
 
+                                    <TouchableOpacity
+                                        onPress={() => mudarPagina(paginaAtual + 1)}
+                                        disabled={paginaAtual === totalPaginas}
+                                        className="px-3 py-1 rounded bg-colorInputs"
+                                    >
+                                        <Text className="text-colorLight200">{'>'}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        </View>
                     </View>
-
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
