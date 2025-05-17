@@ -16,13 +16,10 @@ import { GerarPdfAvaliacao } from '~/utils/gerarPdfAvaliacao';
 export default function AvaliacaoScreen() {
     const navigation = useNavigation();
     const route = useRoute();
-    console.log('params recebidos:', route.params);
     const { idAluno } = route.params || {};
-    console.log('idAluno:', idAluno);
 
     const [avaliacoes, setAvaliacoes] = useState([]);
     const [loading, setLoading] = useState(true);
-
     const [modalVisible, setModalVisible] = useState(false);
     const [avaliacaoSelecionada, setAvaliacaoSelecionada] = useState(null);
 
@@ -97,7 +94,6 @@ export default function AvaliacaoScreen() {
                     </View>
 
                     <View className='px-5 py-5'>
-                        {/* cards q será exibido a avaliação criada (Avaliação - Data: DD/MM/AAAA) - ao clicar, abrir a tela detalhes da avaliação */}
                         <View className='px-5 py-5'>
                             {loading ? (
                                 <ActivityIndicator size="large" color="#6943FF" className="mt-10" />
@@ -140,16 +136,6 @@ export default function AvaliacaoScreen() {
                                 </TouchableOpacity>
                             </View>
                         </View>
-
-                        { /*
-                        <TouchableOpacity
-                            className="flex-row items-center bg-red-500 rounded-full py-3 justify-center mt-10"
-                        >
-                            <View className="text-center">
-                                <Text className="text-colorLight200 text-base font-semibold">Gerar PDF</Text>
-                            </View>
-                        </TouchableOpacity>
-                       */ }
                     </View>
 
                     <Modal
