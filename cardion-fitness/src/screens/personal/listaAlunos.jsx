@@ -1,4 +1,4 @@
-import { View, KeyboardAvoidingView, Platform, ScrollView, Image, TouchableOpacity, TextInput, Text } from "react-native";
+import { View, KeyboardAvoidingView, Platform, ScrollView, Image, TouchableOpacity, TextInput, Text, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useCallback, useEffect } from "react";
 import { useGet } from "~/hook/crud/useGet";
@@ -18,6 +18,7 @@ export default function Alunos() {
     const isFocused = useIsFocused();
     const [busca, setBusca] = useState('');
     const [alunosFiltrados, setAlunosFiltrados] = useState([]);
+    const [carregando, setCarregando] = useState(true);
 
     useEffect(() => {
         const termo = busca.toLowerCase();
@@ -31,8 +32,10 @@ export default function Alunos() {
     }, [busca, alunos]);
 
     const fetchAlunos = async () => {
+        setCarregando(true);
         const data = await getAllAlunosByPersonal();
         setAlunos(data || []);
+        setCarregando(false);
     };
 
     useFocusEffect(
@@ -95,16 +98,22 @@ export default function Alunos() {
 
                         <View className="py-10">
 
-                            {alunosFiltrados.map((aluno) => (
-                                <TouchableOpacity
-                                    key={aluno.id}
-                                    onPress={() => navigation.navigate('detalhesAlunos', { aluno })}
-                                >
-                                    <Text className="text-colorLight200 text-base bg-colorInputs px-10 py-5 mb-2 rounded-xl border-colorDark100 border">
-                                        {aluno.nome || aluno.email}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
+                            {carregando ? (
+                                <View className="items-center justify-center">
+                                    <ActivityIndicator size="large" color="#6943FF" />
+                                </View>
+                            ) : (
+                                alunosFiltrados.map((aluno) => (
+                                    <TouchableOpacity
+                                        key={aluno.id}
+                                        onPress={() => navigation.navigate('detalhesAlunos', { aluno })}
+                                    >
+                                        <Text className="text-colorLight200 text-base bg-colorInputs px-10 py-5 mb-2 rounded-xl border-colorDark100 border">
+                                            {aluno.nome || aluno.email}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))
+                            )}
 
                         </View>
 
