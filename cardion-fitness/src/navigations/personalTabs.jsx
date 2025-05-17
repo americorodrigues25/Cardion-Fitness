@@ -25,7 +25,7 @@ export default function PersonalTabs() {
                 tabBarStyle: {
                     borderTopWidth: 0,
                     borderTopColor: '#27272A',
-                    backgroundColor: 'transparent',
+                    backgroundColor: '#transparent',
                     position: 'absolute',
                     elevation: 0,
                     paddingBottom: Platform.OS === 'android' ? 10 : 0,
