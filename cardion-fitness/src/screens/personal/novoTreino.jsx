@@ -116,7 +116,7 @@ export default function NovoTreino() {
             repeticoes.trim() === '' ||
             descanso.trim() === ''
         ) {
-            setFormError('Preencha todos os campos para adicionar um exercício. ❌');
+            setFormError('Preencha todos os campos para adicionar um exercício.');
             return;
         }
         setFormError('');
@@ -172,16 +172,16 @@ export default function NovoTreino() {
 
                         <View className="gap-y-5">
 
-                            <View>
+                            <View className=''>
                                 <Text className="text-colorLight200 text-lg mb-1">Nome do treino</Text>
-                                <View className="border border-colorLight300 rounded-lg px-3">
+                                <View className="border border-gray-500 rounded-lg px-3">
                                     <Picker
                                         selectedValue={novoTreino.nome}
                                         onValueChange={(value) => setNovoTreino({ ...novoTreino, nome: value })}
-                                        style={{ color: '#D4D4D8' }}
-                                        dropdownIconColor="#E4E4E7"
+                                        style={{ color: '#9ca3af' }}
+                                        dropdownIconColor="#9ca3af"
                                     >
-                                        <Picker.Item label="Selecione o nome do treino" value="default" enabled={false} />
+                                        <Picker.Item label="Selecione o nome do treino" value="default" enabled={false} color="#9ca3af" />
                                         {[
                                             'Treino A',
                                             'Treino B',
@@ -202,8 +202,8 @@ export default function NovoTreino() {
                                 <Text className="text-colorLight200 text-lg mb-1">Grupo muscular</Text>
                                 <TextInput
                                     placeholder="Ex: Peito"
-                                    placeholderTextColor="#D4D4D8"
-                                    className="border border-colorLight300 px-3 py-5 rounded-lg text-colorLight200"
+                                    placeholderTextColor="#9CA3AF"
+                                    className="border border-gray-500 px-3 py-5 rounded-lg text-colorLight200"
                                     value={novoTreino.tipo}
                                     onChangeText={(text) => setNovoTreino({ ...novoTreino, tipo: text })}
                                 />
@@ -211,12 +211,12 @@ export default function NovoTreino() {
 
                             <View>
                                 <Text className="text-colorLight200 text-lg mb-1">Dia da semana</Text>
-                                <View className="border border-colorLight300 rounded-lg px-3">
+                                <View className="border border-gray-500 rounded-lg px-3">
                                     <Picker
                                         selectedValue={novoTreino.dia}
                                         onValueChange={(value) => setNovoTreino({ ...novoTreino, dia: value })}
-                                        style={{ color: '#D4D4D8' }}
-                                        dropdownIconColor="#E4E4E7"
+                                        style={{ color: '#9ca3af' }}
+                                        dropdownIconColor="#9ca3af"
                                     >
                                         <Picker.Item label="Selecione o dia da semana" value="default" enabled={false} />
                                         {[
@@ -232,6 +232,18 @@ export default function NovoTreino() {
                                         ))}
                                     </Picker>
                                 </View>
+                            </View>
+
+                            <View>
+                                <Text className="text-colorLight200 text-lg mb-1">Quantidade de sessões</Text>
+                                <TextInput
+                                    placeholder="Ex: 20"
+                                    placeholderTextColor="#9CA3AF"
+                                    keyboardType='numeric'
+                                    className="border border-gray-500 px-3 py-5 rounded-lg text-colorLight200"
+                                    value={novoTreino.sessoes}
+                                    onChangeText={(text) => setNovoTreino({ ...novoTreino, sessoes: text })}
+                                />
                             </View>
 
                             {/* aq vai aparece os exercicios que o personal criar */}
@@ -278,12 +290,14 @@ export default function NovoTreino() {
 
                             <TouchableOpacity
                                 onPress={() => {
-                                    if (!novoTreino.nome || !novoTreino.tipo || !novoTreino.dia) {
-                                        setFormError('Preencha todos os campos para adicionar um exercício.');
+                                    if (!novoTreino.nome || !novoTreino.tipo || !novoTreino.dia || !novoTreino.sessoes) {
+                                        Toast.show({
+                                            type: 'error',
+                                            text1: 'Campos obrigatórios',
+                                            text2: 'Preencha todos os campos para adicionar um exercicio.',
+                                        });
                                         return;
                                     }
-
-                                    setFormError('');
                                     setModalVisible(true);
                                 }}
                                 className="flex-row items-center bg-colorViolet rounded-full py-3 justify-center"
@@ -389,7 +403,7 @@ export default function NovoTreino() {
                                     Tem certeza que deseja remover este exercício?
                                 </Text>
 
-                                <View className="flex-row justify-end gap-x-6">
+                                <View className="flex-row justify-end gap-x-10">
                                     <TouchableOpacity
                                         onPress={() => setModalDeleteVisible(false)}
                                         className="text-colorViolet text-lg font-semibold"
