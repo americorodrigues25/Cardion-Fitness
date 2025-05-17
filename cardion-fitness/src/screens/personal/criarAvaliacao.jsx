@@ -10,9 +10,9 @@ import Toast from 'react-native-toast-message';
 
 const Input = ({ label, keyboardType = 'default', className = '', value, onChangeText, editable = true }) => (
     <View className={`mb-3 ${className}`}>
-        <Text className="text-base text-gray-700 mb-1">{label}</Text>
+        <Text className="text-base text-gray-400 mb-1">{label}</Text>
         <TextInput
-            className={`bg-${editable ? 'white' : 'gray-200'} border border-gray-300 rounded-lg px-4 py-2 w-full`}
+            className={`w-full h-12 px-4 py-3 rounded-lg border ${editable ? 'bg-colorLight200' : 'bg-gray-200'}`}
             placeholder={label}
             keyboardType={keyboardType}
             value={value}
@@ -33,6 +33,9 @@ export default function CriarAvaliacao() {
     const [avaliacao, setAvaliacao] = useState({
         idAluno: '',
         idPersonal: '',
+        focoAvaliacao: '',
+        data: '',
+        dataProximaAvaliacao: '',
         nome: '',
         idade: '',
         sexo: 'default',
@@ -46,7 +49,7 @@ export default function CriarAvaliacao() {
         pescoco: '',
         coxa: '',
         panturrilha: '',
-        metodoCalculo: 'imc',
+        metodoCalculo: 'default',
         peso: '',
         altura: '',
         imc: '',
@@ -57,7 +60,42 @@ export default function CriarAvaliacao() {
 
     const { criarAvaliacaoFisica, loading } = useCreateAvaliacaoFisica();
 
+    const validarCampos = () => {
+        if (!avaliacao.focoAvaliacao.trim()) {
+            Toast.show({ type: 'error', text1: 'Preencha o objetivo da avaliação.' });
+            return false;
+        }
+        if (!avaliacao.data.trim()) {
+            Toast.show({ type: 'error', text1: 'Preencha a data da avaliação.' });
+            return false;
+        }
+        if (!avaliacao.dataProximaAvaliacao.trim()) {
+            Toast.show({ type: 'error', text1: 'Preencha a próxima avaliação.' });
+            return false;
+        }
+
+        if (!avaliacao.nome.trim()) {
+            Toast.show({ type: 'error', text1: 'Preencha o nome.' });
+            return false;
+        }
+        if (!avaliacao.idade.trim()) {
+            Toast.show({ type: 'error', text1: 'Preencha a idade.' });
+            return false;
+        }
+        if (avaliacao.sexo === 'default') {
+            Toast.show({ type: 'error', text1: 'Selecione o sexo.' });
+            return false;
+        }
+
+        return true;
+    };
+
     const salvarAvaliacao = async () => {
+
+        if (!validarCampos()) return;
+
+        const idPersonal = await AsyncStorage.getItem('uid');
+
         const avaliacaoData = {
             ...avaliacao,
             idAluno,
@@ -91,18 +129,18 @@ export default function CriarAvaliacao() {
         const quadrilNum = parseFloat(avaliacao.quadril.replace(',', '.'));
         const pescocoNum = parseFloat(avaliacao.pescoco.replace(',', '.'));
 
-        if (pesoNum > 0 && alturaNum > 0 && idadeNum > 0 && (avaliacao.sexo === 'masculino' || avaliacao.sexo === 'feminino')) {
+        if (pesoNum > 0 && alturaNum > 0 && idadeNum > 0 && (avaliacao.sexo === 'Masculino' || avaliacao.sexo === 'Feminino')) {
             const imcCalc = pesoNum / (alturaNum * alturaNum);
             const imc = imcCalc.toFixed(2);
 
             let percGorduraCalc = 0;
-            if (avaliacao.metodoCalculo === 'imc') {
-                const sexoNum = avaliacao.sexo === 'masculino' ? 1 : 0;
+            if (avaliacao.metodoCalculo === 'IMC') {
+                const sexoNum = avaliacao.sexo === 'Masculino' ? 1 : 0;
                 percGorduraCalc = 1.2 * imcCalc + 0.23 * idadeNum - 10.8 * sexoNum - 5.4;
-            } else if (avaliacao.metodoCalculo === 'navy') {
-                if (avaliacao.sexo === 'masculino' && cinturaNum > 0 && pescocoNum > 0) {
+            } else if (avaliacao.metodoCalculo === 'NAVY') {
+                if (avaliacao.sexo === 'Masculino' && cinturaNum > 0 && pescocoNum > 0) {
                     percGorduraCalc = 86.010 * Math.log10(cinturaNum - pescocoNum) - 70.041 * Math.log10(alturaNum * 100) + 36.76;
-                } else if (avaliacao.sexo === 'feminino' && cinturaNum > 0 && pescocoNum > 0 && quadrilNum > 0) {
+                } else if (avaliacao.sexo === 'Feminino' && cinturaNum > 0 && pescocoNum > 0 && quadrilNum > 0) {
                     percGorduraCalc = 163.205 * Math.log10(cinturaNum + quadrilNum - pescocoNum) - 97.684 * Math.log10(alturaNum * 100) - 78.387;
                 }
             }
@@ -129,6 +167,20 @@ export default function CriarAvaliacao() {
         }
     }, [avaliacao.peso, avaliacao.altura, avaliacao.idade, avaliacao.sexo, avaliacao.metodoCalculo, avaliacao.cintura, avaliacao.quadril, avaliacao.pescoco]);
 
+    const formatarData = (text) => {
+        const cleaned = text.replace(/\D/g, '');
+        const formatted = cleaned
+            .slice(0, 8)
+            .replace(/(\d{2})(\d{0,2})(\d{0,4})/, (_, d, m, y) => {
+                let resultado = d;
+                if (m) resultado += '/' + m;
+                if (y) resultado += '/' + y;
+                return resultado;
+            });
+
+        return formatted;
+    };
+
     return (
         <SafeAreaView edges={["top"]} className="flex-1 bg-colorBackground">
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
@@ -147,92 +199,127 @@ export default function CriarAvaliacao() {
                     </View>
 
                     <View className='px-4 py-5'>
-                        <Text className="text-3xl font-bold mb-6 text-colorLight200 text-center">Avaliação Física</Text>
+                        <Text className="text-2xl font-bold mb-6 text-colorLight200 text-center">Avaliação Física</Text>
 
-                        <View className="bg-gray-100 px-3 py-4 mb-4 rounded-xl border border-gray-200 shadow-sm">
-                            <Text className="text-lg font-semibold mb-2">Dados pessoais</Text>
+                        <View className="bg-colorInputs px-3 py-4 mb-4 rounded-xl border border-colorDark100">
+                            <Text className="text-lg font-semibold mb-2 text-colorLight200">Detalhes</Text>
                             <View className="flex-row justify-between gap-x-3">
-                                <Input label="Nome" value={avaliacao.nome} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, nome: text }))} />
-                                <Input label="Idade" keyboardType="numeric" value={avaliacao.idade} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, idade: text }))} />
+                                <Input className='flex-1' label="Objetivo da Avaliação" value={avaliacao.focoAvaliacao} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, focoAvaliacao: text }))} />
+                            </View>
+                            <View className="flex-row justify-between gap-x-3">
+                                <Input
+                                    className="flex-1"
+                                    label="Data Avaliação"
+                                    keyboardType="numeric"
+                                    value={avaliacao.data}
+                                    onChangeText={(text) => {
+                                        const dataFormatada = formatarData(text);
+                                        setAvaliacao((prev) => ({ ...prev, data: dataFormatada }));
+                                    }}
+                                />
+                                <Input
+                                    className="flex-1"
+                                    label="Proxima Avaliação"
+                                    keyboardType="numeric"
+                                    value={avaliacao.dataProximaAvaliacao}
+                                    onChangeText={(text) => {
+                                        const dataFormatada = formatarData(text);
+                                        setAvaliacao((prev) => ({ ...prev, dataProximaAvaliacao: dataFormatada }));
+                                    }}
+                                />
+
                             </View>
 
+                        </View>
+
+                        <View className="bg-colorInputs px-3 py-4 mb-4 rounded-xl border border-colorDark100">
+                            <Text className="text-lg font-semibold mb-2 text-colorLight200">Dados Pessoais</Text>
+                            <View className="flex-row justify-between gap-x-3">
+                                <Input className='flex-1' label="Nome" value={avaliacao.nome} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, nome: text }))} />
+                                <Input className='flex-1' label="Idade" keyboardType="numeric" value={avaliacao.idade} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, idade: text }))} />
+                            </View>
+
+
                             <View className="mb-3">
-                                <Text className="text-base text-gray-700 mb-1">Sexo</Text>
-                                <View className="border border-gray-300 rounded-lg bg-white">
+                                <Text className="text-base text-gray-400 mb-1">Sexo</Text>
+                                <View className="rounded-lg bg-colorLight200">
                                     <Picker
                                         selectedValue={avaliacao.sexo}
                                         onValueChange={(itemValue) => setAvaliacao((prev) => ({ ...prev, sexo: itemValue }))}
                                     >
                                         <Picker.Item label="Escolha um gênero" value="default" color="#9ca3af" enabled={false} />
-                                        <Picker.Item label="Masculino" value="masculino" />
-                                        <Picker.Item label="Feminino" value="feminino" />
+                                        <Picker.Item label="Masculino" value="Masculino" />
+                                        <Picker.Item label="Feminino" value="Feminino" />
                                     </Picker>
                                 </View>
                             </View>
                         </View>
 
-                        <View className="bg-gray-100 px-3 py-4 mb-4 rounded-xl border border-gray-200 shadow-sm">
-                            <Text className="text-lg font-semibold mb-2">Perímetros</Text>
+                        <View className="bg-colorInputs px-3 py-4 mb-4 rounded-xl border border-colorDark100">
+                            <Text className="text-lg font-semibold mb-2 text-colorLight200">Perímetros</Text>
                             <View className="flex-row justify-between gap-x-3">
-                                <Input label="Cintura (cm)" keyboardType="numeric" value={avaliacao.cintura} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, cintura: text }))} />
-                                <Input label="Quadril (cm)" keyboardType="numeric" value={avaliacao.quadril} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, quadril: text }))} />
+                                <Input className='flex-1' label="Cintura (cm)" keyboardType="numeric" value={avaliacao.cintura} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, cintura: text }))} />
+                                <Input className='flex-1' label="Quadril (cm)" keyboardType="numeric" value={avaliacao.quadril} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, quadril: text }))} />
                             </View>
 
                             <View className="flex-row justify-between gap-x-3">
-                                <Input label="Peitoral (cm)" keyboardType="numeric" value={avaliacao.peitoral} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, peitoral: text }))} />
-                                <Input label="Abdômen (cm)" keyboardType="numeric" value={avaliacao.abdomen} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, abdomen: text }))} />
+                                <Input className='flex-1' label="Peitoral (cm)" keyboardType="numeric" value={avaliacao.peitoral} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, peitoral: text }))} />
+                                <Input className='flex-1' label="Abdômen (cm)" keyboardType="numeric" value={avaliacao.abdomen} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, abdomen: text }))} />
                             </View>
 
                             <View className="flex-row justify-between gap-x-3">
-                                <Input label="Braço Relaxado (cm)" keyboardType="numeric" value={avaliacao.bracoRelaxado} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, bracoRelaxado: text }))} />
-                                <Input label="Braço Contraído (cm)" keyboardType="numeric" value={avaliacao.bracoContraido} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, bracoContraido: text }))} />
+                                <Input className='flex-1' label="Braço Relaxado (cm)" keyboardType="numeric" value={avaliacao.bracoRelaxado} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, bracoRelaxado: text }))} />
+                                <Input className='flex-1' label="Braço Contraído (cm)" keyboardType="numeric" value={avaliacao.bracoContraido} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, bracoContraido: text }))} />
                             </View>
 
                             <View className="flex-row justify-between gap-x-3">
-                                <Input label="Antebraço (cm)" keyboardType="numeric" value={avaliacao.antebraco} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, antebraco: text }))} />
-                                <Input label="Pescoço (cm)" keyboardType="numeric" value={avaliacao.pescoco} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, pescoco: text }))} />
+                                <Input className='flex-1' label="Antebraço (cm)" keyboardType="numeric" value={avaliacao.antebraco} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, antebraco: text }))} />
+                                <Input className='flex-1' label="Pescoço (cm)" keyboardType="numeric" value={avaliacao.pescoco} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, pescoco: text }))} />
                             </View>
 
                             <View className="flex-row justify-between gap-x-3">
-                                <Input label="Coxa (cm)" keyboardType="numeric" value={avaliacao.coxa} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, coxa: text }))} />
-                                <Input label="Panturrilha (cm)" keyboardType="numeric" value={avaliacao.panturrilha} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, panturrilha: text }))} />
+                                <Input className='flex-1' label="Coxa (cm)" keyboardType="numeric" value={avaliacao.coxa} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, coxa: text }))} />
+                                <Input className='flex-1' label="Panturrilha (cm)" keyboardType="numeric" value={avaliacao.panturrilha} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, panturrilha: text }))} />
                             </View>
                         </View>
 
-                        <View className="bg-gray-100 px-3 py-4 mb-4 rounded-xl border border-gray-200 shadow-sm">
+                        <View className="bg-colorInputs px-3 py-4 mb-4 rounded-xl border border-colorDark100">
                             <View className="flex-row justify-between">
-                                <Text className="text-lg font-semibold mb-2">Método de Cálculo</Text>
+                                <Text className="text-lg font-semibold mb-2 text-colorLight200">Método de Cálculo</Text>
                                 <TouchableOpacity onPress={() => setModalVisible(true)}>
-                                    <Icon name="info-outline" size={20} color="#6943FF" />
+                                    <Icon name="info-outline" size={20} color="#E4E4E7" />
                                 </TouchableOpacity>
                             </View>
-                            <View className="border border-gray-300 rounded-lg bg-white">
+                            <View className="rounded-lg bg-colorLight200">
                                 <Picker
                                     selectedValue={avaliacao.metodoCalculo}
                                     onValueChange={(itemValue) => setAvaliacao((prev) => ({ ...prev, metodoCalculo: itemValue }))}
                                 >
-                                    <Picker.Item label="IMC" value="imc" />
-                                    <Picker.Item label="Marinha (US Navy)" value="navy" />
+                                    <Picker.Item label="Escolha o método de calculo" value="default" color="#9ca3af" enabled={false} />
+                                    <Picker.Item label="IMC (Deurenberg)" value="IMC" />
+                                    <Picker.Item label="Marinha (US Navy)" value="NAVY" />
                                 </Picker>
                             </View>
                         </View>
 
-                        <View className="bg-gray-100 px-3 py-4 mb-6 rounded-xl border border-gray-200 shadow-sm">
-                            <Text className="text-lg font-semibold mb-2">Resultados</Text>
+                        <View className="bg-colorInputs px-3 py-4 mb-4 rounded-xl border border-colorDark100">
+                            <Text className="text-lg font-semibold mb-2 text-colorLight200">Resultados</Text>
 
-                            <Input label="Peso (kg)" keyboardType="numeric" value={avaliacao.peso} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, peso: text }))} />
-                            <Input label="Altura (m)" keyboardType="numeric" value={avaliacao.altura} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, altura: text }))} />
-                            <Input label="IMC" keyboardType="numeric" editable={false} value={avaliacao.imc} />
-                            <Input label="% Gordura" keyboardType="numeric" editable={false} value={avaliacao.percentualGordura} />
-                            <Input label="Massa Gorda (kg)" keyboardType="numeric" editable={false} value={avaliacao.massaGorda} />
-                            <Input label="Massa Magra (kg)" keyboardType="numeric" editable={false} value={avaliacao.massaMagra} />
+                            <Input className='flex-1' label="Peso (kg)" keyboardType="numeric" value={avaliacao.peso} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, peso: text }))} />
+                            <Input className='flex-1' label="Altura (m)" keyboardType="numeric" value={avaliacao.altura} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, altura: text }))} />
+                            <Input className='flex-1' label="IMC" keyboardType="numeric" editable={false} value={avaliacao.imc} />
+                            <Input className='flex-1' label="% Gordura" keyboardType="numeric" editable={false} value={avaliacao.percentualGordura} />
+                            <Input className='flex-1' label="Massa Gorda (kg)" keyboardType="numeric" editable={false} value={avaliacao.massaGorda} />
+                            <Input className='flex-1' label="Massa Magra (kg)" keyboardType="numeric" editable={false} value={avaliacao.massaMagra} />
                         </View>
 
-                        <TouchableOpacity onPress={salvarAvaliacao} disabled={loading} className="bg-colorViolet py-3 rounded-full">
-                            <Text className="text-white text-center text-lg font-semibold">
-                                {loading ? 'Salvando...' : 'Salvar Avaliação'}
-                            </Text>
-                        </TouchableOpacity>
+                        <View className='px-10 py-5'>
+                            <TouchableOpacity onPress={salvarAvaliacao} disabled={loading} className="bg-colorViolet py-3 rounded-full">
+                                <Text className="text-colorLight200 text-center text-lg font-semibold">
+                                    {loading ? 'Salvando...' : 'Salvar Avaliação'}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
                     <Modal
@@ -248,7 +335,6 @@ export default function CriarAvaliacao() {
                                 </Text>
 
                                 <ScrollView className="max-h-[360px] mb-4" showsVerticalScrollIndicator={false}>
-                                    {/* Método 1 - IMC */}
                                     <Text className="text-lg font-bold text-colorLight300 mb-1">
                                         1. IMC - Fórmula de Deurenberg
                                     </Text>
@@ -293,7 +379,6 @@ export default function CriarAvaliacao() {
                                         Fonte: U.S. Navy – Body Composition Assessment Guide (BCA)
                                     </Text>
                                 </ScrollView>
-
                                 <TouchableOpacity
                                     onPress={() => setModalVisible(false)}
                                     className="bg-colorViolet py-3 rounded-xl items-center mt-4"
