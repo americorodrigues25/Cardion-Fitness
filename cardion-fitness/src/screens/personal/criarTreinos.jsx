@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from '@expo/vector-icons';
 import Feather from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo'
+import * as Progress from 'react-native-progress';
 import { useGetTreino } from "~/hook/crud/treino/useGetTreino";
 import { useDeleteTreino } from "~/hook/crud/treino/useDeleteTreino";
 import { useEditTreino } from "~/hook/crud/treino/useEditTreino";
@@ -21,12 +22,12 @@ export default function CriarTreino() {
     const { deletarTreinoAluno } = useDeleteTreino();
     const [loading, setLoading] = useState(true);
     const [expandedTreinos, setExpandedTreinos] = useState({});
-    const [formError, setFormError] = useState('');
 
     const { EditarTreinoAluno } = useEditTreino();
 
     const [modalVisible, setModalVisible] = useState(false);
     const [treinoEditando, setTreinoEditando] = useState(null);
+
 
     const handleEditarTreino = async () => {
         if (!treinoEditando?.id) {
@@ -127,14 +128,40 @@ export default function CriarTreino() {
                                 onPress={() => toggleExpand(treino.id || idx)}
                                 className="mb-2 mx-4 p-4 rounded-lg border-b border-colorDark100"
                             >
-                                <View className="flex-row justify-between items-center">
-                                    <Text className="text-colorLight200 font-bold text-xl">
-                                        {treino.nome}
+                                <View className="flex-row justify-between items-center p-2">
+                                    <Text className="text-white font-bold text-xl">
+                                        {treino?.nome ?? 'Sem nome'}
                                     </Text>
+
                                     <AntDesign
-                                        name={expandedTreinos[treino.id || idx] ? "up" : "down"}
+                                        name={expandedTreinos[treino?.id ?? idx] ? "up" : "down"}
                                         size={15}
                                         color="#E4E4E7"
+                                    />
+                                </View>
+
+                                <View className="w-full mt-2">
+                                    <View className='ml-5'>
+                                        <Text className='text-colorLight300 text-xl mb-1'>Sessões realizadas</Text>
+                                        <Text className="text-colorViolet text-3xl">
+                                            20 { /* só p teste, depois colocar "sessoes realizadas" */}
+                                            <Text className="text-gray-500 text-xl"> / {treino.sessoes}</Text>
+                                        </Text>
+
+                                    </View>
+                                    <Progress.Bar
+                                        progress={
+                                            (treino.sessoes || 1)
+                                        }
+                                        width={null}
+                                        height={10}
+                                        color="#6943FF"
+                                        unfilledColor="#eee"
+                                        borderWidth={0}
+                                        borderRadius={5}
+                                        animated={true}
+                                        animationType="spring"
+                                        animationDuration={500}
                                     />
                                 </View>
 
