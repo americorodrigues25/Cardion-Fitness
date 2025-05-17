@@ -15,24 +15,26 @@ export const useRealizarSessaoTreino = () =>
         }
         function dataEhj(dataTimestamp){
 
+            if(dataTimestamp == null) return false
+
             const data = dataTimestamp.toDate ? dataTimestamp.toDate() : new Date(dataTimestamp);
             const hoje = new Date();
 
             return formatarDataSimples(data) === formatarDataSimples(hoje);
         }
         
-        const realizarSessao = async () =>{
+        const realizarSessao = async (idTreino) =>{
             const role = await AsyncStorage.getItem("role")
             const uid = await AsyncStorage.getItem('uid')
 
             if(role != 'aluno') return
 
-            const docRef = doc(db, role, uid);
+           const docRef = doc(db,"treino" , idTreino);
             const docSnap = await getDoc(docRef);
+    
+            const treino = docSnap.data()
 
-            const user = docSnap.data()
-
-            const usuarioTreinouHj = dataEhj(user?.sessoesRealizadas?.dataUltimaSessao)
+            const usuarioTreinouHj = dataEhj(treino?.sessoesRealizadas?.dataUltimaSessao)
 
             if(usuarioTreinouHj == true) {
                 Toast.show({
@@ -47,8 +49,14 @@ export const useRealizarSessaoTreino = () =>
             const {aplicarConquistaPendente} = useConquistas()        
                 
             try{
+
+                  await updateDoc(doc(db, 'treino', idTreino), {
+                    'sessoesRealizadas.qtd': increment(1),
+                    'sessoesRealizadas.dataUltimaSessao': Timestamp.now()
+                });
+
                 await updateDoc(doc(db, role, uid), {
-                    pontos:5,
+                    pontos:increment(5),
                     'sessoesRealizadas.qtd': increment(1),
                     'sessoesRealizadas.dataUltimaSessao': Timestamp.now()
                     
