@@ -138,8 +138,8 @@ export const useGet = () => {
 
     if (querySnapshot.empty) return
 
-    const doc = querySnapshot.docs[0];
-    const data = doc.data();
+    const docVinculo = querySnapshot.docs[0];
+    const data = docVinculo.data();
 
     const docRef = doc(db, 'personal', data.idPersonal);
     const docSnap = await getDoc(docRef);

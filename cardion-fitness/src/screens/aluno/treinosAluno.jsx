@@ -5,6 +5,7 @@ import { useGetTreino } from '~/hook/crud/treino/useGetTreino';
 import { getAuth } from 'firebase/auth';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { gerarPdfTreinos } from '~/utils/gerarPdfTreinos';
+import { useGet } from '~/hook/crud/useGet';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import * as Progress from 'react-native-progress';
@@ -14,6 +15,9 @@ export default function TreinosAluno() {
     const [loading, setLoading] = useState(true);
     const { getAllTreinosByIdAluno } = useGetTreino();
     const [dadosTreinos, setDadosTreinos] = useState([]);
+    const {getById, getPersonalDoAluno} = useGet()
+    const [nome,setNome] = useState()
+    const [nomePersonal,setNomePersonal] = useState()
 
     useFocusEffect(
         useCallback(() => {
@@ -33,7 +37,21 @@ export default function TreinosAluno() {
                 }
             };
 
+            const fetchAluno = async () =>{
+                    const user = await getById()
+                    setNome(user.nome)
+                
+            }
+
+            const fetchNomePersonal = async () => {
+                const personal = await getPersonalDoAluno()
+                setNomePersonal(personal.nome)
+            }
             fetchTreinos();
+
+            fetchAluno();
+
+            fetchNomePersonal();
         }, [])
     );
 
@@ -74,7 +92,7 @@ export default function TreinosAluno() {
                             <View>
                                 <Text className="text-lg font-bold text-colorLight200">Personal </Text>
                                 { /*trazer nome do personal vinculado*/}
-                                <Text className="text-lg mb-4 text-gray-400">Américo Rodrigues </Text>
+                                <Text className="text-lg mb-4 text-gray-400">{nomePersonal} </Text>
                             </View>
                         </View>
 
@@ -139,7 +157,7 @@ export default function TreinosAluno() {
                     </View>
                     <View className='px-20'>
                         <TouchableOpacity
-                            onPress={() => gerarPdfTreinos(dadosTreinos)}
+                            onPress={() => gerarPdfTreinos(dadosTreinos,nome)}
                             className="bg-colorViolet py-3 rounded-full">
                             <Text className="text-colorLight200 text-center text-lg font-bold">Baixar Treino</Text>
                         </TouchableOpacity>
