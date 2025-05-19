@@ -5,6 +5,8 @@ import SignUp from '../screens/auth/signUp';
 import ResetPassword from '~/screens/auth/resetPassword';
 import LoginPassword from '~/screens/auth/loginPassword';
 import UpdatePassword from '~/screens/auth/updatePassword';
+import TreinosAluno from '~/screens/aluno/treinosAluno';
+import TreinoDetalhado from '~/screens/aluno/treinoDetalhado';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +44,16 @@ const AlunoNavigation = () => {
                 name='updatePassword'
                 options={{ headerShown: false }}
                 component={UpdatePassword}
+            />
+            <Stack.Screen
+                name='TreinoAluno'
+                options={{ headerShown: false }}
+                component={TreinosAluno}
+            />
+            <Stack.Screen
+                name='TreinoDetalhado'
+                options={{ headerShown: false }}
+                component={TreinoDetalhado}
             />
         </Stack.Navigator>
     );

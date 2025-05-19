@@ -12,7 +12,7 @@ export const ButtonViolet = styled.TouchableOpacity`
 
 export const ButtonTextViolet = styled.Text`
   color: #E4E4E7;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 500;
   text-align: center;
 `;

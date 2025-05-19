@@ -115,11 +115,11 @@ export default function SignUp({ }) {
 
             <SafeAreaView className='w-full h-full'>
 
-                <View className="px-5 py-5 flex-row justify-between">
+                <View className=" px-5 pt-5 flex-row justify-between">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image source={require('~/assets/img/btnVoltar.png')} className='w-4 h-5' />
                     </TouchableOpacity>
-                    <Image source={require('~/assets/img/logo/Logo1.png')} className="w-28 h-14" resizeMode="contain" />
+                    <Image source={require('~/assets/img/logo/Logo1.png')} className="w-24 h-12" resizeMode="contain" />
                 </View>
 
                 <KeyboardAvoidingView

@@ -344,57 +344,11 @@ export default function Perfil({ }) {
                                 </TouchableOpacity>
                             </View>
 
-                            <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Peso:</Text>
-                            <Input
-                                placeholder="Digite seu peso"
-                                keyboardType="number-pad"
-                                returnKeyType="done"
-                                mask
-                                type="custom"
-                                options={{ mask: '99.99' }}
-                                placeholderTextColor="#5d5d5d"
-                                value={peso}
-                                onChangeText={setPeso}
-                                onFocus={() => setCampoFocado('peso')}
-                                onBlur={() => setCampoFocado('')}
-                                style={{
-                                    borderColor: campoFocado === 'peso' ? '#6943FF' : '#27272A',
-                                }}
-                            />
-
-                            <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Altura:</Text>
-                            <Input
-                                placeholder="Digite sua altura"
-                                keyboardType="number-pad"
-                                returnKeyType="done"
-                                mask
-                                type="custom"
-                                options={{ mask: '9.99' }}
-                                placeholderTextColor="#5d5d5d"
-                                value={altura}
-                                onChangeText={setAltura}
-                                onFocus={() => setCampoFocado('altura')}
-                                onBlur={() => setCampoFocado('')}
-                                style={{
-                                    borderColor: campoFocado === 'altura' ? '#6943FF' : '#27272A',
-                                }}
-                            />
-
-                            <Text className="px-12 text-colorLight200 text-lg font-semibold mb-1">Objetivo:</Text>
-                            <Input
-                                placeholder="Objetivo"
-                                keyboardType="default"
-                                returnKeyType="done"
-                                maxLength={30}
-                                placeholderTextColor="#5d5d5d"
-                                value={objetivo}
-                                onChangeText={setObjetivo}
-                                onFocus={() => setCampoFocado('objetivo')}
-                                onBlur={() => setCampoFocado('')}
-                                style={{
-                                    borderColor: campoFocado === 'objetivo' ? '#6943FF' : '#27272A',
-                                }}
-                            />
+                            <TouchableOpacity className='mt-5' onPress={() => navigation.navigate('updatePassword')}>
+                                <Text className="text-colorLight200 text-base font-normal text-center">
+                                    Atualizar minha <Text className='text-colorViolet font-semibold'>senha</Text>
+                                </Text>
+                            </TouchableOpacity>
 
                             <View className="my-5">
                                 <ButtonViolet onPress={atualizarDados}>

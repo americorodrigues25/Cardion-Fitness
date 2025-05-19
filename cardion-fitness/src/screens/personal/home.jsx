@@ -47,17 +47,6 @@ export default function Home() {
         }, [isFocused])
     );
 
-    const trazerNome = async () => {
-        const user = await getById()
-        setNome(user.nome)
-    }
-
-    useEffect(() => {
-        const fetchNome = async () => {
-            await trazerNome();
-        };
-        fetchNome();
-    }, [])
 
     useFocusEffect(
         useCallback(() => {
@@ -74,6 +63,19 @@ export default function Home() {
         }, [])
     );
 
+    const trazerNome = async () => {
+        const user = await getById()
+        setNome(user.nome)
+    }
+
+    useEffect(() => {
+        const fetchNome = async () => {
+            await trazerNome();
+        };
+
+        fetchNome();
+    }, [])
+
 
     return (
         <SafeAreaView
@@ -84,6 +86,22 @@ export default function Home() {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
+
+                <View className='flex-row items-center justify-between mb-2'>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Image source={require('~/assets/img/logo/Logo1.png')} className="w-20 h-10" resizeMode="contain" />
+                    </View>
+
+                    <View className='flex-row items-center gap-3'>
+                        <TouchableOpacity >
+                            <FontAwesome name="bell-o" size={20} color="#e4e4e7" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setShowMessageModal(true)}>
+                            <MaterialCommunityIcons name="message-reply-text-outline" size={20} color="#e4e4e7" />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
                 <ScrollView
                     bounces={false}
                     overScrollMode="never"
@@ -91,24 +109,9 @@ export default function Home() {
                     keyboardShouldPersistTaps="handled"
                 >
 
-                    <View className='flex-row items-center justify-between'>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Image source={require('~/assets/img/logo/Logo1.png')} className="w-24 h-12" resizeMode="contain" />
-                        </View>
-
-                        <View className='flex-row items-center gap-5'>
-                            <TouchableOpacity >
-                                <FontAwesome name="bell-o" size={23} color="#e4e4e7" />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setShowMessageModal(true)}>
-                                <MaterialCommunityIcons name="message-reply-text-outline" size={23} color="#e4e4e7" />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
                     <View className='py-10'>
                         <View className=''>
-                            <Text className='text-colorLight200 text-2xl font-semibold'>Bem vindo, {nome}!</Text>
+                            <Text className='text-colorLight200 text-2xl font-semibold'>Olá {nome}!</Text>
                             <Text className='text-lg font-semibold text-gray-400 pt-5 pb-2 px-3'>Seus alunos</Text>
                         </View>
 

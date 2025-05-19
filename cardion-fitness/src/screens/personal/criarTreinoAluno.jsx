@@ -80,7 +80,7 @@ export default function CriarTreinoAluno() {
                             <Image source={require('~/assets/img/btnVoltar.png')} className="w-4 h-5" />
                             <Text className="ml-2 text-colorLight200">Criar treinos</Text>
                         </TouchableOpacity>
-                        <Image source={require('~/assets/img/logo/Logo1.png')} className="w-24 h-12" resizeMode="contain" />
+                        <Image source={require('~/assets/img/logo/Logo1.png')} className="w-20 h-10" resizeMode="contain" />
                     </View>
 
                     <View className='py-10 px-10'>
