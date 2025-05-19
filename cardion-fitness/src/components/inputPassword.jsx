@@ -16,7 +16,7 @@ const StyledInput = styled.TextInput`
   flex: 1;
   font-size: 16px;
   color: #e4e4e7;
-  padding: 20px 40px;
+  padding: 17px 30px;
 `;
 
 const ToggleButton = styled.TouchableOpacity`

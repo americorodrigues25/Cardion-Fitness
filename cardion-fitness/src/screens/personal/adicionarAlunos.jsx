@@ -104,7 +104,7 @@ export default function AdicionarAlunos() {
                             <Image source={require('~/assets/img/btnVoltar.png')} className="w-4 h-5" />
                             <Text className="ml-2 text-colorLight200">Adicionar aluno</Text>
                         </TouchableOpacity>
-                        <Image source={require('~/assets/img/logo/Logo1.png')} className="w-24 h-12" resizeMode="contain" />
+                        <Image source={require('~/assets/img/logo/Logo1.png')} className="w-20 h-10" resizeMode="contain" />
                     </View>
 
                     <View className="flex-1 justify-center items-center">
