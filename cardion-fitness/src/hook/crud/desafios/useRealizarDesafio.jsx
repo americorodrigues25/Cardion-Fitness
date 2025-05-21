@@ -1,4 +1,4 @@
-import { doc, setDoc,query,limit,where,getDocs, getDoc,collection,addDoc,updateDoc,arrayUnion,arrayRemove,increment  } from 'firebase/firestore';
+import { doc, setDoc,query,limit,where,getDocs, getDoc,collection,addDoc,updateDoc,arrayUnion,arrayRemove,increment ,Timestamp } from 'firebase/firestore';
 import { useState } from 'react';
 
 // conexão Firebase
@@ -64,8 +64,10 @@ export const useRealizarDesafio = () => {
         const desafio = docSnap.data()
 
         await updateDoc(doc(db, 'aluno', idAluno), {
-              desafiosRealizados: arrayUnion(1),
-              pontos: increment(desafio.pontos)
+              "desafiosRealizados.qtd": increment(1),
+              "desafiosRealizados.dataUltimaSessao": Timestamp.now(),
+              pontos: increment(desafio.pontos),
+              pontosDesafios: increment(desafio.pontos)
               });
         
         await verificarConquistaPendente(idAluno)
