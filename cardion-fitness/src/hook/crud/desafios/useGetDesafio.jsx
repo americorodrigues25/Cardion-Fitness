@@ -54,11 +54,25 @@ import { db, auth } from '../../../firebase/firebaseConfig';
             return desafios;
         }
 
-        const getAll = async (idPersonal) =>{
+        const getAllDesafiosByTipo = async (tipo) =>{
+
+            const desafiosRef = collection(db, 'desafios');
+            const q = query(desafiosRef, where('tipo', '=', tipo));
+            const querySnap = await getDocs(q);
+
+            const desafios = querySnap.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+            }));
+
+            return desafios;
+        }
+
+        const getAll = async () =>{
             const dados = await getDocs(collection(db, 'desafios'));
 
             return dados.data()
         }
     
-        return{getDesafio,getAllDesafiosByIdAluno,getAll}
+        return{getDesafio,getAllDesafiosByIdAluno,getAll,getAllDesafiosByTipo}
     }
