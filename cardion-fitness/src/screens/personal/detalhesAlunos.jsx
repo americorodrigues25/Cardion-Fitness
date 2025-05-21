@@ -13,12 +13,16 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 
+import axios from 'axios';
+
+import { SERVER_URL } from '~/apiConfig/config';
 
 export default function DetalhesAlunos() {
     const navigation = useNavigation();
     const route = useRoute();
     const [showModal, setShowModal] = useState(false);
     const { aluno } = route.params || {};
+    const [imageUrl,setImageUrl] =useState()
 
     const { desvincularAluno } = useVinculo();
 
@@ -52,8 +56,9 @@ export default function DetalhesAlunos() {
         };
 
         const fetchImage = async () => {
-            const userId = await AsyncStorage.getItem("uid");
-            const res = await axios.get(`${SERVER_URL}/image/${userId}`);
+            
+            const res = await axios.get(`${SERVER_URL}/image/${aluno.id}`);
+            
             setImageUrl(`${res.data.url}?${Date.now()}`);
         };
 
