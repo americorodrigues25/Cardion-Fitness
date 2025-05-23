@@ -98,7 +98,7 @@ export default function AvaliacaoScreen() {
                             {loading ? (
                                 <ActivityIndicator size="large" color="#6943FF" className="mt-10" />
                             ) : avaliacoes.length === 0 ? (
-                                <Text className="text-center text-gray-500">Nenhuma avaliação registrada.</Text>
+                                <Text className="text-center text-colorLight200">Nenhuma avaliação registrada.</Text>
                             ) : (
                                 avaliacoes.map((avaliacao) => (
                                     <TouchableOpacity
