@@ -46,7 +46,7 @@ export default function TreinoDetalhado({ route }) {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
-                <View className='flex-row justify-between items-center py-7 px-5 bg-colorViolet'>
+                <View className='flex-row justify-between items-center py-5 px-5 bg-colorViolet'>
                     <Text className='text-2xl font-bold text-colorLight200'>{treino.nome}</Text>
                     <Text className='text-2xl font-bold text-colorLight200'>{formatTime(seconds)}</Text>
                 </View>
@@ -80,22 +80,22 @@ export default function TreinoDetalhado({ route }) {
                                 <View className="flex-row justify-between pt-2">
                                     <View>
                                         <Text className="text-gray-500 text-base">Carga</Text>
-                                        <Text className="text-colorLight200 text-base">{ex.carga || '–'} Kg</Text>
+                                        <Text className="text-colorLight300 text-base">{ex.carga || '–'} Kg</Text>
                                     </View>
                                     <View>
                                         <Text className="text-gray-500 text-base">Séries</Text>
-                                        <Text className="text-colorLight200 text-base">{ex.series} x {ex.repeticoes}</Text>
+                                        <Text className="text-colorLight300 text-base">{ex.series} x {ex.repeticoes}</Text>
                                     </View>
                                     <View>
                                         <Text className="text-gray-500 text-base">Descanso</Text>
-                                        <Text className="text-colorLight200 text-base">{ex.descanso} s</Text>
+                                        <Text className="text-colorLight300 text-base">{ex.descanso} s</Text>
                                     </View>
                                 </View>
 
                                 {ex.observacao ? (
                                     <View className="pt-2">
                                         <Text className="text-gray-500 text-base">Observações</Text>
-                                        <Text className="text-colorLight200 text-base">{ex.observacao}</Text>
+                                        <Text className="text-colorLight300 text-base">{ex.observacao}</Text>
                                     </View>
                                 ) : null}
                             </View>
@@ -125,17 +125,17 @@ export default function TreinoDetalhado({ route }) {
                         </View>
                     </View>
                 </ScrollView>
-                <View className="flex-row justify-around items-center py-3 bg-colorViolet">
+                <View className="flex-row justify-around items-center py-3 border-t-[0.5px] border-colorDark100">
                     <TouchableOpacity onPress={() => setIsRunning(true)}>
-                        <Icon name="play" size={28} color="#10B981" />
+                        <Icon name="play" size={28} color="#6943FF" />
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => setIsRunning(false)}>
-                        <Icon name="pause" size={28} color="#F59E0B" />
+                        <Icon name="pause" size={28} color="#6943FF" />
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => { setIsRunning(false); setSeconds(0); }}>
-                        <Icon name="refresh" size={28} color="#EF4444" />
+                        <Icon name="refresh" size={28} color="#6943FF" />
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
