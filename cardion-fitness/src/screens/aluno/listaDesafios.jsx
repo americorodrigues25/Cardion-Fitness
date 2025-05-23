@@ -89,7 +89,7 @@ export default function ListaDesafios({ route }) {
                                 <View className="bg-colorInputs p-4 rounded-2xl mb-4 border-[0.2px] border-gray-600">
                                     <Text className="text-colorLight300 font-bold text-xl">{item.nome}</Text>
 
-                                    {/*teste pra conseguir identificar desafio no firebase e corrigir bug*/}
+                                    {/*aqui o ID é só teste pra conseguir identificar desafio no firebase e corrigir bug*/}
                                     <Text className="text-colorLight300 font-bold text-xl">{item.id}</Text>
 
                                     <Text className="text-gray-400 mt-1">{item.descricao}</Text>
