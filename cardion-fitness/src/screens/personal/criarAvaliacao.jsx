@@ -5,19 +5,20 @@ import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useCreateAvaliacaoFisica } from '~/hook/crud/avaliacaoFisica/useCreateAvaliacaoFisica';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/Feather';
 import Toast from 'react-native-toast-message';
 
 const Input = ({ label, keyboardType = 'default', className = '', value, onChangeText, editable = true }) => (
     <View className={`mb-3 ${className}`}>
         <Text className="text-base text-gray-400 mb-1">{label}</Text>
         <TextInput
-            className={`w-full h-12 px-4 py-3 rounded-lg border ${editable ? 'bg-colorLight200' : 'bg-gray-200'}`}
+            className={`w-full h-12 px-4 py-3 rounded-lg ${editable ? 'bg-colorLight300' : 'bg-gray-300'}`}
             placeholder={label}
             keyboardType={keyboardType}
             value={value}
             onChangeText={onChangeText}
             editable={editable}
+            placeholderTextColor="gray"
         />
     </View>
 );
@@ -56,6 +57,19 @@ export default function CriarAvaliacao() {
         percentualGordura: '',
         massaMagra: '',
         massaGorda: '',
+        // Campos para Pollock 3 dobras (HOMEM: Peitoral, Abdominal, Coxa / MULHER: Tríceps, Supra-ilíaca, Coxa)
+        dobraPollock3_1: '', // Será Peitoral (H) ou Tríceps (M)
+        dobraPollock3_2: '', // Será Abdominal (H) ou Supra-ilíaca (M)
+        dobraPollock3_3: '', // Será Coxa (H/M)
+
+        // Campos para Pollock 7 dobras
+        dobraPeitoral7: '',
+        dobraAbdominal7: '',
+        dobraTriceps7: '',
+        dobraSubescapular7: '',
+        dobraAxilar7: '',
+        dobraSuprailiaca7: '',
+        dobraCoxa7: '',
     });
 
     const { criarAvaliacaoFisica, loading } = useCreateAvaliacaoFisica();
@@ -73,7 +87,6 @@ export default function CriarAvaliacao() {
             Toast.show({ type: 'error', text1: 'Preencha a próxima avaliação.' });
             return false;
         }
-
         if (!avaliacao.nome.trim()) {
             Toast.show({ type: 'error', text1: 'Preencha o nome.' });
             return false;
@@ -86,12 +99,42 @@ export default function CriarAvaliacao() {
             Toast.show({ type: 'error', text1: 'Selecione o sexo.' });
             return false;
         }
+        if (avaliacao.metodoCalculo === 'default') {
+            Toast.show({ type: 'error', text1: 'Selecione o método de cálculo.' });
+            return false;
+        }
+        if (!avaliacao.peso.trim()) {
+            Toast.show({ type: 'error', text1: 'Preencha o peso.' });
+            return false;
+        }
+        if (!avaliacao.altura.trim()) {
+            Toast.show({ type: 'error', text1: 'Preencha a altura.' });
+            return false;
+        }
+
+        // Validação dos inputs para Pollock 3 dobras
+        if (avaliacao.metodoCalculo === 'Pollock3') {
+            if (!avaliacao.dobraPollock3_1 || !avaliacao.dobraPollock3_2 || !avaliacao.dobraPollock3_3) {
+                Toast.show({ type: 'error', text1: 'Preencha todas as dobras para Pollock 3 Dobras.' });
+                return false;
+            }
+        }
+        // Validação dos inputs para Pollock 7 dobras
+        if (avaliacao.metodoCalculo === 'Pollock7') {
+            // Note que Dobra Peitoral é diferente para Homens e Mulheres (mesmo nome, mas campo de estado diferente)
+            // Para simplificar, estamos usando os mesmos campos para o estado, e a lógica que decide qual deles exibir
+            // e validar será baseada no sexo. A validação final aqui só verifica se os 7 campos estão preenchidos.
+            if (!avaliacao.dobraPeitoral7 || !avaliacao.dobraAbdominal7 || !avaliacao.dobraTriceps7 || !avaliacao.dobraSubescapular7 ||
+                !avaliacao.dobraAxilar7 || !avaliacao.dobraSuprailiaca7 || !avaliacao.dobraCoxa7) {
+                Toast.show({ type: 'error', text1: 'Preencha todas as dobras para Pollock 7 Dobras.' });
+                return false;
+            }
+        }
 
         return true;
     };
 
     const salvarAvaliacao = async () => {
-
         if (!validarCampos()) return;
 
         const idPersonal = await AsyncStorage.getItem('uid');
@@ -125,272 +168,336 @@ export default function CriarAvaliacao() {
         const pesoNum = parseFloat(avaliacao.peso.replace(',', '.'));
         const alturaNum = parseFloat(avaliacao.altura.replace(',', '.'));
         const idadeNum = parseInt(avaliacao.idade);
-        const cinturaNum = parseFloat(avaliacao.cintura.replace(',', '.'));
-        const quadrilNum = parseFloat(avaliacao.quadril.replace(',', '.'));
-        const pescocoNum = parseFloat(avaliacao.pescoco.replace(',', '.'));
+        const sexo = avaliacao.sexo;
 
-        if (pesoNum > 0 && alturaNum > 0 && idadeNum > 0 && (avaliacao.sexo === 'Masculino' || avaliacao.sexo === 'Feminino')) {
-            const imcCalc = pesoNum / (alturaNum * alturaNum);
-            const imc = imcCalc.toFixed(2);
+        // Função auxiliar para somar dobras e converter string para float com fallback 0
+        const toFloat = (v) => {
+            const n = parseFloat(v.replace(',', '.'));
+            return isNaN(n) ? 0 : n;
+        };
 
-            let percGorduraCalc = 0;
-            if (avaliacao.metodoCalculo === 'IMC') {
-                const sexoNum = avaliacao.sexo === 'Masculino' ? 1 : 0;
-                percGorduraCalc = 1.2 * imcCalc + 0.23 * idadeNum - 10.8 * sexoNum - 5.4;
-            } else if (avaliacao.metodoCalculo === 'NAVY') {
-                if (avaliacao.sexo === 'Masculino' && cinturaNum > 0 && pescocoNum > 0) {
-                    percGorduraCalc = 86.010 * Math.log10(cinturaNum - pescocoNum) - 70.041 * Math.log10(alturaNum * 100) + 36.76;
-                } else if (avaliacao.sexo === 'Feminino' && cinturaNum > 0 && pescocoNum > 0 && quadrilNum > 0) {
-                    percGorduraCalc = 163.205 * Math.log10(cinturaNum + quadrilNum - pescocoNum) - 97.684 * Math.log10(alturaNum * 100) - 78.387;
+        let percentualGorduraCalc = null;
+        let imcCalc = null;
+        let massaGordaCalc = null;
+        let massaMagraCalc = null;
+
+        // Cálculo do IMC
+        if (pesoNum > 0 && alturaNum > 0) {
+            imcCalc = pesoNum / (alturaNum * alturaNum);
+        }
+
+        // Cálculos de Percentual de Gordura, Massa Gorda e Massa Magra
+        if (pesoNum > 0 && alturaNum > 0 && idadeNum > 0 && (sexo === 'Masculino' || sexo === 'Feminino')) {
+            if (avaliacao.metodoCalculo === 'Pollock3') {
+                const dobra1 = toFloat(avaliacao.dobraPollock3_1);
+                const dobra2 = toFloat(avaliacao.dobraPollock3_2);
+                const dobra3 = toFloat(avaliacao.dobraPollock3_3);
+
+                if (dobra1 > 0 && dobra2 > 0 && dobra3 > 0) {
+                    const somaDobras = dobra1 + dobra2 + dobra3;
+
+                    let densidadeCorporal = 0;
+                    if (sexo === 'Masculino') {
+                        // Pollock 3 Dobras - Homens (Peitoral, Abdominal, Coxa)
+                        densidadeCorporal = 1.10938 - 0.0008267 * somaDobras + 0.0000016 * somaDobras * somaDobras - 0.0002574 * idadeNum;
+                    } else { // Feminino
+                        // Pollock 3 Dobras - Mulheres (Tríceps, Supra-ilíaca, Coxa)
+                        densidadeCorporal = 1.0994921 - 0.0009929 * somaDobras + 0.0000023 * somaDobras * somaDobras - 0.0001392 * idadeNum;
+                    }
+
+                    if (densidadeCorporal > 0) {
+                        percentualGorduraCalc = (495 / densidadeCorporal) - 450;
+                    }
+                }
+            } else if (avaliacao.metodoCalculo === 'Pollock7') {
+                const dobraPeitoral7Num = toFloat(avaliacao.dobraPeitoral7);
+                const dobraAbdominal7Num = toFloat(avaliacao.dobraAbdominal7);
+                const dobraTriceps7Num = toFloat(avaliacao.dobraTriceps7);
+                const dobraSubescapular7Num = toFloat(avaliacao.dobraSubescapular7);
+                const dobraAxilar7Num = toFloat(avaliacao.dobraAxilar7);
+                const dobraSuprailiaca7Num = toFloat(avaliacao.dobraSuprailiaca7);
+                const dobraCoxa7Num = toFloat(avaliacao.dobraCoxa7);
+
+                // As 7 dobras devem ser preenchidas para o cálculo
+                if (dobraPeitoral7Num > 0 && dobraAbdominal7Num > 0 && dobraTriceps7Num > 0 &&
+                    dobraSubescapular7Num > 0 && dobraAxilar7Num > 0 && dobraSuprailiaca7Num > 0 && dobraCoxa7Num > 0) {
+
+                    const somaDobras = dobraPeitoral7Num + dobraAbdominal7Num + dobraTriceps7Num
+                        + dobraSubescapular7Num + dobraAxilar7Num + dobraSuprailiaca7Num + dobraCoxa7Num;
+
+                    let densidadeCorporal = 0;
+                    if (sexo === 'Masculino') {
+                        // Pollock 7 Dobras - Homens
+                        densidadeCorporal = 1.112 - (0.00043499 * somaDobras) + (0.00000055 * somaDobras * somaDobras) - (0.00028826 * idadeNum);
+                    } else { // Feminino
+                        // Pollock 7 Dobras - Mulheres
+                        densidadeCorporal = 1.097 - (0.00046971 * somaDobras) + (0.00000056 * somaDobras * somaDobras) - (0.00012828 * idadeNum);
+                    }
+
+                    if (densidadeCorporal > 0) {
+                        percentualGorduraCalc = (495 / densidadeCorporal) - 450;
+                    }
                 }
             }
 
-            const percentualGordura = Math.max(0, percGorduraCalc).toFixed(2);
-            const massaGorda = (pesoNum * (percentualGordura / 100)).toFixed(2);
-            const massaMagra = (pesoNum - pesoNum * (percentualGordura / 100)).toFixed(2);
-
-            setAvaliacao((prev) => ({
-                ...prev,
-                imc,
-                percentualGordura,
-                massaGorda,
-                massaMagra,
-            }));
-        } else {
-            setAvaliacao((prev) => ({
-                ...prev,
-                imc: '',
-                percentualGordura: '',
-                massaGorda: '',
-                massaMagra: '',
-            }));
+            if (percentualGorduraCalc !== null && pesoNum > 0 && !isNaN(percentualGorduraCalc)) {
+                massaGordaCalc = (percentualGorduraCalc / 100) * pesoNum;
+                massaMagraCalc = pesoNum - massaGordaCalc;
+            }
         }
-    }, [avaliacao.peso, avaliacao.altura, avaliacao.idade, avaliacao.sexo, avaliacao.metodoCalculo, avaliacao.cintura, avaliacao.quadril, avaliacao.pescoco]);
 
-    const formatarData = (text) => {
-        const cleaned = text.replace(/\D/g, '');
-        const formatted = cleaned
-            .slice(0, 8)
-            .replace(/(\d{2})(\d{0,2})(\d{0,4})/, (_, d, m, y) => {
-                let resultado = d;
-                if (m) resultado += '/' + m;
-                if (y) resultado += '/' + y;
-                return resultado;
-            });
-
-        return formatted;
-    };
+        setAvaliacao(prev => ({
+            ...prev,
+            imc: imcCalc !== null && !isNaN(imcCalc) ? imcCalc.toFixed(2).replace('.', ',') : '',
+            percentualGordura: percentualGorduraCalc !== null && !isNaN(percentualGorduraCalc) ? percentualGorduraCalc.toFixed(2).replace('.', ',') : '',
+            massaGorda: massaGordaCalc !== null && !isNaN(massaGordaCalc) ? massaGordaCalc.toFixed(2).replace('.', ',') : '',
+            massaMagra: massaMagraCalc !== null && !isNaN(massaMagraCalc) ? massaMagraCalc.toFixed(2).replace('.', ',') : '',
+        }));
+    }, [
+        avaliacao.peso,
+        avaliacao.altura,
+        avaliacao.idade,
+        avaliacao.sexo,
+        avaliacao.metodoCalculo,
+        avaliacao.dobraPollock3_1,
+        avaliacao.dobraPollock3_2,
+        avaliacao.dobraPollock3_3,
+        avaliacao.dobraPeitoral7,
+        avaliacao.dobraAbdominal7,
+        avaliacao.dobraTriceps7,
+        avaliacao.dobraSubescapular7,
+        avaliacao.dobraAxilar7,
+        avaliacao.dobraSuprailiaca7,
+        avaliacao.dobraCoxa7,
+    ]);
 
     return (
-        <SafeAreaView edges={["top"]} className="flex-1 bg-colorBackground">
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+        <SafeAreaView
+            edges={['top', 'bottom']}
+            className='flex-1 bg-colorBackground px-5 py-2'
+        >
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+            >
                 <ScrollView
                     bounces={false}
                     overScrollMode="never"
-                    showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
                 >
 
-                    <View className="pt-5 px-5">
+                    <View className="pt-5 pb-5">
                         <TouchableOpacity onPress={() => navigation.goBack()} className="flex-row">
                             <Image source={require('~/assets/img/btnVoltar.png')} className="w-4 h-5" />
-                            <Text className="ml-2 text-colorLight200">Criar avaliação</Text>
+                            <Text className="ml-2 text-colorLight200">Nova Avaliação</Text>
                         </TouchableOpacity>
                     </View>
 
-                    <View className='px-4 py-5'>
-                        <Text className="text-2xl font-bold mb-6 text-colorLight200 text-center">Avaliação Física</Text>
+                    <View className="flex-row justify-between items-center mb-3">
+                        <Text className="text-white text-xl font-semibold">Nova Avaliação Física</Text>
+                    </View>
 
-                        <View className="bg-colorInputs px-3 py-4 mb-4 rounded-xl border border-colorDark100">
-                            <Text className="text-lg font-semibold mb-2 text-colorLight200">Detalhes</Text>
-                            <View className="flex-row justify-between gap-x-3">
-                                <Input className='flex-1' label="Objetivo da Avaliação" value={avaliacao.focoAvaliacao} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, focoAvaliacao: text }))} />
-                            </View>
-                            <View className="flex-row justify-between gap-x-3">
-                                <Input
-                                    className="flex-1"
-                                    label="Data Avaliação"
-                                    keyboardType="numeric"
-                                    value={avaliacao.data}
-                                    onChangeText={(text) => {
-                                        const dataFormatada = formatarData(text);
-                                        setAvaliacao((prev) => ({ ...prev, data: dataFormatada }));
-                                    }}
-                                />
-                                <Input
-                                    className="flex-1"
-                                    label="Proxima Avaliação"
-                                    keyboardType="numeric"
-                                    value={avaliacao.dataProximaAvaliacao}
-                                    onChangeText={(text) => {
-                                        const dataFormatada = formatarData(text);
-                                        setAvaliacao((prev) => ({ ...prev, dataProximaAvaliacao: dataFormatada }));
-                                    }}
-                                />
+                    <View className='border border-gray-500 p-3 rounded-xl mb-3'>
+                        <Text className='text-colorLight300 font-bold text-lg mb-2'>Detalhes Avaliação:</Text>
+                        <Input label="Foco da Avaliação" value={avaliacao.focoAvaliacao} onChangeText={text => setAvaliacao(prev => ({ ...prev, focoAvaliacao: text }))} />
+                        <Input label="Data da Avaliação (dd/mm/aaaa)" value={avaliacao.data} onChangeText={text => setAvaliacao(prev => ({ ...prev, data: text }))} />
+                        <Input label="Próxima Avaliação (dd/mm/aaaa)" value={avaliacao.dataProximaAvaliacao} onChangeText={text => setAvaliacao(prev => ({ ...prev, dataProximaAvaliacao: text }))} />
+                    </View>
 
-                            </View>
+                    <View className='border border-gray-500 p-3 rounded-xl mb-3'>
+                        <Text className='text-colorLight300 font-bold text-lg mb-2'>Dados Pessoais:</Text>
+                        <Input label="Nome" value={avaliacao.nome} onChangeText={text => setAvaliacao(prev => ({ ...prev, nome: text }))} />
+                        <Input label="Idade" keyboardType="numeric" value={avaliacao.idade} onChangeText={text => setAvaliacao(prev => ({ ...prev, idade: text.replace(/[^0-9]/g, '') }))} />
 
-                        </View>
-
-                        <View className="bg-colorInputs px-3 py-4 mb-4 rounded-xl border border-colorDark100">
-                            <Text className="text-lg font-semibold mb-2 text-colorLight200">Dados Pessoais</Text>
-                            <View className="flex-row justify-between gap-x-3">
-                                <Input className='flex-1' label="Nome" value={avaliacao.nome} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, nome: text }))} />
-                                <Input className='flex-1' label="Idade" keyboardType="numeric" value={avaliacao.idade} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, idade: text }))} />
-                            </View>
-
-
-                            <View className="mb-3">
-                                <Text className="text-base text-gray-400 mb-1">Sexo</Text>
-                                <View className="rounded-lg bg-colorLight200">
-                                    <Picker
-                                        selectedValue={avaliacao.sexo}
-                                        onValueChange={(itemValue) => setAvaliacao((prev) => ({ ...prev, sexo: itemValue }))}
-                                    >
-                                        <Picker.Item label="Escolha um gênero" value="default" color="#9ca3af" enabled={false} />
-                                        <Picker.Item label="Masculino" value="Masculino" />
-                                        <Picker.Item label="Feminino" value="Feminino" />
-                                    </Picker>
-                                </View>
-                            </View>
-                        </View>
-
-                        <View className="bg-colorInputs px-3 py-4 mb-4 rounded-xl border border-colorDark100">
-                            <Text className="text-lg font-semibold mb-2 text-colorLight200">Perímetros</Text>
-                            <View className="flex-row justify-between gap-x-3">
-                                <Input className='flex-1' label="Cintura (cm)" keyboardType="numeric" value={avaliacao.cintura} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, cintura: text }))} />
-                                <Input className='flex-1' label="Quadril (cm)" keyboardType="numeric" value={avaliacao.quadril} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, quadril: text }))} />
-                            </View>
-
-                            <View className="flex-row justify-between gap-x-3">
-                                <Input className='flex-1' label="Peitoral (cm)" keyboardType="numeric" value={avaliacao.peitoral} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, peitoral: text }))} />
-                                <Input className='flex-1' label="Abdômen (cm)" keyboardType="numeric" value={avaliacao.abdomen} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, abdomen: text }))} />
-                            </View>
-
-                            <View className="flex-row justify-between gap-x-3">
-                                <Input className='flex-1' label="Braço Relaxado (cm)" keyboardType="numeric" value={avaliacao.bracoRelaxado} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, bracoRelaxado: text }))} />
-                                <Input className='flex-1' label="Braço Contraído (cm)" keyboardType="numeric" value={avaliacao.bracoContraido} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, bracoContraido: text }))} />
-                            </View>
-
-                            <View className="flex-row justify-between gap-x-3">
-                                <Input className='flex-1' label="Antebraço (cm)" keyboardType="numeric" value={avaliacao.antebraco} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, antebraco: text }))} />
-                                <Input className='flex-1' label="Pescoço (cm)" keyboardType="numeric" value={avaliacao.pescoco} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, pescoco: text }))} />
-                            </View>
-
-                            <View className="flex-row justify-between gap-x-3">
-                                <Input className='flex-1' label="Coxa (cm)" keyboardType="numeric" value={avaliacao.coxa} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, coxa: text }))} />
-                                <Input className='flex-1' label="Panturrilha (cm)" keyboardType="numeric" value={avaliacao.panturrilha} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, panturrilha: text }))} />
-                            </View>
-                        </View>
-
-                        <View className="bg-colorInputs px-3 py-4 mb-4 rounded-xl border border-colorDark100">
-                            <View className="flex-row justify-between">
-                                <Text className="text-lg font-semibold mb-2 text-colorLight200">Método de Cálculo</Text>
-                                <TouchableOpacity onPress={() => setModalVisible(true)}>
-                                    <Icon name="info-outline" size={20} color="#E4E4E7" />
-                                </TouchableOpacity>
-                            </View>
-                            <View className="rounded-lg bg-colorLight200">
+                        <View className="mb-4">
+                            <Text className="text-base text-gray-400 mb-1">Sexo</Text>
+                            <View className="border border-colorLight200 bg-colorLight300 rounded-lg overflow-hidden">
                                 <Picker
-                                    selectedValue={avaliacao.metodoCalculo}
-                                    onValueChange={(itemValue) => setAvaliacao((prev) => ({ ...prev, metodoCalculo: itemValue }))}
+                                    selectedValue={avaliacao.sexo}
+                                    onValueChange={(itemValue) => setAvaliacao(prev => ({ ...prev, sexo: itemValue }))}
                                 >
-                                    <Picker.Item label="Escolha o método de calculo" value="default" color="#9ca3af" enabled={false} />
-                                    <Picker.Item label="IMC (Deurenberg)" value="IMC" />
-                                    <Picker.Item label="Marinha (US Navy)" value="NAVY" />
+                                    <Picker.Item label="Selecione o sexo" value="default" color="gray" enabled={false} />
+                                    <Picker.Item label="Masculino" value="Masculino" />
+                                    <Picker.Item label="Feminino" value="Feminino" />
                                 </Picker>
                             </View>
                         </View>
+                    </View>
 
-                        <View className="bg-colorInputs px-3 py-4 mb-4 rounded-xl border border-colorDark100">
-                            <Text className="text-lg font-semibold mb-2 text-colorLight200">Resultados</Text>
-
-                            <Input className='flex-1' label="Peso (kg)" keyboardType="numeric" value={avaliacao.peso} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, peso: text }))} />
-                            <Input className='flex-1' label="Altura (m)" keyboardType="numeric" value={avaliacao.altura} onChangeText={(text) => setAvaliacao((prev) => ({ ...prev, altura: text }))} />
-                            <Input className='flex-1' label="IMC" keyboardType="numeric" editable={false} value={avaliacao.imc} />
-                            <Input className='flex-1' label="% Gordura" keyboardType="numeric" editable={false} value={avaliacao.percentualGordura} />
-                            <Input className='flex-1' label="Massa Gorda (kg)" keyboardType="numeric" editable={false} value={avaliacao.massaGorda} />
-                            <Input className='flex-1' label="Massa Magra (kg)" keyboardType="numeric" editable={false} value={avaliacao.massaMagra} />
+                    {/* Medidas de Circunferência - Mantidas iguais para ambos os sexos */}
+                    <View className='border border-gray-500 p-3 rounded-xl mb-3'>
+                        <Text className='text-colorLight300 font-bold text-lg mb-2'>Perímetros Corporais:</Text>
+                        <View className='flex-row gap-x-2'>
+                            <Input label="Peso (kg)" keyboardType="numeric" value={avaliacao.peso} onChangeText={text => setAvaliacao(prev => ({ ...prev, peso: text.replace(',', '.').replace(/[^0-9.]/g, '') }))} className='flex-1' />
+                            <Input label="Altura (m)" keyboardType="numeric" value={avaliacao.altura} onChangeText={text => setAvaliacao(prev => ({ ...prev, altura: text.replace(',', '.').replace(/[^0-9.]/g, '') }))} className='flex-1' />
                         </View>
-
-                        <View className='px-10 py-5'>
-                            <TouchableOpacity onPress={salvarAvaliacao} disabled={loading} className="bg-colorViolet py-3 rounded-full">
-                                <Text className="text-colorLight200 text-center text-lg font-semibold">
-                                    {loading ? 'Salvando...' : 'Salvar Avaliação'}
-                                </Text>
-                            </TouchableOpacity>
+                        <View className='flex-row gap-x-2'>
+                            <Input label="Cintura (cm)" keyboardType="numeric" value={avaliacao.cintura} onChangeText={text => setAvaliacao(prev => ({ ...prev, cintura: text.replace(/[^0-9.]/g, '') }))} className='flex-1' />
+                            <Input label="Quadril (cm)" keyboardType="numeric" value={avaliacao.quadril} onChangeText={text => setAvaliacao(prev => ({ ...prev, quadril: text.replace(/[^0-9.]/g, '') }))} className='flex-1' />
+                        </View>
+                        <View className='flex-row gap-x-2'>
+                            <Input label="Peitoral (cm)" keyboardType="numeric" value={avaliacao.peitoral} onChangeText={text => setAvaliacao(prev => ({ ...prev, peitoral: text.replace(/[^0-9.]/g, '') }))} className='flex-1' />
+                            <Input label="Abdômen (cm)" keyboardType="numeric" value={avaliacao.abdomen} onChangeText={text => setAvaliacao(prev => ({ ...prev, abdomen: text.replace(/[^0-9.]/g, '') }))} className='flex-1' />
+                        </View>
+                        <View className='flex-row gap-x-2'>
+                            <Input label="Braço Relaxado (cm)" keyboardType="numeric" value={avaliacao.bracoRelaxado} onChangeText={text => setAvaliacao(prev => ({ ...prev, bracoRelaxado: text.replace(/[^0-9.]/g, '') }))} className='flex-1' />
+                            <Input label="Braço Contraído (cm)" keyboardType="numeric" value={avaliacao.bracoContraido} onChangeText={text => setAvaliacao(prev => ({ ...prev, bracoContraido: text.replace(/[^0-9.]/g, '') }))} className='flex-1' />
+                        </View>
+                        <View className='flex-row gap-x-2'>
+                            <Input label="Antebraço (cm)" keyboardType="numeric" value={avaliacao.antebraco} onChangeText={text => setAvaliacao(prev => ({ ...prev, antebraco: text.replace(/[^0-9.]/g, '') }))} className='flex-1' />
+                            <Input label="Pescoço (cm)" keyboardType="numeric" value={avaliacao.pescoco} onChangeText={text => setAvaliacao(prev => ({ ...prev, pescoco: text.replace(/[^0-9.]/g, '') }))} className='flex-1' />
+                        </View>
+                        <View className='flex-row gap-x-2'>
+                            <Input label="Coxa (cm)" keyboardType="numeric" value={avaliacao.coxa} onChangeText={text => setAvaliacao(prev => ({ ...prev, coxa: text.replace(/[^0-9.]/g, '') }))} className='flex-1' />
+                            <Input label="Panturrilha (cm)" keyboardType="numeric" value={avaliacao.panturrilha} onChangeText={text => setAvaliacao(prev => ({ ...prev, panturrilha: text.replace(/[^0-9.]/g, '') }))} className='flex-1' />
                         </View>
                     </View>
 
-                    <Modal
-                        animationType="fade"
-                        transparent
-                        visible={modalVisible}
-                        onRequestClose={() => setModalVisible(false)}
+                    <View className='border border-gray-500 p-3 rounded-xl mb-3'>
+                        <View className='flex-row justify-between items-center mb-2'>
+                            <Text className="text-base text-gray-400 mb-1">Método de Cálculo</Text>
+                            <TouchableOpacity onPress={() => setModalVisible(true)}>
+                                <Icon name="info" size={22} color="#6943FF" />
+                            </TouchableOpacity>
+                        </View>
+                        <View className="bg-colorLight200 rounded-lg overflow-hidden">
+                            <Picker
+                                selectedValue={avaliacao.metodoCalculo}
+                                onValueChange={(itemValue) => setAvaliacao(prev => ({ ...prev, metodoCalculo: itemValue }))}
+                            >
+                                <Picker.Item label="Selecione um método" value="default" color="gray" enabled={false} />
+                                <Picker.Item label="Pollock 3 Dobras" value="Pollock3" />
+                                <Picker.Item label="Pollock 7 Dobras" value="Pollock7" />
+                            </Picker>
+                        </View>
+
+                        {/* Inputs para Pollock 3 Dobras - Condicional pelo Sexo */}
+                        {avaliacao.metodoCalculo === 'Pollock3' && (
+                            <>
+                                <Text className="text-colorLight300 font-semibold my-2">Insira as dobras cutâneas (mm) - Pollock 3 Dobras</Text>
+                                {avaliacao.sexo === 'Masculino' ? (
+                                    <>
+                                        <Input label="Dobra Peitoral" keyboardType="numeric" value={avaliacao.dobraPollock3_1} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraPollock3_1: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Abdominal" keyboardType="numeric" value={avaliacao.dobraPollock3_2} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraPollock3_2: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Coxa" keyboardType="numeric" value={avaliacao.dobraPollock3_3} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraPollock3_3: text.replace(/[^0-9.]/g, '') }))} />
+                                    </>
+                                ) : avaliacao.sexo === 'Feminino' ? (
+                                    <>
+                                        <Input label="Dobra Tríceps" keyboardType="numeric" value={avaliacao.dobraPollock3_1} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraPollock3_1: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Supra-ilíaca" keyboardType="numeric" value={avaliacao.dobraPollock3_2} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraPollock3_2: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Coxa" keyboardType="numeric" value={avaliacao.dobraPollock3_3} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraPollock3_3: text.replace(/[^0-9.]/g, '') }))} />
+                                    </>
+                                ) : (
+                                    <Text className="text-gray-400 mb-2">Selecione o sexo para ver as dobras de Pollock 3.</Text>
+                                )}
+                            </>
+                        )}
+
+                        {/* Inputs para Pollock 7 Dobras - Condicional pelo Sexo */}
+                        {avaliacao.metodoCalculo === 'Pollock7' && (
+                            <>
+                                <Text className="text-colorLight300 font-semibold my-2">Insira as dobras cutâneas (mm) - Pollock 7 Dobras</Text>
+                                {avaliacao.sexo === 'Masculino' ? (
+                                    <>
+                                        <Input label="Dobra Peitoral" keyboardType="numeric" value={avaliacao.dobraPeitoral7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraPeitoral7: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Abdominal" keyboardType="numeric" value={avaliacao.dobraAbdominal7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraAbdominal7: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Tríceps" keyboardType="numeric" value={avaliacao.dobraTriceps7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraTriceps7: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Subescapular" keyboardType="numeric" value={avaliacao.dobraSubescapular7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraSubescapular7: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Axilar Média" keyboardType="numeric" value={avaliacao.dobraAxilar7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraAxilar7: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Supra-ilíaca" keyboardType="numeric" value={avaliacao.dobraSuprailiaca7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraSuprailiaca7: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Coxa" keyboardType="numeric" value={avaliacao.dobraCoxa7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraCoxa7: text.replace(/[^0-9.]/g, '') }))} />
+                                    </>
+                                ) : avaliacao.sexo === 'Feminino' ? (
+                                    <>
+                                        <Input label="Dobra Peitoral" keyboardType="numeric" value={avaliacao.dobraPeitoral7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraPeitoral7: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Abdominal" keyboardType="numeric" value={avaliacao.dobraAbdominal7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraAbdominal7: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Tríceps" keyboardType="numeric" value={avaliacao.dobraTriceps7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraTriceps7: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Subescapular" keyboardType="numeric" value={avaliacao.dobraSubescapular7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraSubescapular7: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Axilar Média" keyboardType="numeric" value={avaliacao.dobraAxilar7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraAxilar7: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Supra-ilíaca" keyboardType="numeric" value={avaliacao.dobraSuprailiaca7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraSuprailiaca7: text.replace(/[^0-9.]/g, '') }))} />
+                                        <Input label="Dobra Coxa" keyboardType="numeric" value={avaliacao.dobraCoxa7} onChangeText={text => setAvaliacao(prev => ({ ...prev, dobraCoxa7: text.replace(/[^0-9.]/g, '') }))} />
+                                    </>
+                                ) : (
+                                    <Text className="text-gray-400 mb-2">Selecione o sexo para ver as dobras de Pollock 7.</Text>
+                                )}
+                            </>
+                        )}
+                    </View>
+
+                    {/* Bloco de Resultados - Sempre visível */}
+                    <View className='border border-gray-500 p-3 rounded-xl'>
+                        <Text className="text-white text-lg font-semibold mb-2">Resultados</Text>
+                        <Input label="IMC" value={avaliacao.imc} editable={false} />
+                        <Input label="Percentual de Gordura (%)" value={avaliacao.percentualGordura} editable={false} />
+                        <Input label="Massa Gorda (kg)" value={avaliacao.massaGorda} editable={false} />
+                        <Input label="Massa Magra (kg)" value={avaliacao.massaMagra} editable={false} />
+                    </View>
+
+                    <TouchableOpacity
+                        className="bg-colorViolet py-3 rounded-full my-4"
+                        onPress={salvarAvaliacao}
+                        disabled={loading}
                     >
-                        <View className="flex-1 justify-center items-center bg-black/80 px-4">
-                            <View className="bg-colorDark100 rounded-2xl p-6 w-full max-w-lg shadow-lg">
-                                <Text className="text-xl font-bold text-colorViolet mb-4">
-                                    Métodos de Cálculo
-                                </Text>
+                        <Text className="text-center text-colorLight200 font-bold text-lg">{loading ? 'Salvando...' : 'Salvar Avaliação'}</Text>
+                    </TouchableOpacity>
 
-                                <ScrollView className="max-h-[360px] mb-4" showsVerticalScrollIndicator={false}>
-                                    <Text className="text-lg font-bold text-colorLight300 mb-1">
-                                        1. IMC - Fórmula de Deurenberg
-                                    </Text>
-                                    <Text className="text-base text-colorLight200 mb-4">
-                                        Estima o percentual de gordura corporal usando IMC, idade e sexo.
-                                        Simples e prático, mas menos preciso para pessoas com alta massa muscular.
+                    <Modal visible={modalVisible} animationType="fade" transparent>
+                        <View className="flex-1 bg-black/80 justify-center items-center px-6">
+                            <View className="bg-colorDark100 rounded-2xl w-full p-6 max-h-[90%]">
+                                <Text className="text-colorLight200 text-xl font-bold mb-4">Métodos de Cálculos:</Text>
+                                <ScrollView showsVerticalScrollIndicator={false}>
+                                    <Text className="text-colorLight300 mb-4">
+                                        Métodos de cálculo baseados em dobras cutâneas para estimar percentual de gordura corporal.
                                     </Text>
 
-                                    <Text className="font-bold text-colorLight200">Fórmula:</Text>
-                                    <Text className='text-base text-colorLight200 mb-4'>Gordura corporal (%) = (1,20 × IMC) + (0,23 × idade) − (10,8 × sexo) − 5,4{'\n'}
-                                        (sexo: 1 para homem, 0 para mulher)
+                                    <Text className="text-colorLight200 font-bold mb-1">Pollock 3 Dobras:</Text>
+                                    <Text className="text-gray-300 mb-[2px]">✔️ Homens: Peitoral, Abdominal e Coxa.</Text>
+                                    <Text className="text-gray-300">✔️ Mulheres: Tríceps, Supra-ilíaca e Coxa.</Text>
+
+                                    <Text className="text-colorLight300 mt-2 mb-1 italic">Fórmulas:</Text>
+                                    <Text className="text-gray-300 text-sm mb-1">
+                                        Homens: 1.10938 - 0.0008267 × soma das 3 dobras + 0.0000016 × soma² - 0.0002574 × idade
+                                    </Text>
+                                    <Text className="text-gray-300 text-sm mb-3">
+                                        Mulheres: 1.0994921 - 0.0009929 × soma das 3 dobras + 0.0000023 × soma² - 0.0001392 × idade
                                     </Text>
 
-                                    <Text className="text-base text-colorLight200 mb-2">
-                                        <Text className="font-bold">Percentual de erro estimado:</Text> ±3% a ±5%
+                                    <Text className="text-colorLight200 font-bold mb-1">Pollock 7 Dobras:</Text>
+                                    <Text className="text-gray-300 mb-[2px]">
+                                        ✔️ Homens: Peitoral, Abdominal, Tríceps, Subescapular, Axilar Média, Supra-ilíaca e Coxa.
                                     </Text>
-                                    <Text className="text-sm text-gray-400 mb-4">
-                                        Fonte: Deurenberg et al., 1991 – British Journal of Nutrition
+                                    <Text className="text-gray-300">
+                                        ✔️ Mulheres: Peitoral, Abdominal, Tríceps, Subescapular, Axilar Média, Supra-ilíaca e Coxa.
                                     </Text>
 
+                                    <Text className="text-colorLight300 mt-2 mb-1 italic">Fórmulas:</Text>
+                                    <Text className="text-gray-300 text-sm mb-1">
+                                        Homens: 1.112 - 0.00043499 × soma das 7 dobras + 0.00000055 × soma² - 0.00028826 × idade
+                                    </Text>
+                                    <Text className="text-gray-300 text-sm mb-3">
+                                        Mulheres: 1.097 - 0.00046971 × soma das 7 dobras + 0.00000056 × soma² - 0.00012828 × idade
+                                    </Text>
 
-                                    <Text className="text-lg font-bold text-colorLight300 mb-1">
-                                        2. Método da Marinha dos EUA (U.S. Navy)
+                                    <Text className="text-colorLight200 font-bold mt-2 mb-1">Cálculo do % de Gordura Corporal:</Text>
+                                    <Text className="text-gray-300 text-sm mb-3">
+                                        % Gordura = (495 ÷ Densidade Corporal) - 450
                                     </Text>
-                                    <Text className="text-base text-colorLight200 mb-2">
-                                        Utiliza medidas corporais (pescoço, cintura, quadril e altura) para estimar o percentual de gordura. Mais preciso que o método IMC.
-                                    </Text>
-                                    <Text className="text-base text-colorLight200 mb-2">
-                                        <Text className="font-bold">Fórmulas:</Text>{'\n'}
-                                        <Text className="font-bold">Homens:</Text>{' '}
-                                        495 / [1,0324 − 0,19077 × log₁₀(cintura − pescoço) + 0,15456 × log₁₀(altura)] − 450{'\n\n'}
-                                        <Text className="font-bold">Mulheres:</Text>{' '}
-                                        495 / [1,29579 − 0,35004 × log₁₀(cintura + quadril − pescoço) + 0,22100 × log₁₀(altura)] − 450
-                                    </Text>
-                                    <Text className="text-base text-colorLight200 mb-2">
-                                        Todas as medidas devem estar em centímetros.
-                                    </Text>
-                                    <Text className="text-base text-colorLight200 mb-2">
-                                        <Text className="font-semibold">Percentual de erro estimado:</Text> ±3% a ±4%
-                                    </Text>
-                                    <Text className="text-sm text-gray-400 mb-4">
-                                        Fonte: U.S. Navy – Body Composition Assessment Guide (BCA)
-                                    </Text>
+
+                                    <TouchableOpacity
+                                        className="bg-colorViolet py-2 rounded-lg mt-4"
+                                        onPress={() => setModalVisible(false)}
+                                    >
+                                        <Text className="text-center text-colorLight200 font-bold">Fechar</Text>
+                                    </TouchableOpacity>
                                 </ScrollView>
-                                <TouchableOpacity
-                                    onPress={() => setModalVisible(false)}
-                                    className="bg-colorViolet py-3 rounded-xl items-center mt-4"
-                                >
-                                    <Text className="text-colorLight200 font-bold text-base">Fechar</Text>
-                                </TouchableOpacity>
                             </View>
                         </View>
                     </Modal>
 
                 </ScrollView>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </SafeAreaView >
     );
-}
+};
