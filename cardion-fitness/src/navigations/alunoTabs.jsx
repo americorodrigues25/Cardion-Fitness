@@ -1,7 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import Home from '../screens/aluno/home';
-import Treino from '../screens/aluno/treino';
 import { SafeAreaView, Platform, StatusBar } from 'react-native';
 
 import { BlurView } from 'expo-blur';
@@ -10,6 +9,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo'
 import Ajustes from '~/screens/personal/ajustes';
+import Desafio from '../screens/aluno/desafios';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,10 +23,10 @@ export default function AlunoTabs() {
         tabBarInactiveTintColor: '#E4E4E7',
         tabBarStyle: {
           borderTopWidth: 0,
-          borderTopColor: '#27272A',
-          backgroundColor: '#transparent',
+          backgroundColor: 'transparent',
           position: 'absolute',
           elevation: 0,
+          overflow: 'hidden',
           paddingBottom: Platform.OS === 'android' ? 10 : 0,
           height: Platform.OS === 'android' ? 60 : 60,
         },
@@ -37,8 +37,12 @@ export default function AlunoTabs() {
         tabBarBackground: () => (
           <BlurView
             tint="dark"
-            intensity={30}
-            style={{ flex: 1 }}
+            intensity={0}
+            style={{
+              flex: 1,
+              borderRadius: 100,
+              overflow: 'hidden',
+            }}
           />
         ),
       }}
@@ -53,8 +57,8 @@ export default function AlunoTabs() {
         }}
       />
       <Tab.Screen
-        name="TREINOS"
-        component={Treino}
+        name="DESAFIOS"
+        component={Desafio}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Entypo name="home" color={color} size={25} />
