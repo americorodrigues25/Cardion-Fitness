@@ -154,7 +154,7 @@ export default function Home({ navigation }) {
                         </View>
 
                         <View className="flex-1 justify-center items-center px-3">
-                            <TouchableOpacity onPress={() => navigation.navigate('CriarTreinoAluno')}
+                            <TouchableOpacity onPress={() => navigation.navigate('AvaliacaoFisica')}
                                 className="w-full aspect-[4/3.7]">
                                 <ImageBackground
                                     source={require('~/assets/img/button-cards/homemAcademia.jpg')}
