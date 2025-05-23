@@ -7,6 +7,9 @@ import LoginPassword from '~/screens/auth/loginPassword';
 import UpdatePassword from '~/screens/auth/updatePassword';
 import TreinosAluno from '~/screens/aluno/treinosAluno';
 import TreinoDetalhado from '~/screens/aluno/treinoDetalhado';
+import AvaliacaoFisica from '~/screens/aluno/avaliacaoFisica';
+import DetalhesAvaliacaoFisica from '~/screens/aluno/detalhesAvaliacaoFisica';
+import ListaDesafios from '~/screens/aluno/listaDesafios';
 
 const Stack = createStackNavigator();
 
@@ -54,6 +57,21 @@ const AlunoNavigation = () => {
                 name='TreinoDetalhado'
                 options={{ headerShown: false }}
                 component={TreinoDetalhado}
+            />
+            <Stack.Screen
+                name='AvaliacaoFisica'
+                options={{ headerShown: false }}
+                component={AvaliacaoFisica}
+            />
+            <Stack.Screen
+                name='DetalhesAvaliacaoFisica'
+                options={{ headerShown: false }}
+                component={DetalhesAvaliacaoFisica}
+            />
+            <Stack.Screen
+                name='ListaDesafios'
+                options={{ headerShown: false }}
+                component={ListaDesafios}
             />
         </Stack.Navigator>
     );
