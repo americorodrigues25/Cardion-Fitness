@@ -164,7 +164,7 @@ export default function CriarTreino() {
                                         borderRadius={5}
                                         animated={true}
                                         animationType="spring"
-                                        animationDuration={500}
+                                        animationDuration={0}
                                     />
                                 </View>
 
