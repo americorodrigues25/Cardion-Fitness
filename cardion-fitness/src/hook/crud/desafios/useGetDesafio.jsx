@@ -38,7 +38,7 @@ export const useGetDesafio = () => {
         const { desafios: idsDesafios } = alunoSnap.data();
 
         if (!idsDesafios || idsDesafios.length === 0) {
-            return []; // Nenhuma conquista associada
+            return [];
         }
 
         const desafiosRef = collection(db, 'desafios');
