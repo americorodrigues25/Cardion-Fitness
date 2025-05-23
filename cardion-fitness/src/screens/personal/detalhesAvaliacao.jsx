@@ -76,7 +76,7 @@ export default function DetalhesAvaliacao() {
               <InfoText label="Massa Gorda" value={avaliacao.massaGorda ? `${avaliacao.massaGorda} Kg` : 'Não informado'} />
             </>
           ) : (
-            <Text className="text-center text-red-500">
+            <Text className="text-center text-colorLight200">
               Nenhuma informação disponível.
             </Text>
           )}
