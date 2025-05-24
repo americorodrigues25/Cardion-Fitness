@@ -86,7 +86,7 @@ export default function NovoTreino() {
                 navigation.goBack();
             }
         } catch (err) {
-            console.log("Erro ao salvar treino:", err);
+            
             Toast.show({
                 type: 'error',
                 text1: 'Erro ao salvar treino',

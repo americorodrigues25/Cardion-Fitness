@@ -10,6 +10,8 @@ import { db, auth } from '../../../firebase/firebaseConfig';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import Toast from "react-native-toast-message";
+
 export const useGetDesafio = () => {
 
     // pegar um
@@ -30,7 +32,10 @@ export const useGetDesafio = () => {
         const alunoSnap = await getDoc(alunoRef);
 
         if (!alunoSnap.exists()) {
-            console.log('Aluno não encontrado');
+            Toast.show({
+                    type: 'error',
+                    text1: 'Aluno não encontrado',
+                });
             return [];
         }
 
@@ -54,10 +59,9 @@ export const useGetDesafio = () => {
     }
 
     const getAllDesafiosByTipo = async (tipo) => {
-        console.log("Buscando desafios para tipo:", tipo);
 
         if (!tipo || typeof tipo !== 'string') {
-            console.warn("Tipo inválido passado para query:", tipo);
+            
             return [];
         }
 
@@ -71,10 +75,12 @@ export const useGetDesafio = () => {
                 ...doc.data()
             }));
 
-            console.log("Desafios encontrados:", desafios.length);
             return desafios;
         } catch (error) {
-            console.error("Erro ao buscar desafios por tipo:", error);
+            Toast.show({
+                    type: 'error',
+                    text1: 'Erro ao buscar desafios por tipo',
+                });
             throw error;
         }
     };

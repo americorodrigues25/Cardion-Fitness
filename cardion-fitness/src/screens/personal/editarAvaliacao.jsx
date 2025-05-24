@@ -149,7 +149,7 @@ export default function EditarAvaliacao() {
         text1: 'Erro ao atualizar avaliação',
         text2: err.message,
       });
-      console.log(err);
+      
     }
   };
 

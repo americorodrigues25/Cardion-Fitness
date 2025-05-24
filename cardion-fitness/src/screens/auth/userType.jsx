@@ -17,8 +17,6 @@ export default function UserType() {
         const requestPermission = async () => {
             const { status } = await Notifications.requestPermissionsAsync();
             if (status === 'granted') {
-                console.log('Permissão ok');
-
                 //depois de o usuario permitir vai agendar as notificações
                 configurarNotificacoes();
             } else {
