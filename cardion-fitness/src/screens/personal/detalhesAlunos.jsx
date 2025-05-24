@@ -7,6 +7,8 @@ import { useNavigation } from "@react-navigation/native";
 
 import Toast from "react-native-toast-message";
 
+import { getAuth } from 'firebase/auth';
+
 import { useVinculo } from '~/hook/crud/vincularAlunos/vincularAluno';
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
@@ -56,8 +58,11 @@ export default function DetalhesAlunos() {
         };
 
         const fetchImage = async () => {
-            
-            const res = await axios.get(`${SERVER_URL}/image/${aluno.id}`);
+             const auth = getAuth();
+            const user = auth.currentUser;
+
+            const token = await user.getIdToken();
+            const res = await axios.get(`${SERVER_URL}/image/${aluno.id}`,{headers:{'Authorization': `Bearer ${token}`}});
             
             setImageUrl(`${res.data.url}?${Date.now()}`);
         };

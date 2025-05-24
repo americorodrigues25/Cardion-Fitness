@@ -6,6 +6,7 @@ import { Input } from '~/components/input';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Toast from 'react-native-toast-message';
 
+import { getAuth } from 'firebase/auth';
 
 import { useNavigation } from '@react-navigation/native';
 
@@ -87,8 +88,15 @@ export default function Perfil({ }) {
         };
 
         const fetchImage = async () => {
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            const token = await user.getIdToken();
+
             const userId = await AsyncStorage.getItem("uid");
-            const res = await axios.get(`${SERVER_URL}/image/${userId}`);
+            const res = await axios.get(`${SERVER_URL}/image/${userId}`,{
+                headers:{'Authorization': `Bearer ${token}`}
+            });
             setImageUrl(`${res.data.url}?${Date.now()}`);
         };
 
@@ -131,6 +139,12 @@ export default function Perfil({ }) {
         if (!result.canceled) {
             const localUri = result.assets[0].uri;
             const formData = new FormData();
+            
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            const token = await user.getIdToken();
+
 
             const userId = await AsyncStorage.getItem("uid")
             formData.append('userId', userId);
@@ -143,7 +157,7 @@ export default function Perfil({ }) {
 
             try {
                 const res = await axios.post(`${SERVER_URL}/upload`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
+                    headers: { 'Content-Type': 'multipart/form-data','Authorization': `Bearer ${token}` },
                 });
 
                 setImageUrl(`${res.data.url}?${new Date().getTime()}`);
@@ -167,6 +181,11 @@ export default function Perfil({ }) {
             const localUri = result.assets[0].uri;
             const formData = new FormData();
 
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            const token = await user.getIdToken();
+
             const userId = await AsyncStorage.getItem("uid")
             formData.append('userId', userId);
 
@@ -178,7 +197,7 @@ export default function Perfil({ }) {
 
             try {
                 const res = await axios.post(`${SERVER_URL}/upload`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
+                    headers: { 'Content-Type': 'multipart/form-data' ,'Authorization': `Bearer ${token}`},
                 });
 
                 setImageUrl(`${res.data.url}?${new Date().getTime()}`);
@@ -194,8 +213,12 @@ export default function Perfil({ }) {
 
     const removerFoto = async () => {
         try {
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            const token = await user.getIdToken();
             const userId = await AsyncStorage.getItem("uid");
-            await axios.delete(`${SERVER_URL}/image/${userId}`);
+            await axios.delete(`${SERVER_URL}/image/${userId}`,{headers:{'Authorization': `Bearer ${token}`}});
 
             setImageUrl(null);
             Toast.show({
