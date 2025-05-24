@@ -8,6 +8,8 @@ const cron = require('node-cron');
 
 const SERVER_URL = require('./config.js');
 
+const authenticate = require('./authMiddleware');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -33,7 +35,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Upload da imagem (substitui a antiga)
-app.post('/upload', upload.single('image'), (req, res) => {
+app.post('/upload',authenticate, upload.single('image'), (req, res) => {
   const imagePath = path.join(`/uploads/${req.userId}`, 'profile.jpg');
 
   // Se a imagem já existir, apaga
@@ -56,7 +58,7 @@ const ensureUserDir = (req, res, next) => {
 };
 
 // GET de uma imagem única do usuário
-app.get('/image/:userId', ensureUserDir, (req, res) => {
+app.get('/image/:userId', authenticate,ensureUserDir, (req, res) => {
   const imagePath = path.join(req.userDir, 'profile.jpg');
   if (!fs.existsSync(imagePath)) return res.status(404).json({ error: 'Imagem não encontrada' });
 
@@ -65,7 +67,7 @@ app.get('/image/:userId', ensureUserDir, (req, res) => {
 });
 
 // Deleta imagem do usuário
-app.delete('/image/:userId', ensureUserDir, (req, res) => {
+app.delete('/image/:userId',authenticate, ensureUserDir, (req, res) => {
   const imagePath = path.join(req.userDir, 'profile.jpg');
   if (!fs.existsSync(imagePath)) return res.status(404).json({ error: 'Imagem não encontrada' });
 
@@ -75,7 +77,7 @@ app.delete('/image/:userId', ensureUserDir, (req, res) => {
 
 
 // Salva token com userId
-app.post('/register-token', async (req, res) => {
+app.post('/register-token', authenticate,async (req, res) => {
   const { token, userId } = req.body;
   if (!token || !userId) return res.status(400).send('Dados inválidos');
 
@@ -114,7 +116,7 @@ app.post('/send-notification/all', async (req, res) => {
 });
 
 // Envia notificação
-app.post('/send-notification', async (req, res) => {
+app.post('/send-notification',authenticate, async (req, res) => {
   const { title, body,token } = req.body;
   try {
     await axios.post('https://exp.host/--/api/v2/push/send', {
