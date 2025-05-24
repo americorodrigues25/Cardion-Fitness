@@ -36,7 +36,6 @@ export const useUpdate = () =>
               
             return true
           }catch(error){
-            console.log(error)
             return false
           }
         }
@@ -60,7 +59,7 @@ export const useUpdate = () =>
             
           return true
         }catch(error){
-          console.log(error)
+          
           return false
         }
       }

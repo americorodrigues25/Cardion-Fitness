@@ -26,7 +26,7 @@ const Input = ({ label, keyboardType = 'default', className = '', value, onChang
 export default function CriarAvaliacao() {
     const route = useRoute();
     const { idAluno } = route.params || {};
-    console.log('idAluno:', idAluno);
+    
 
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false);
@@ -160,7 +160,7 @@ export default function CriarAvaliacao() {
                 text1: 'Erro ao salvar avaliação',
                 text2: err.message,
             });
-            console.log(err);
+            
         }
     };
 

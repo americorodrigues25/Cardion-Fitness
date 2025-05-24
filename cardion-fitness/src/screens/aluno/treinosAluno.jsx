@@ -10,6 +10,8 @@ import { useGet } from '~/hook/crud/useGet';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import * as Progress from 'react-native-progress';
 
+import Toast from "react-native-toast-message";
+
 export default function TreinosAluno() {
     const navigation = useNavigation();
     const [loading, setLoading] = useState(true);
@@ -31,7 +33,10 @@ export default function TreinosAluno() {
                         setDadosTreinos(dados);
                     }
                 } catch (error) {
-                    console.error("Erro ao buscar treinos:", error);
+                    Toast.show({
+                      type: 'error',
+                      text1: 'Erro ao buscar treinos',                    
+                    });
                 } finally {
                     setLoading(false);
                 }

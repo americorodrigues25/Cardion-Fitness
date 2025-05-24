@@ -11,6 +11,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import Toast from "react-native-toast-message";
+
 export default function Desafios() {
     const navigation = useNavigation();
     const [pontosDesafios, setPontosDesafios] = useState(0);
@@ -29,7 +31,10 @@ export default function Desafios() {
 
                     setPontosDesafios(pontosDesafios);
                 } catch (error) {
-                    console.error('Erro ao buscar pontos do aluno:', error);
+                     Toast.show({
+                      type: 'error',
+                      text1: 'Erro ao buscar pontos',                    
+                    });
                     setPontosDesafios(0);
                 }
             };

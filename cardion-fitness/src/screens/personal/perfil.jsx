@@ -50,7 +50,7 @@ export default function Perfil({ }) {
         }
 
         const result = await updateDadosBasicosPersonal(data)
-        console.log("Dados sendo atualizados:", data);
+        
 
         if (result) {
             Toast.show({
@@ -58,7 +58,10 @@ export default function Perfil({ }) {
                 text1: 'Dados atualizados com sucesso ! 🎉',
             });
         } else {
-            Alert.alert("Erro")
+            Toast.show({
+                      type: 'error',
+                      text1: 'Erro ao atualizar',                    
+                    });
         }
     }
 
@@ -140,7 +143,10 @@ export default function Perfil({ }) {
                 setImageUrl(`${res.data.url}?${new Date().getTime()}`);
                 Asset.fromURI(res.data.url).downloadAsync();
             } catch (error) {
-                console.error('Erro no upload:', error);
+                 Toast.show({
+                      type: 'error',
+                      text1: 'Erro no upload',                    
+                    });
             }
         }
     };
@@ -172,7 +178,10 @@ export default function Perfil({ }) {
                 setImageUrl(`${res.data.url}?${new Date().getTime()}`);
                 Asset.fromURI(res.data.url).downloadAsync();
             } catch (error) {
-                console.error('Erro no upload:', error);
+                 Toast.show({
+                      type: 'error',
+                      text1: 'Erro no upload',                    
+                    });
             }
         }
     };
@@ -183,10 +192,15 @@ export default function Perfil({ }) {
             await axios.delete(`${SERVER_URL}/image/${userId}`);
 
             setImageUrl(null);
-            Alert.alert('Imagem removida', 'A imagem de perfil foi resetada.');
+              Toast.show({
+                type: 'success',
+                text1: `Imagem removida`,
+            });
         } catch (error) {
-            console.error('Erro ao remover imagem:', error);
-            Alert.alert('Erro', 'Não foi possível remover a imagem.');
+             Toast.show({
+                      type: 'error',
+                      text1: 'Erro ao remover imagem',                    
+                    });
         };
     }
 

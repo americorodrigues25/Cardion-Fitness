@@ -7,6 +7,9 @@ import { useState } from 'react';
 import { db } from '../../../firebase/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import Toast from "react-native-toast-message";
+
+
 export const useAvaliacao = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -34,7 +37,10 @@ export const useAvaliacao = () => {
       return true;
     } catch (err) {
       setError(err.message);
-      console.error("Erro ao enviar avaliação:", err);
+       Toast.show({
+                  type: 'error',
+                  text1: 'Não foi possivel realizar Avaliação',
+                });
       return false;
     } finally {
       setLoading(false);

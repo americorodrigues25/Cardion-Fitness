@@ -92,7 +92,7 @@ export default function CriarTreino() {
 
                 if (idAluno && idPersonal) {
                     const resultado = await getAllTreinosByIdAluno(idAluno, idPersonal);
-                    console.warn(resultado);
+                    
                     setDadosTreinos(resultado);
                     setLoading(false);
                 }

@@ -13,6 +13,8 @@ import { useDeleteAvaliacaoFisica } from '~/hook/crud/avaliacaoFisica/useDeleteA
 
 import { GerarPdfAvaliacao } from '~/utils/gerarPdfAvaliacao';
 
+import Toast from "react-native-toast-message";
+
 export default function AvaliacaoScreen() {
     const navigation = useNavigation();
     const route = useRoute();
@@ -40,7 +42,10 @@ export default function AvaliacaoScreen() {
                         setAvaliacoes(data);
                     }
                 } catch (error) {
-                    console.error('Erro ao buscar avaliações:', error);
+                     Toast.show({
+                      type: 'error',
+                      text1: 'Erro ao buscar avaliacoes',                    
+                    });
                 } finally {
                     if (isActive) setLoading(false);
                 }
@@ -69,7 +74,10 @@ export default function AvaliacaoScreen() {
             await deletarAvalicaoFisica(avaliacaoSelecionada);
             setAvaliacoes((prev) => prev.filter((a) => a.id !== avaliacaoSelecionada));
         } catch (err) {
-            console.error('Erro ao deletar avaliação:', err.message);
+             Toast.show({
+                      type: 'error',
+                      text1: 'Erro ao deletar avaliacoes',                    
+                    });
         } finally {
             setModalVisible(false);
             setAvaliacaoSelecionada(null);

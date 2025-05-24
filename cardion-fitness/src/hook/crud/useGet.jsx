@@ -10,6 +10,8 @@ import { db, auth } from '../../firebase/firebaseConfig';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import Toast from "react-native-toast-message";
+
 export const useGet = () => {
   const auth = getAuth();
 
@@ -39,15 +41,10 @@ export const useGet = () => {
   // trazer todos alunos de um personal
 
   const getAllAlunosByPersonal = async () => {
-    console.log("Iniciando busca de alunos vinculados...");
-
     const role = await AsyncStorage.getItem("role")
     const uid = await AsyncStorage.getItem("uid")
 
-    console.log("role:", role, "uid:", uid);
-
     if (role !== 'personal') {
-      console.log("Role não é personal. Encerrando.");
       return null;
     }
 
@@ -56,12 +53,14 @@ export const useGet = () => {
     const vinculosSnap = await getDocs(q);
 
     if (vinculosSnap.empty) {
-      console.log("Nenhum vínculo encontrado.");
+       Toast.show({
+                type: 'error',
+                text1: 'Nenhum vinculo encontrado',
+              });
       return [];
     }
 
     const alunoIds = vinculosSnap.docs.map(doc => doc.data().idAluno);
-    console.log("IDs dos alunos vinculados:", alunoIds);
 
 
     //até 10 por vez
@@ -71,7 +70,6 @@ export const useGet = () => {
 
     for (let i = 0; i < alunoIds.length; i += batchSize) {
       const batch = alunoIds.slice(i, i + batchSize);
-      console.log("Batch atual:", batch);
       const alunosQuery = query(alunoRef, where('uid', 'in', batch));
       const alunosSnap = await getDocs(alunosQuery);
 
@@ -97,7 +95,6 @@ export const useGet = () => {
       });
     });
 
-    console.log("Lista final de alunos:", alunos);
     return alunos;
   }
 
