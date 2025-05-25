@@ -143,14 +143,14 @@ export default function Desafios() {
                                     </Text>
                                 </View>
                                 <TouchableOpacity
-                                    onPress={() => navigation.navigate('Ranking')}
+                                    onPress={() => navigation.navigate('RankingPontosDesafios')}
                                     className='py-[2px]'
                                 >
                                     <View className='flex-row items-center gap-x-1'>
                                         <Text className="text-gray-500 text-xs font-bold">
                                             Veja o ranking
                                         </Text>
-                                        <MaterialCommunityIcons name='medal' size={20} color="#6943FF"/>
+                                        <MaterialCommunityIcons name='medal' size={20} color="#6943FF" />
                                     </View>
                                 </TouchableOpacity>
                             </View>

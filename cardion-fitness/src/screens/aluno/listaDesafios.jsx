@@ -19,7 +19,26 @@ export default function ListaDesafios({ route }) {
         async function fetchDesafios() {
             setLoading(true);
             const dados = await getAllDesafiosByTipo(tipo);
-            setDesafios(dados);
+
+            const normalizarNivel = (nivel) => {
+                return nivel
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .trim();
+            };
+
+            const ordemNivel = {
+                iniciante: 1,
+                intermediario: 2,
+                avancado: 3,
+            };
+
+            const desafiosOrdenados = dados.sort((a, b) => {
+                return ordemNivel[normalizarNivel(a.nivel)] - ordemNivel[normalizarNivel(b.nivel)];
+            });
+
+            setDesafios(desafiosOrdenados);
             setLoading(false);
         }
         fetchDesafios();
@@ -50,7 +69,7 @@ export default function ListaDesafios({ route }) {
             Toast.show({
                 type: 'error',
                 text1: 'Erro ao realizar desafio!',
-                text2: 'Você ja realizou este desafio.',
+                text2: 'Você ja realizou este desafio hoje.',
                 position: 'top',
             });;
         } finally {
@@ -88,10 +107,6 @@ export default function ListaDesafios({ route }) {
                             renderItem={({ item }) => (
                                 <View className="bg-colorInputs p-4 rounded-2xl mb-4 border-[0.2px] border-gray-600">
                                     <Text className="text-colorLight300 font-bold text-xl">{item.nome}</Text>
-
-                                    {/*aqui o ID é só teste pra conseguir identificar desafio no firebase e corrigir bug*/}
-                                    <Text className="text-colorLight300 font-bold text-xl">{item.id}</Text>
-
                                     <Text className="text-gray-400 mt-1">{item.descricao}</Text>
 
                                     <View className="flex-row justify-between my-4">
