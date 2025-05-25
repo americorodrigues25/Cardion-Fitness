@@ -5,6 +5,8 @@ import { Text, View, ActivityIndicator, TouchableOpacity, KeyboardAvoidingView, 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
+import Toast from "react-native-toast-message";
+
 export default function AvaliacaoFisica() {
     const { getAllAvaliacoesByIdAluno } = useGetAvaliacaoFisica();
     const [avaliacoes, setAvaliacoes] = useState([]);
@@ -18,14 +20,20 @@ export default function AvaliacaoFisica() {
                 const idAluno = auth.currentUser?.uid || await AsyncStorage.getItem('uid');
 
                 if (!idAluno) {
-                    console.warn("Usuário não autenticado");
+                     Toast.show({
+                      type: 'error',
+                      text1: 'Usuário não encontrado',
+                    });
                     return;
                 }
 
                 const data = await getAllAvaliacoesByIdAluno(idAluno);
                 setAvaliacoes(data);
             } catch (error) {
-                console.error("Erro ao buscar avaliações:", error);
+                 Toast.show({
+                      type: 'error',
+                      text1: 'Erro ao buscar avaliações',
+                    });
             } finally {
                 setLoading(false);
             }

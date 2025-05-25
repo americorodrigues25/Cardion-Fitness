@@ -40,9 +40,6 @@ export const useConquistas = () =>
     
             const conquista = docSnap2.data()
 
-            console.log("conquista",conquista)
-            console.log(conquista.pontos)
-
             await updateDoc(doc(db, 'aluno', uid), {
                         pontos: increment(conquista.pontos),
                         conquistas: arrayUnion(idConquista)
@@ -76,7 +73,10 @@ export const useConquistas = () =>
             const alunoSnap = await getDoc(alunoRef);
 
             if (!alunoSnap.exists()) {
-            console.log('Aluno não encontrado');
+             Toast.show({
+                      type: 'error',
+                      text1: 'Aluno não encontrado',
+                    });
             return [];
             }
 
@@ -104,7 +104,10 @@ export const useConquistas = () =>
             const alunoSnap = await getDoc(alunoRef);
 
             if (!alunoSnap.exists()) {
-            console.log('Aluno não encontrado');
+             Toast.show({
+                      type: 'error',
+                      text1: 'Aluno não encontrado',
+                    });
             return [];
             }
 

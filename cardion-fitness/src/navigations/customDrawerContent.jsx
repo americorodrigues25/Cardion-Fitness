@@ -37,8 +37,15 @@ export default function CustomDrawerContent(props) {
         };
 
         const fetchImage = async () => {
+             const auth = getAuth();
+            const user = auth.currentUser;
+
+            const token = await user.getIdToken();
+
             const userId = await AsyncStorage.getItem("uid");
-            const res = await axios.get(`${SERVER_URL}/image/${userId}`);
+            const res = await axios.get(`${SERVER_URL}/image/${userId}`,{
+                headers:{'Authorization': `Bearer ${token}`}
+            });
             setImageUrl(`${res.data.url}?${Date.now()}`);
         };
 

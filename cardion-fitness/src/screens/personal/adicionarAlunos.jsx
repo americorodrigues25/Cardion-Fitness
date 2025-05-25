@@ -47,10 +47,9 @@ export default function AdicionarAlunos() {
         }
 
         const users = await getAlunoByEmail(email)
-        console.log(users)
         const user = users[0]
 
-        console.log(user)
+        
 
         setUsuarioEncontrado(!!user);
         setUsuario(user);
@@ -69,7 +68,7 @@ export default function AdicionarAlunos() {
                 setEmail('');
             }
         } catch (error) {
-            console.error("Erro ao vincular:", error.message);
+            
             Toast.show({
                 type: 'error',
                 text1: 'Erro ao tentar vincular',

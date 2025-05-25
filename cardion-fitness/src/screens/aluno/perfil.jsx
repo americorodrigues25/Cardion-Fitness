@@ -6,6 +6,7 @@ import { Input } from '~/components/input';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Toast from 'react-native-toast-message';
 
+import { getAuth } from 'firebase/auth';
 
 import { useNavigation } from '@react-navigation/native';
 
@@ -61,7 +62,10 @@ export default function Perfil({ }) {
                 text1: 'Dados atualizados com sucesso ! 🎉',
             });
         } else {
-            Alert.alert("Erro")
+            Toast.show({
+            type: 'error',
+            text1: 'Erro',                    
+        });
         }
     }
 
@@ -84,8 +88,15 @@ export default function Perfil({ }) {
         };
 
         const fetchImage = async () => {
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            const token = await user.getIdToken();
+
             const userId = await AsyncStorage.getItem("uid");
-            const res = await axios.get(`${SERVER_URL}/image/${userId}`);
+            const res = await axios.get(`${SERVER_URL}/image/${userId}`,{
+                headers:{'Authorization': `Bearer ${token}`}
+            });
             setImageUrl(`${res.data.url}?${Date.now()}`);
         };
 
@@ -128,6 +139,12 @@ export default function Perfil({ }) {
         if (!result.canceled) {
             const localUri = result.assets[0].uri;
             const formData = new FormData();
+            
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            const token = await user.getIdToken();
+
 
             const userId = await AsyncStorage.getItem("uid")
             formData.append('userId', userId);
@@ -140,13 +157,16 @@ export default function Perfil({ }) {
 
             try {
                 const res = await axios.post(`${SERVER_URL}/upload`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
+                    headers: { 'Content-Type': 'multipart/form-data','Authorization': `Bearer ${token}` },
                 });
 
                 setImageUrl(`${res.data.url}?${new Date().getTime()}`);
                 Asset.fromURI(res.data.url).downloadAsync();
             } catch (error) {
-                console.error('Erro no upload:', error);
+                Toast.show({
+                type: 'error',
+                text1: 'Erro no upload',                    
+            });
             }
         }
     };
@@ -161,6 +181,11 @@ export default function Perfil({ }) {
             const localUri = result.assets[0].uri;
             const formData = new FormData();
 
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            const token = await user.getIdToken();
+
             const userId = await AsyncStorage.getItem("uid")
             formData.append('userId', userId);
 
@@ -172,27 +197,40 @@ export default function Perfil({ }) {
 
             try {
                 const res = await axios.post(`${SERVER_URL}/upload`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
+                    headers: { 'Content-Type': 'multipart/form-data' ,'Authorization': `Bearer ${token}`},
                 });
 
                 setImageUrl(`${res.data.url}?${new Date().getTime()}`);
                 Asset.fromURI(res.data.url).downloadAsync();
             } catch (error) {
-                console.error('Erro no upload:', error);
+                Toast.show({
+                type: 'error',
+                text1: 'Erro no upload',                    
+            });
             }
         }
     };
 
     const removerFoto = async () => {
         try {
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            const token = await user.getIdToken();
             const userId = await AsyncStorage.getItem("uid");
-            await axios.delete(`${SERVER_URL}/image/${userId}`);
+            await axios.delete(`${SERVER_URL}/image/${userId}`,{headers:{'Authorization': `Bearer ${token}`}});
 
             setImageUrl(null);
-            Alert.alert('Imagem removida', 'A imagem de perfil foi resetada.');
+            Toast.show({
+                type: 'success',
+                text1: `Imagem removida`,
+                position: 'top',
+            });
         } catch (error) {
-            console.error('Erro ao remover imagem:', error);
-            Alert.alert('Erro', 'Não foi possível remover a imagem.');
+            Toast.show({
+                type: 'error',
+                text1: 'Erro ao remover imagem!',                    
+            });
         };
     }
 

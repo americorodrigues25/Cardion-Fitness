@@ -2,6 +2,8 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Alert } from 'react-native';
 
+import Toast from "react-native-toast-message";
+
 const format = (valor, sufixo = '') => {
   return valor !== undefined && valor !== null && valor !== ''
     ? `${valor}${sufixo}`
@@ -52,10 +54,15 @@ export async function gerarPdfAvaliacao(avaliacao) {
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(uri);
     } else {
-      Alert.alert('Compartilhamento não disponível');
+       Toast.show({
+                      type: 'error',
+                      text1: 'Compartilhamento não disponivel',                    
+                    });
     }
   } catch (error) {
-    console.error('Erro ao gerar PDF:', error);
-    Alert.alert('Erro', 'Falha ao gerar PDF');
+     Toast.show({
+                      type: 'error',
+                      text1: 'Erro ao gerar pdf',                    
+                    });
   }
 }
