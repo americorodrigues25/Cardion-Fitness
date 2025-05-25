@@ -10,6 +10,9 @@ import TreinoDetalhado from '~/screens/aluno/treinoDetalhado';
 import AvaliacaoFisica from '~/screens/aluno/avaliacaoFisica';
 import DetalhesAvaliacaoFisica from '~/screens/aluno/detalhesAvaliacaoFisica';
 import ListaDesafios from '~/screens/aluno/listaDesafios';
+import RankingPontosDesafios from '~/screens/aluno/rankingPontosDesafios';
+import RankingPontosGeral from '~/screens/aluno/rankingPontosGeral';
+
 
 const Stack = createStackNavigator();
 
@@ -72,6 +75,16 @@ const AlunoNavigation = () => {
                 name='ListaDesafios'
                 options={{ headerShown: false }}
                 component={ListaDesafios}
+            />
+            <Stack.Screen
+                name='RankingPontosDesafios'
+                options={{ headerShown: false }}
+                component={RankingPontosDesafios}
+            />
+            <Stack.Screen
+                name='RankingPontosGeral'
+                options={{ headerShown: false }}
+                component={RankingPontosGeral}
             />
         </Stack.Navigator>
     );
