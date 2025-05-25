@@ -172,7 +172,7 @@ export default function Home({ navigation }) {
                         </View>
 
                         <View className="flex-1 justify-center items-center px-3">
-                            <TouchableOpacity onPress={() => navigation.navigate('')}
+                            <TouchableOpacity onPress={() => navigation.navigate('RankingPontosGeral')}
                                 className="w-full aspect-[4/3.7]">
                                 <ImageBackground
                                     source={require('~/assets/img/button-cards/mulherAcademia.jpg')}
@@ -184,55 +184,6 @@ export default function Home({ navigation }) {
                                 </ImageBackground>
                             </TouchableOpacity>
                         </View>
-                    </View>
-
-
-
-                    <View className=''>
-
-
-                        <TouchableOpacity onPress={() => gerarPdfUsuario(usuario)}>
-                            <Text>Gerar PDF</Text>
-                        </TouchableOpacity>
-
-                        
-                        <View className='mx-10 p-5 rounded-xl bg-colorDark200 mt-10'>
-                            <View className="flex-row items-center mb-10">
-                                <View className='flex-row justify-center items-center'>
-                                    <View className='bg-colorViolet p-3 rounded-full'>
-                                        < FontAwesome5 name='dumbbell' size={20} color='#E4E4E7' />
-                                    </View>
-                                    <View className='ml-5'>
-                                        <Text className='text-colorLight200 text-2xl'>Sessões realizadas</Text>
-                                        <Text className="text-colorViolet text-3xl">
-                                            {sessoes}
-                                            <Text className="text-gray-500 text-xl"> / {totalSessoes}</Text>
-                                        </Text>
-                                    </View>
-                                </View>
-                            </View>
-
-                            <ProgressBar
-                                progress={progresso}
-                                width={null}
-                                height={12}
-                                color="#6943FF"
-                                unfilledColor="#eee"
-                                borderWidth={0}
-                                borderRadius={5}
-                                animated={true}
-                                animationType="spring"
-                                animationDuration={500}
-                            />
-
-                            <View className='px-10'>
-                                <TouchableOpacity className="bg-colorViolet mt-6 py-3 rounded" onPress={marcarSessao}>
-                                    <Text className="text-center text-white font-semibold">Marcar sessão concluída</Text>
-                                </TouchableOpacity>
-                            </View>
-
-                        </View>
-                        <DashboardGraficoAlunos />
                     </View>
 
                 </ScrollView>
