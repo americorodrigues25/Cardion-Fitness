@@ -5,11 +5,13 @@ import { SafeAreaView, Platform, StatusBar } from 'react-native';
 
 import { BlurView } from 'expo-blur';
 
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Ajustes from '~/screens/personal/ajustes';
 import Desafio from '../screens/aluno/desafios';
+import Conquistas from '~/screens/aluno/conquistas';
 
 const Tab = createBottomTabNavigator();
 
@@ -61,7 +63,16 @@ export default function AlunoTabs() {
         component={Desafio}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Entypo name="home" color={color} size={25} />
+            <MaterialCommunityIcons name="bullseye-arrow" color={color} size={25} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="CONQUISTAS"
+        component={Conquistas}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="trophy" color={color} size={25} />
           ),
         }}
       />
