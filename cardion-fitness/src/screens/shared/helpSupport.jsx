@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Toast from "react-native-toast-message";
 
 import { Linking } from "react-native";
 import { ButtonViolet } from "~/components/button";
@@ -74,7 +75,7 @@ export default function HelSupport() {
     };
 
     const criarAvaliacao = async () => {
-        Alert.alert("cheguei aqui")
+        
         const user = await getById()
         const nome = user.nome
 
@@ -87,7 +88,11 @@ export default function HelSupport() {
 
         const resultado = await avaliar(data)
         if (resultado) {
-            Alert.alert("Avaliação enviada!")
+             Toast.show({
+                                type: 'success',
+                                text1: `Avaliação enviada!`,
+                                position: 'top',
+                            });
             setShowModal(false);
         } else {
             Alert.alert("Erro")
