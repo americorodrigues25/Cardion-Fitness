@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Toast from "react-native-toast-message";
 
 import { Linking } from "react-native";
 import { ButtonViolet } from "~/components/button";
@@ -25,11 +26,55 @@ export default function HelSupport() {
     const [showModal, setShowModal] = useState(false);
     const [showModalQuestions, setShowModalQuestions] = useState(false)
     const [rating, setRating] = useState(4);
-    const {avaliar} = useAvaliacao()
-    const [comentario,setComentario] =useState()
+    const { avaliar } = useAvaliacao()
+    const [comentario, setComentario] = useState()
+    const [openIndex, setOpenIndex] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+    const faqData = [
+        {
+            question: 'Como entro em contato com o meu personal?',
+            answer: 'Nós disponibilizamos o contato dos personais na área do perfil.',
+        },
+        {
+            question: 'Preciso pagar algo para usar o aplicativo?',
+            answer: 'Não, o aplicativo é gratuito para uso.',
+        },
+        {
+            question: 'O aplicativo disponibiliza dietas?',
+            answer: 'Sim, algumas dietas estão disponíveis com base no seu perfil.',
+        },
+        {
+            question: 'Como faço para adicionar um personal?',
+            answer: 'Vá até a aba de "Personal" e clique em "Adicionar".',
+        },
+        {
+            question: 'Como faço para adicionar um aluno?',
+            answer: 'Na aba "Alunos", clique em "+ Adicionar aluno".',
+        },
+        {
+            question: 'É possível adicionar quantos alunos?',
+            answer: 'Não há limite de alunos cadastrados.',
+        },
+        {
+            question: 'Tenho limite de alunos adicionados?',
+            answer: 'Não, você pode adicionar quantos alunos quiser.',
+        },
+        {
+            question: 'Como faço para adicionar um treino?',
+            answer: 'Na seção "Treinos", clique em "Novo treino" e preencha os dados.',
+        },
+    ];
 
-    const criarAvaliacao = async () =>{
+    const toggleQuestion = (index) => {
+        setOpenIndex(openIndex === index ? null : index);
+    };
+
+    const onClose = () => {
+        setShowModalQuestions(false);
+    };
+
+    const criarAvaliacao = async () => {
         Alert.alert("cheguei aqui")
         const user = await getById()
         const nome = user.nome
@@ -43,7 +88,11 @@ export default function HelSupport() {
 
         const resultado = await avaliar(data)
         if (resultado) {
-            Alert.alert("Avaliação enviada!")
+             Toast.show({
+                                type: 'success',
+                                text1: `Avaliação enviada!`,
+                                position: 'top',
+                            });
             setShowModal(false);
         } else {
             Alert.alert("Erro")
