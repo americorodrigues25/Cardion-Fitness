@@ -1,28 +1,18 @@
-import { View, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, Image, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, Image, ImageBackground, Modal, Linking, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { BackHandler } from 'react-native'; //esse é evento do botão voltar em Android
 import { useEffect, useState, useCallback } from 'react';
+import Toast from 'react-native-toast-message';
 
-import ProgressBar from 'react-native-progress/Bar';
-import DashboardGraficoAlunos from '~/components/dashboardAlunoPontos';
+import InfosPersonal from '~/components/modais/infosPersonal';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { getAuth, signOut } from 'firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useDelete } from '~/hook/crud/useDelete';
 import { useGet } from '~/hook/crud/useGet';
-import { gerarPdfUsuario } from '~/utils/gerarPdfUsuario';
 import { useRealizarSessaoTreino } from '~/hook/crud/treino/sessoesTreino/useRealizarSessaoTreino';
-
-
-
-// ponto para refatorar, deixar mais legivel o trazer nome
-// para pegar o nome é so usar a funcao de getById e pegar a propriedade nome
 
 export default function Home({ navigation }) {
     const [nome, setNome] = useState();
@@ -31,7 +21,11 @@ export default function Home({ navigation }) {
     const [usuario, setUsuario] = useState();
     const { realizarSessao } = useRealizarSessaoTreino();
 
-    //sessões de treinos realizadas
+    const [modalVisible, setModalVisible] = useState(false);
+    const [personal, setPersonal] = useState(null);
+    const { getPersonalDoAluno } = useGet();
+    const [loading, setLoading] = useState(false);
+
     const totalSessoes = 40;
     const [sessoes, setSessoes] = useState(0);
     const progresso = sessoes / totalSessoes;
@@ -95,6 +89,68 @@ export default function Home({ navigation }) {
         }, [])
     );
 
+    const abrirModalPersonal = async () => {
+        setLoading(true);
+        try {
+            const dados = await getPersonalDoAluno();
+
+            if (dados && dados.nome) {
+                setPersonal(dados);
+                setModalVisible(true);
+            } else {
+                Toast.show({
+                    type: 'info',
+                    text1: 'Sem Personal',
+                    text2: 'Você ainda não está vinculado a nenhum personal.'
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            Toast.show({
+                type: 'error',
+                text1: 'Erro',
+                text2: 'Não foi possível carregar os dados do personal.'
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const openWhatsApp = (telefone) => {
+        if (!telefone) {
+            Toast.show({
+                type: 'info',
+                text1: 'Telefone não informado.',
+            });
+            return;
+        }
+
+        const phoneNumber = telefone.replace(/\D/g, '');
+        const url = `https://wa.me/${phoneNumber}`;
+        Linking.openURL(url).catch(() =>
+            Toast.show({
+                type: 'error',
+                text1: 'Erro ao abrir o WhatsApp',
+            })
+        );
+    };
+
+    const sendEmail = (email) => {
+        if (!email) {
+            Toast.show({
+                type: 'info',
+                text1: 'Email não informado.',
+            });
+            return;
+        }
+        const url = `mailto:${email}`;
+        Linking.openURL(url).catch(() =>
+            Toast.show({
+                type: 'error',
+                text1: 'Erro ao abrir o cliente de email',
+            })
+        );
+    };
 
     return (
         <SafeAreaView
@@ -115,8 +171,13 @@ export default function Home({ navigation }) {
                         <TouchableOpacity >
                             <FontAwesome name="bell-o" size={20} color="#e4e4e7" />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={''}>
-                            <MaterialCommunityIcons name="message-reply-text-outline" size={20} color="#e4e4e7" />
+
+                        <TouchableOpacity onPress={abrirModalPersonal} disabled={loading} className="p-2">
+                            {loading ? (
+                                <ActivityIndicator size="small" color="#6943FF" />
+                            ) : (
+                                <MaterialCommunityIcons name="message-reply-text-outline" size={20} color="#e4e4e7" />
+                            )}
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -129,7 +190,7 @@ export default function Home({ navigation }) {
                     showsVerticalScrollIndicator={false}
                 >
 
-                    <View className='py-10'>
+                    <View className='py-5'>
                         <View className=''>
                             <Text className='text-colorLight200 text-2xl font-semibold'>Olá, {nome}!</Text>
                             <Text className='text-lg font-semibold text-gray-400 pt-5 pb-2 px-3'>Seus treinos</Text>
@@ -185,6 +246,14 @@ export default function Home({ navigation }) {
                             </TouchableOpacity>
                         </View>
                     </View>
+
+                    <InfosPersonal
+                        visible={modalVisible}
+                        onClose={() => setModalVisible(false)}
+                        personal={personal}
+                        openWhatsApp={openWhatsApp}
+                        sendEmail={sendEmail}
+                    />
 
                 </ScrollView>
             </KeyboardAvoidingView>
