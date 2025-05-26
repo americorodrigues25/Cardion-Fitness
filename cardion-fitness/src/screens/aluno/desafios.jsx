@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -6,6 +6,9 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '~/firebase/firebaseConfig';
+import { useGet } from '~/hook/crud/useGet';
+
+import InfosPersonal from '~/components/modais/infosPersonal';
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -16,6 +19,12 @@ import Toast from "react-native-toast-message";
 export default function Desafios() {
     const navigation = useNavigation();
     const [pontosDesafios, setPontosDesafios] = useState(0);
+    const { getById } = useGet();
+
+    const [modalVisible, setModalVisible] = useState(false);
+    const [personal, setPersonal] = useState(null);
+    const { getPersonalDoAluno } = useGet();
+    const [loading, setLoading] = useState(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -31,9 +40,9 @@ export default function Desafios() {
 
                     setPontosDesafios(pontosDesafios);
                 } catch (error) {
-                     Toast.show({
-                      type: 'error',
-                      text1: 'Erro ao buscar pontos',                    
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Erro ao buscar pontos',
                     });
                     setPontosDesafios(0);
                 }
@@ -70,6 +79,69 @@ export default function Desafios() {
         },
     ];
 
+    const abrirModalPersonal = async () => {
+        setLoading(true);
+        try {
+            const dados = await getPersonalDoAluno();
+
+            if (dados && dados.nome) {
+                setPersonal(dados);
+                setModalVisible(true);
+            } else {
+                Toast.show({
+                    type: 'info',
+                    text1: 'Sem Personal',
+                    text2: 'Você ainda não está vinculado a nenhum personal.'
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            Toast.show({
+                type: 'error',
+                text1: 'Erro',
+                text2: 'Não foi possível carregar os dados do personal.'
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const openWhatsApp = (telefone) => {
+        if (!telefone) {
+            Toast.show({
+                type: 'info',
+                text1: 'Telefone não informado.',
+            });
+            return;
+        }
+
+        const phoneNumber = telefone.replace(/\D/g, '');
+        const url = `https://wa.me/${phoneNumber}`;
+        Linking.openURL(url).catch(() =>
+            Toast.show({
+                type: 'error',
+                text1: 'Erro ao abrir o WhatsApp',
+            })
+        );
+    };
+
+    const sendEmail = (email) => {
+        if (!email) {
+            Toast.show({
+                type: 'info',
+                text1: 'Email não informado.',
+            });
+            return;
+        }
+        const url = `mailto:${email}`;
+        Linking.openURL(url).catch(() =>
+            Toast.show({
+                type: 'error',
+                text1: 'Erro ao abrir o cliente de email',
+            })
+        );
+    };
+
     return (
         <SafeAreaView
             edges={['top', 'bottom']}
@@ -80,25 +152,22 @@ export default function Desafios() {
                 style={{ flex: 1 }}
             >
 
-                <View className="flex-row items-center justify-between mb-2">
+                <View className='flex-row items-center justify-between mb-2'>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image
-                            source={require('~/assets/img/logo/Logo1.png')}
-                            className="w-20 h-10"
-                            resizeMode="contain"
-                        />
+                        <Image source={require('~/assets/img/logo/Logo1.png')} className="w-20 h-10" resizeMode="contain" />
                     </View>
 
-                    <View className="flex-row items-center gap-3">
-                        <TouchableOpacity>
+                    <View className='flex-row items-center gap-3'>
+                        <TouchableOpacity >
                             <FontAwesome name="bell-o" size={20} color="#e4e4e7" />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={''}>
-                            <MaterialCommunityIcons
-                                name="message-reply-text-outline"
-                                size={20}
-                                color="#e4e4e7"
-                            />
+
+                        <TouchableOpacity onPress={abrirModalPersonal} disabled={loading} className="p-2">
+                            {loading ? (
+                                <ActivityIndicator size="small" color="#6943FF" />
+                            ) : (
+                                <MaterialCommunityIcons name="message-reply-text-outline" size={20} color="#e4e4e7" />
+                            )}
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -111,7 +180,7 @@ export default function Desafios() {
                     showsVerticalScrollIndicator={false}
                 >
 
-                    <View className="px-4  pt-5">
+                    <View className="px-4 pt-5">
                         <Text className="text-2xl font-bold text-colorLight300 text-center">
                             Desafie-se e Transforme
                         </Text>
@@ -187,6 +256,15 @@ export default function Desafios() {
                             </TouchableOpacity>
                         ))}
                     </View>
+
+                    <InfosPersonal
+                        visible={modalVisible}
+                        onClose={() => setModalVisible(false)}
+                        personal={personal}
+                        openWhatsApp={openWhatsApp}
+                        sendEmail={sendEmail}
+                    />
+
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>

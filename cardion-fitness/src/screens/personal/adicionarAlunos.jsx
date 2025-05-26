@@ -183,7 +183,7 @@ export default function AdicionarAlunos() {
                                         onPress={() => setModalVisible(false)}
                                         className="bg-colorViolet p-3 rounded-full mx-10"
                                     >
-                                        <Text className="text-colorLight200 text-center">Fechar</Text>
+                                        <Text className="text-colorDark100 text-center">Fechar</Text>
                                     </TouchableOpacity>
                                 </>
                             )}

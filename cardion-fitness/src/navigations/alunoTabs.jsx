@@ -25,8 +25,7 @@ export default function AlunoTabs() {
         tabBarInactiveTintColor: '#E4E4E7',
         tabBarStyle: {
           borderTopWidth: 0,
-          backgroundColor: 'transparent',
-          position: 'absolute',
+          backgroundColor: '#10131A',
           elevation: 0,
           overflow: 'hidden',
           paddingBottom: Platform.OS === 'android' ? 10 : 0,
@@ -42,7 +41,6 @@ export default function AlunoTabs() {
             intensity={0}
             style={{
               flex: 1,
-              borderRadius: 100,
               overflow: 'hidden',
             }}
           />
