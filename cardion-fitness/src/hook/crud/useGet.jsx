@@ -112,7 +112,7 @@ export const useGet = () => {
   }
 
 
-  // Trazer dados do aluno pelo id dele, nesse caso chamado de detalhe do aluno
+  // Trazer dados do personal pelo id dele, nesse caso chamado de detalhe do aluno
   const getPersonalById = async (idPersonal) => {
 
     const docRef = doc(db, 'personal', idPersonal);
