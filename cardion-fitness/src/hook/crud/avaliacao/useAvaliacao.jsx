@@ -9,10 +9,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Toast from "react-native-toast-message";
 
+import { useConquistas } from '../conquistas/useConquistas';
 
 export const useAvaliacao = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const {verificarConquistaPendenteAvaliacao}= useConquistas()
 
   const avaliar = async (data) => {
     setLoading(true);
@@ -20,13 +22,17 @@ export const useAvaliacao = () => {
 
     try {
       const uid = await AsyncStorage.getItem('uid');
+      const role = await AsyncStorage.getItem("role")
 
       if (!uid) {
         throw new Error('UID não encontrado no AsyncStorage.');
       }
 
+      await verificarConquistaPendenteAvaliacao(uid)
+      
       await addDoc(collection(db, 'avaliacao'), {
         uid,
+        role:role,
         name: data.name,
         avaliacao: data.avaliacao,
         comentario: data?.comentario ?? null,
