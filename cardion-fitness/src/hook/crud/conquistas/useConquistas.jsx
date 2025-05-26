@@ -1,4 +1,4 @@
-import { doc, updateDoc,increment,getDoc ,arrayUnion,getDocs  } from 'firebase/firestore';
+import { doc, updateDoc,increment,getDoc ,arrayUnion,getDocs,where,query,collection  } from 'firebase/firestore';
 // conexão Firebase
 import { db } from '~/firebase/firebaseConfig';
 
@@ -30,6 +30,17 @@ export const useConquistas = () =>
                 case 10:
                     idConquista = 3;
                     break;
+                case 20:
+                    idConquista = 5;
+                    break;
+                case 30:
+                    idConquista = 6;
+                    break;
+                case 50:
+                    idConquista =8;
+                    break;
+
+    
                 
             }
 
@@ -55,6 +66,48 @@ export const useConquistas = () =>
                 position: 'top',
             });
            
+        }
+
+        const verificarConquistaPendenteAvaliacao = async (uid) =>{
+            // validar aqui
+            const role = await AsyncStorage.getItem("role")
+            if(role != 'aluno') return
+
+            const avaliacaoRef = collection(db, 'avaliacao');
+            const q = query(avaliacaoRef, where('uid', '==', uid),where('role', '==', role));
+            const querySnapshot = await getDocs(q);
+        
+            const avaliacoes = [];
+            querySnapshot.forEach((doc) => {
+                avaliacoes.push({
+                id: doc.id,        
+                ...doc.data()      
+                });
+            });
+
+
+            if (avaliacoes.length === 0) {
+                const docRef2 = doc(db,"conquistas" , String(17));
+                const docSnap2 = await getDoc(docRef2);
+        
+                const conquista = docSnap2.data()
+
+                await updateDoc(doc(db, 'aluno', uid), {
+                            pontos: increment(conquista.pontos),
+                            conquistas: arrayUnion(17)
+                        });
+                
+            
+                // await enviarMensagem("Conquista desbloqueada",conquista?.descricao)
+
+                Toast.show({
+                    type: 'success',
+                    text1: `Conquista Desbloqueada!`,
+                    text2: `${conquista?.nome}`,
+                    position: 'top',
+                });
+                }
+
         }
         
         const aplicarConquistaPendente = async () =>{
@@ -128,5 +181,5 @@ export const useConquistas = () =>
             return conquistasNaoAdquiridas;
         }
 
-        return{aplicarConquistaPendente,buscarConquistasDoAluno,buscarConquistasNaoDesbloqueadas}
+        return{aplicarConquistaPendente,buscarConquistasDoAluno,buscarConquistasNaoDesbloqueadas,verificarConquistaPendenteAvaliacao}
     }
