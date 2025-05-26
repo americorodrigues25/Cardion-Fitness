@@ -11,6 +11,8 @@ import { getAuth } from 'firebase/auth';
 
 import { useVinculo } from '~/hook/crud/vincularAlunos/vincularAluno';
 
+import { useCreateAnotacoes } from "~/hook/crud/anotacoes/useCreateAnotacoes";
+
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
@@ -25,6 +27,9 @@ export default function DetalhesAlunos() {
     const [showModal, setShowModal] = useState(false);
     const { aluno } = route.params || {};
     const [imageUrl,setImageUrl] =useState()
+    const [anotacao,setAnotacao] = useState()
+    const [anotacaoOriginal, setAnotacaoOriginal] = useState('');
+    const {criarAnotacoes} = useCreateAnotacoes();
 
     const { desvincularAluno } = useVinculo();
 
@@ -69,7 +74,15 @@ export default function DetalhesAlunos() {
 
         fetchImage();
         fetchNome();
+        setAnotacao(aluno.anotacao)
+        setAnotacaoOriginal(aluno.anotacao)
     }, []);
+
+    const handleSalvar =async ()=>{
+        await criarAnotacoes(aluno.uid,anotacao)
+        setAnotacaoOriginal(anotacao)
+    }
+    const houveMudanca = anotacao !== anotacaoOriginal;
 
     if (!aluno) {
         return (
@@ -165,7 +178,18 @@ export default function DetalhesAlunos() {
                                 multiline
                                 textAlignVertical="center"
                                 className="bg-colorInputs w-full h-40 rounded-2xl border border-colorDark100 text-colorLight200 text-base p-5"
+                                onChangeText={setAnotacao}
+                                value={anotacao}
                             />
+
+                             {houveMudanca && (
+                                <TouchableOpacity
+                                onPress={handleSalvar}
+                                className="bg-colorViolet py-3 px-6 rounded-xl mt-3"
+                                >
+                                <Text className="text-white font-bold text-center">Salvar</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
 
                         <View className=" pt-10 items-center">
