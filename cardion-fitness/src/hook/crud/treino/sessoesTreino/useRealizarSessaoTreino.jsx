@@ -46,7 +46,7 @@ export const useRealizarSessaoTreino = () =>
                 return false;
             }
 
-            const {aplicarConquistaPendente} = useConquistas()        
+            const {aplicarConquistaPendente,verificarConquistaPendenteSessaoTreino} = useConquistas()        
                 
             try{
 
@@ -63,6 +63,8 @@ export const useRealizarSessaoTreino = () =>
                 });
                 
                  await aplicarConquistaPendente()
+
+                 await verificarConquistaPendenteSessaoTreino(idTreino,uid)
                 return true
 
             }catch(error){

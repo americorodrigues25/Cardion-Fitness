@@ -181,5 +181,37 @@ export const useConquistas = () =>
             return conquistasNaoAdquiridas;
         }
 
-        return{aplicarConquistaPendente,buscarConquistasDoAluno,buscarConquistasNaoDesbloqueadas,verificarConquistaPendenteAvaliacao}
+        const verificarConquistaPendenteSessaoTreino = async (idTreino,uid) =>{
+            const docRef = doc(db, 'treino', idTreino);
+            const docSnap = await getDoc(docRef);
+
+            const treino = docSnap.data()
+            
+            if(treino.sessoesRealizadas == null) return
+            
+            if(treino.sessoes == treino.sessoesRealizadas.qtd){
+            const docRef2 = doc(db,"conquistas" , String(7));
+            const docSnap2 = await getDoc(docRef2);
+    
+            const conquista = docSnap2.data()
+
+            await updateDoc(doc(db, 'aluno', uid), {
+                        pontos: increment(conquista.pontos),
+                        conquistas: arrayUnion(7)
+                    });
+            
+           
+            await enviarMensagem("Conquista desbloqueada",conquista?.descricao)
+
+            Toast.show({
+                type: 'success',
+                text1: `Conquista Desbloqueada!`,
+                text2: `${conquista?.nome}`,
+                position: 'top',
+            });
+            }
+           
+        }
+
+        return{aplicarConquistaPendente,buscarConquistasDoAluno,buscarConquistasNaoDesbloqueadas,verificarConquistaPendenteAvaliacao,verificarConquistaPendenteSessaoTreino}
     }
