@@ -25,11 +25,11 @@ export default function PersonalTabs() {
                 tabBarStyle: {
                     borderTopWidth: 0,
                     borderTopColor: '#27272A',
-                    backgroundColor: '#transparent',
-                    position: 'absolute',
+                    backgroundColor: '#10131A',
                     elevation: 0,
+                    overflow: 'hidden',
                     paddingBottom: Platform.OS === 'android' ? 10 : 0,
-                    height: Platform.OS === 'android' ? 70 : 70,
+                    height: Platform.OS === 'android' ? 60 : 60,
                 },
                 tabBarLabelStyle: {
                     fontSize: 9,
@@ -39,7 +39,10 @@ export default function PersonalTabs() {
                     <BlurView
                         tint="dark"
                         intensity={30}
-                        style={{ flex: 1 }}
+                        style={{
+                            flex: 1,
+                            overflow: 'hidden',
+                        }}
                     />
                 ),
             }}
