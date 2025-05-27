@@ -1,8 +1,9 @@
-import { collection, addDoc, getDocs, where, query, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, getDocs,getDoc,where, query, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '~/firebase/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Toast from "react-native-toast-message";
+import { useConquistas } from '../conquistas/useConquistas';
 
 export const useVinculo = () => {
 
@@ -43,6 +44,13 @@ export const useVinculo = () => {
       text1: 'Parabéns ✅',
       text2: 'Você tem um novo aluno vinculado! 🎉',
     });
+
+     const docRef = doc(db, "aluno", idAluno);
+      const docSnap = await getDoc(docRef);
+
+    const user = docSnap.data()
+    const {verificarConquistaVinculo} = useConquistas()
+    await verificarConquistaVinculo(user,idAluno)
     return true;
   };
 

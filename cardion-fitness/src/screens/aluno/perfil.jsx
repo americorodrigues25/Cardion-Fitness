@@ -22,6 +22,7 @@ import { useGet } from '~/hook/crud/useGet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useUpdate } from '~/hook/crud/useUpdate';
+import { useConquistas } from '~/hook/crud/conquistas/useConquistas';
 
 export default function Perfil({ }) {
     const navigation = useNavigation();
@@ -40,6 +41,7 @@ export default function Perfil({ }) {
     const [filename, setFilename] = useState();
     const { updateDadosBasicos } = useUpdate();
     const [campoFocado, setCampoFocado] = useState('');
+    const {verificarConquistaPerfil} = useConquistas()
 
 
     const atualizarDados = async () => {
@@ -61,6 +63,10 @@ export default function Perfil({ }) {
                 type: 'success',
                 text1: 'Dados atualizados com sucesso ! 🎉',
             });
+
+            const uid = await AsyncStorage.getItem('uid')
+
+            verificarConquistaPerfil(uid)
         } else {
             Toast.show({
             type: 'error',
@@ -72,7 +78,7 @@ export default function Perfil({ }) {
     const trazerDados = async () => {
         const user = await getById()
         setNome(user.nome)
-        setSobrenome(user.nome)
+        setSobrenome(user.sobrenome)
         setEmail(user.email)
         setTelefone(user.telefone)
         setDataNascimento(user.dataNasc)

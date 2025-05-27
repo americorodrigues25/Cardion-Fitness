@@ -24,6 +24,7 @@ export const useUpdate = () =>
               // TODO: terminar de implementar
               await updateDoc(doc(db, role, uid), {
                 nome:data.nome,
+                sobrenome:data.sobrenome,
                 telefone:data.telefone,
                 altura:data.altura,
                 dataNasc:data.dataNasc,
