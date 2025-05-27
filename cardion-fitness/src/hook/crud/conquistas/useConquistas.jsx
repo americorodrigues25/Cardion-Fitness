@@ -275,5 +275,11 @@ export const useConquistas = () =>
             
         }
 
-        return{aplicarConquistaPendente,buscarConquistasDoAluno,buscarConquistasNaoDesbloqueadas,verificarConquistaPendenteAvaliacao,verificarConquistaPendenteSessaoTreino,verificarConquistaPerfil,verificarConquistaVinculo}
+        const getAllConquistas = async () =>{
+            const dados = await getDocs(collection(db, 'conquistas'));
+
+            return dados.data()
+        }
+
+        return{aplicarConquistaPendente,buscarConquistasDoAluno,buscarConquistasNaoDesbloqueadas,verificarConquistaPendenteAvaliacao,verificarConquistaPendenteSessaoTreino,verificarConquistaPerfil,verificarConquistaVinculo,getAllConquistas}
     }
