@@ -213,5 +213,67 @@ export const useConquistas = () =>
            
         }
 
-        return{aplicarConquistaPendente,buscarConquistasDoAluno,buscarConquistasNaoDesbloqueadas,verificarConquistaPendenteAvaliacao,verificarConquistaPendenteSessaoTreino}
+        const verificarConquistaPerfil = async (uid) =>{
+
+            const docRef = doc(db,'aluno' ,uid);
+            const docSnap = await getDoc(docRef);
+    
+            const user = docSnap.data()
+
+            if(!verificarProps(user)) return null
+
+            if(user.conquistas.includes(13)) return null
+
+            const docRef2 = doc(db,"conquistas" , String(13));
+            const docSnap2 = await getDoc(docRef2);
+    
+            const conquista = docSnap2.data()
+
+            await updateDoc(doc(db, 'aluno', uid), {
+                    pontos: increment(conquista.pontos),
+                    conquistas: arrayUnion(13)
+                });
+            
+            await enviarMensagem("Conquista desbloqueada",conquista?.descricao)
+
+            Toast.show({
+                type: 'success',
+                text1: `Conquista Desbloqueada!`,
+                text2: `${conquista?.nome}`,
+                position: 'top',
+            });
+            
+        }
+
+        function verificarProps(user){
+            if(user.nome == null ||
+                user.sobrenome == null ||
+                user.email == null ||
+                user.telefone == null ||
+                user.dataNasc == null ||
+                user.sexo == null
+            ){
+                return false
+            }
+
+            return true
+        }
+
+        const verificarConquistaVinculo = async (user,uid) =>{
+            
+            if(user.conquistas.includes(11)) return null
+            
+            const docRef2 = doc(db,"conquistas" , String(11));
+            const docSnap2 = await getDoc(docRef2);
+    
+            const conquista = docSnap2.data()
+
+            await updateDoc(doc(db, 'aluno', uid), {
+                    pontos: increment(conquista.pontos),
+                    conquistas: arrayUnion(11)
+                });
+            
+        }
+
+        return{aplicarConquistaPendente,buscarConquistasDoAluno,buscarConquistasNaoDesbloqueadas,verificarConquistaPendenteAvaliacao,verificarConquistaPendenteSessaoTreino,verificarConquistaPerfil,verificarConquistaVinculo}
     }
