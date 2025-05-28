@@ -18,9 +18,9 @@ export const useEditTreino = () => {
     // o objeto do treino deve vir completo, com tudo, porque caso alguma propriedade esteja faltando, ira ser nula no banco
     try {
       
-      const role = await AsyncStorage.getItem('role')
+      // const role = await AsyncStorage.getItem('role')
 
-      if(role != "personal") return false
+      // if(role != "personal") return false
       
 
       await updateDoc(doc(db, 'treino',idTreino),treino);

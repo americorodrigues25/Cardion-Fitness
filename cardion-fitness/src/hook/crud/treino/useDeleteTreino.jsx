@@ -12,12 +12,12 @@ export const useDeleteTreino = () => {
     setError(null);
 
     try {
-      const role = await AsyncStorage.getItem('role');
+      // const role = await AsyncStorage.getItem('role');
 
-      if (role !== 'personal') {
-        setError('Acesso negado: Você não tem permissão para excluir este treino.');
-        return false;
-      }
+      // if (role !== 'personal') {
+      //   setError('Acesso negado: Você não tem permissão para excluir este treino.');
+      //   return false;
+      // }
 
       await deleteDoc(doc(db, 'treino', idTreino));
       
