@@ -168,9 +168,6 @@ export default function Home({ navigation }) {
                     </View>
 
                     <View className='flex-row items-center gap-3'>
-                        <TouchableOpacity >
-                            <FontAwesome name="bell-o" size={20} color="#e4e4e7" />
-                        </TouchableOpacity>
 
                         <TouchableOpacity onPress={abrirModalPersonal} disabled={loading} className="p-2">
                             {loading ? (

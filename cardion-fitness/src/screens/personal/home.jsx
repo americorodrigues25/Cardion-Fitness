@@ -94,9 +94,6 @@ export default function Home() {
                     </View>
 
                     <View className='flex-row items-center gap-3'>
-                        <TouchableOpacity >
-                            <FontAwesome name="bell-o" size={20} color="#e4e4e7" />
-                        </TouchableOpacity>
                         <TouchableOpacity onPress={() => setShowMessageModal(true)}>
                             <MaterialCommunityIcons name="message-reply-text-outline" size={20} color="#e4e4e7" />
                         </TouchableOpacity>

@@ -26,10 +26,10 @@ export default function DetalhesAlunos() {
     const route = useRoute();
     const [showModal, setShowModal] = useState(false);
     const { aluno } = route.params || {};
-    const [imageUrl,setImageUrl] =useState()
-    const [anotacao,setAnotacao] = useState()
+    const [imageUrl, setImageUrl] = useState()
+    const [anotacao, setAnotacao] = useState()
     const [anotacaoOriginal, setAnotacaoOriginal] = useState('');
-    const {criarAnotacoes} = useCreateAnotacoes();
+    const { criarAnotacoes } = useCreateAnotacoes();
 
     const { desvincularAluno } = useVinculo();
 
@@ -63,12 +63,12 @@ export default function DetalhesAlunos() {
         };
 
         const fetchImage = async () => {
-             const auth = getAuth();
+            const auth = getAuth();
             const user = auth.currentUser;
 
             const token = await user.getIdToken();
-            const res = await axios.get(`${SERVER_URL}/image/${aluno.id}`,{headers:{'Authorization': `Bearer ${token}`}});
-            
+            const res = await axios.get(`${SERVER_URL}/image/${aluno.id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+
             setImageUrl(`${res.data.url}?${Date.now()}`);
         };
 
@@ -78,8 +78,8 @@ export default function DetalhesAlunos() {
         setAnotacaoOriginal(aluno.anotacao)
     }, []);
 
-    const handleSalvar =async ()=>{
-        await criarAnotacoes(aluno.uid,anotacao)
+    const handleSalvar = async () => {
+        await criarAnotacoes(aluno.uid, anotacao)
         setAnotacaoOriginal(anotacao)
     }
     const houveMudanca = anotacao !== anotacaoOriginal;
@@ -144,7 +144,9 @@ export default function DetalhesAlunos() {
                                     resizeMode="cover"
                                     className="w-20 h-20 rounded-full"
                                 />
-                                <Text className="text-colorLight200 text-xl font-bold pl-5">{aluno.nome}</Text>
+                                <View>
+                                    <Text className="text-colorLight200 text-xl font-bold pl-5">{aluno.nome} {aluno.sobrenome}</Text>
+                                </View>
                             </View>
                         </View>
 
@@ -159,12 +161,6 @@ export default function DetalhesAlunos() {
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                className="flex-row items-center">
-                                <FontAwesome name="trophy" size={25} color="#E4E4E7" />
-                                <Text className="text-colorLight200 font-bold text-base pl-3">Ver conquistas</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
                                 onPress={() => navigation.navigate('Avaliacoes', { idAluno: aluno.id })}
                                 className="flex-row items-center">
                                 <FontAwesome5 name="clipboard-list" size={25} color="#E4E4E7" />
@@ -173,7 +169,7 @@ export default function DetalhesAlunos() {
                         </View>
 
                         <View>
-                            <Text className="text-colorLight200 font-bold mb-3">Anotações</Text>
+                            <Text className="text-colorLight200 font-bold mb-2">Feedback</Text>
                             <TextInput
                                 multiline
                                 textAlignVertical="center"
@@ -182,12 +178,12 @@ export default function DetalhesAlunos() {
                                 value={anotacao}
                             />
 
-                             {houveMudanca && (
+                            {houveMudanca && (
                                 <TouchableOpacity
-                                onPress={handleSalvar}
-                                className="bg-colorViolet py-3 px-6 rounded-xl mt-3"
+                                    onPress={handleSalvar}
+                                    className="bg-colorViolet py-3 px-6 rounded-full mt-3"
                                 >
-                                <Text className="text-white font-bold text-center">Salvar</Text>
+                                    <Text className="text-white font-bold text-center">Salvar</Text>
                                 </TouchableOpacity>
                             )}
                         </View>

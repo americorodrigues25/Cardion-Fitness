@@ -75,6 +75,7 @@ export default function Alunos() {
                     overScrollMode="never"
                     contentContainerStyle={{ flexGrow: 1 }}
                     keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
                 >
 
                     <View className='flex-row items-center justify-between'>
@@ -83,9 +84,6 @@ export default function Alunos() {
                         </View>
 
                         <View className='flex-row items-center gap-3'>
-                            <TouchableOpacity >
-                                <FontAwesome name="bell-o" size={20} color="#e4e4e7" />
-                            </TouchableOpacity>
                             <TouchableOpacity onPress={() => setShowMessageModal(true)}>
                                 <MaterialCommunityIcons name="message-reply-text-outline" size={20} color="#e4e4e7" />
                             </TouchableOpacity>
@@ -121,7 +119,11 @@ export default function Alunos() {
                                         onPress={() => navigation.navigate('detalhesAlunos', { aluno })}
                                     >
                                         <Text className="text-colorLight200 text-base bg-colorInputs px-10 py-5 mb-2 rounded-xl border-colorDark100 border">
-                                            {aluno.nome || aluno.email}
+                                            {
+                                                aluno.nome
+                                                    ? (aluno.sobrenome ? `${aluno.nome} ${aluno.sobrenome}` : aluno.nome)
+                                                    : aluno.email
+                                            }
                                         </Text>
                                     </TouchableOpacity>
                                 ))

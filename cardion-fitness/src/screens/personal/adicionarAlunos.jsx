@@ -97,6 +97,7 @@ export default function AdicionarAlunos() {
                     overScrollMode="never"
                     contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
                     keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
                 >
                     <View className="pt-5 px-5 flex-row justify-between">
                         <TouchableOpacity onPress={() => navigation.goBack()} className="flex-row">
@@ -183,7 +184,7 @@ export default function AdicionarAlunos() {
                                         onPress={() => setModalVisible(false)}
                                         className="bg-colorViolet p-3 rounded-full mx-10"
                                     >
-                                        <Text className="text-colorDark100 text-center">Fechar</Text>
+                                        <Text className="text-colorLight200 text-center">Fechar</Text>
                                     </TouchableOpacity>
                                 </>
                             )}

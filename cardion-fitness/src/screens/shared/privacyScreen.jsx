@@ -22,7 +22,7 @@ export default function Privacy() {
                     </TouchableOpacity>
                 </View>
 
-                <View className="px-5 py-14">
+                <View className="px-5 py-10">
                     <Text className="text-base text-justify">
                         <Text className="text-colorViolet text-lg font-semibold">Política de privacidade</Text>
                         <Text className="text-colorLight200 text-lg font-semibold"> - Cardio Fitness</Text>
