@@ -12,6 +12,7 @@ export const useRealizarDesafio = () => {
     const docRef = doc(db, 'aluno', uid);
     const docSnap = await getDoc(docRef);
     const user = docSnap.data();
+
     if (!user?.desafiosRealizados?.qtd) return;
 
     let idConquista = 0;
@@ -19,7 +20,12 @@ export const useRealizarDesafio = () => {
       case 1:
         idConquista = 4;
         break;
+      case 20:
+        idConquista = 12
+        break;
     }
+
+    if(user.conquistas.includes(idConquista)) return 
 
     if (idConquista === 0) return;
 
