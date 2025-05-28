@@ -37,32 +37,64 @@ export default function HelSupport() {
             answer: 'Nós disponibilizamos o contato dos personais na área do perfil.',
         },
         {
-            question: 'Preciso pagar algo para usar o aplicativo?',
-            answer: 'Não, o aplicativo é gratuito para uso.',
+            question: 'Como me vinculo a um personal trainer no app?',
+            answer: 'O personal se vinculará ao aluno, buscando-o pelo e-mail cadastrado no aplicativo.',
         },
         {
-            question: 'O aplicativo disponibiliza dietas?',
-            answer: 'Sim, algumas dietas estão disponíveis com base no seu perfil.',
+            question: 'O que é um treino no aplicativo?',
+            answer: 'É um conjunto de exercícios criado pelo seu personal trainer, personalizado para seus objetivos. Ele contém os exercícios, repetições, séries e dias da semana recomendados.',
         },
         {
-            question: 'Como faço para adicionar um personal?',
-            answer: 'Vá até a aba de "Personal" e clique em "Adicionar".',
+            question: 'Como vejo os treinos que o personal criou para mim??',
+            answer: 'Acesse a aba "Meus Treinos" no menu principal. Lá você verá todos os treinos ativos criados pelo seu personal.',
         },
         {
-            question: 'Como faço para adicionar um aluno?',
-            answer: 'Na aba "Alunos", clique em "+ Adicionar aluno".',
+            question: 'Posso marcar quais treinos já fiz?',
+            answer: 'Sim! Basta abrir o treino e registrar a sessão como concluída. Isso ajuda seu personal a acompanhar sua evolução.',
         },
         {
             question: 'É possível adicionar quantos alunos?',
             answer: 'Não há limite de alunos cadastrados.',
         },
         {
-            question: 'Tenho limite de alunos adicionados?',
-            answer: 'Não, você pode adicionar quantos alunos quiser.',
+            question: 'O que é a avaliação física no app?',
+            answer: 'É uma análise feita pelo seu personal com base em dados como peso, medidas corporais e percentual de gordura. Ela ajuda a montar um treino mais eficaz para seus objetivos.',
         },
         {
-            question: 'Como faço para adicionar um treino?',
-            answer: 'Na seção "Treinos", clique em "Novo treino" e preencha os dados.',
+            question: 'Como acesso minha avaliação física?',
+            answer: 'Na aba "Minha Avaliação", você pode visualizar todas as avaliações feitas pelo seu personal, com detalhes.',
+        },
+        {
+            question: 'Posso ter mais de um personal vinculado?',
+            answer: 'Atualmente, só é possível ter um personal ativo por vez. Você pode trocar de personal a qualquer momento, mas perderá o acesso aos treinos e avaliações anteriores.',
+        },
+        {
+            question: 'O que são os desafios do aplicativo?',
+            answer: 'São atividades pré-definidas que você pode realizar para acumular pontos e desbloquear conquistas. Eles ajudam a manter sua motivação em alta.',
+        },
+        {
+            question: 'Como participo de um desafio?',
+            answer: 'Acesse a aba "Desafios", escolha o desafio desejado e clique em "Participar". Depois, é só seguir as instruções para concluí-lo.',
+        },
+        {
+            question: 'O que ganho ao completar desafios?',
+            answer: 'Você acumula pontos, pode desbloquear conquistas e subir no ranking geral do app, mostrando sua evolução.',
+        },
+        {
+            question: 'O que são as conquistas?',
+            answer: 'Conquistas são metas atingidas dentro do app, como "10 treinos concluídos" ou "3 desafios completados". Elas ficam salvas no seu perfil.',
+        },
+        {
+            question: 'Onde vejo meu ranking?',
+            answer: 'Na aba "Ranking", você pode ver sua posição em relação a outros usuários com base nos pontos conquistados com desafios e conquistas.',
+        },
+        {
+            question: 'Meus dados estão seguros no aplicativo?',
+            answer: 'Sim, todos os dados são armazenados com segurança e usados apenas para melhorar sua experiência com o app e permitir o acompanhamento do seu progresso.',
+        },
+        {
+            question: 'Consigo usar o app sem estar vinculado a um personal?',
+            answer: 'Sim, é possível usar os desafios e acompanhar suas conquistas, mas para receber treinos e avaliações personalizadas, é necessário ter um personal vinculado.',
         },
     ];
 
@@ -75,7 +107,7 @@ export default function HelSupport() {
     };
 
     const criarAvaliacao = async () => {
-        
+
         const user = await getById()
         const nome = user.nome
 
@@ -88,11 +120,11 @@ export default function HelSupport() {
 
         const resultado = await avaliar(data)
         if (resultado) {
-             Toast.show({
-                                type: 'success',
-                                text1: `Avaliação enviada!`,
-                                position: 'top',
-                            });
+            Toast.show({
+                type: 'success',
+                text1: `Avaliação enviada!`,
+                position: 'top',
+            });
             setShowModal(false);
         } else {
             Alert.alert("Erro")

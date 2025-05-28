@@ -41,7 +41,10 @@ export default function CriarTreino() {
         }
 
         if (!treinoEditando.exercicios || treinoEditando.exercicios.length === 0) {
-            Alert.alert('Erro', 'Não é possível salvar o treino sem exercícios adicionados.')
+            Toast.show({
+                type: 'error',
+                text1: 'Não é possivel salvar treino sem exercicios',
+            });
             return;
         }
 

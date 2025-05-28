@@ -11,7 +11,7 @@ export default function InfosPersonal({ visible, onClose, personal, openWhatsApp
             transparent
             onRequestClose={onClose}
         >
-            <View className="flex-1 justify-center items-center bg-black/80">
+            <View className="flex-1 justify-center items-center bg-black/80 px-5">
                 <View className="bg-colorDark100 rounded-2xl p-6 w-full max-h-[80%]">
                     <Text className="text-lg font-bold mb-5 text-colorLight200">Informações do Personal</Text>
 
@@ -33,21 +33,21 @@ export default function InfosPersonal({ visible, onClose, personal, openWhatsApp
                     </View>
 
                     {(personal?.telefone || personal?.email) && (
-                        <View className="mt-6 gap-y-3 items-start">
+                        <View className="mt-6 gap-y-2 mx-10">
                             {personal?.telefone && (
                                 <TouchableOpacity
                                     onPress={() => openWhatsApp(personal.telefone)}
-                                    className="border border-green-500 rounded-md py-2 px-4 w-40"
+                                    className="border border-green-500 rounded-md py-2 px-4"
                                 >
-                                    <Text className="text-green-500 font-semibold">Falar via WhatsApp</Text>
+                                    <Text className="text-green-500 font-semibold text-center">Falar via WhatsApp</Text>
                                 </TouchableOpacity>
                             )}
                             {personal?.email && (
                                 <TouchableOpacity
                                     onPress={() => sendEmail(personal.email)}
-                                    className="border border-colorViolet rounded-md py-2 px-4 w-40"
+                                    className="border border-colorViolet rounded-md py-2 px-4"
                                 >
-                                    <Text className="text-colorViolet font-semibold">Enviar Email</Text>
+                                    <Text className="text-colorViolet font-semibold text-center">Enviar Email</Text>
                                 </TouchableOpacity>
                             )}
                         </View>

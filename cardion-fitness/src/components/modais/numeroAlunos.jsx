@@ -25,7 +25,7 @@ export default function NumerosAlunos({
                             <TextInput
                                 placeholder="Busque o aluno"
                                 placeholderTextColor="#A1A1AA"
-                                className="bg-colorDark100 text-colorLight200 px-4 py-4 rounded-xl mb-4"
+                                className="bg-colorDark100 text-colorLight200 px-4 rounded-xl mb-4 border-b border-gray-600"
                                 value={busca}
                                 onChangeText={setBusca}
                             />
