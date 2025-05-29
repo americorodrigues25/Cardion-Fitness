@@ -13,6 +13,7 @@ export default function Privacy() {
                 bounces={false}
                 overScrollMode='never'
                 contentContainerStyle={{ flexGrow: 1 }}
+                showsVerticalScrollIndicator={false}
             >
 
                 <View className="pt-5 px-5">
