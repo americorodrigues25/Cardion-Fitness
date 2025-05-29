@@ -4,9 +4,7 @@ import { useEffect, useState } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-
 import axios from 'axios';
-
 
 import { SERVER_URL } from '~/apiConfig/config';
 
@@ -26,10 +24,22 @@ export default function CustomDrawerContent(props) {
     const { getById } = useGet()
     const [filename, setFilename] = useState()
 
-    const trazerNome = async () => {
-        const user = await getById()
-        setNome(user.nome)
-    }
+    const [role, setRole] = useState('');
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const user = await getById();
+                setNome(user.nome);
+                setRole(user.role || (await AsyncStorage.getItem('role')));
+                console.log('Tipo de usuário:', user.role);
+            } catch (error) {
+                console.log('Erro ao buscar dados do usuário:', error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     useEffect(() => {
         const fetchNome = async () => {
@@ -37,14 +47,14 @@ export default function CustomDrawerContent(props) {
         };
 
         const fetchImage = async () => {
-             const auth = getAuth();
+            const auth = getAuth();
             const user = auth.currentUser;
 
             const token = await user.getIdToken();
 
             const userId = await AsyncStorage.getItem("uid");
-            const res = await axios.get(`${SERVER_URL}/image/${userId}`,{
-                headers:{'Authorization': `Bearer ${token}`}
+            const res = await axios.get(`${SERVER_URL}/image/${userId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             setImageUrl(`${res.data.url}?${Date.now()}`);
         };
@@ -138,6 +148,19 @@ export default function CustomDrawerContent(props) {
                                 </View>
                                 <Text className="text-colorLight200 text-base font-medium">Política de privacidade</Text>
                             </TouchableOpacity>
+
+                            {role === 'aluno' && (
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('Infos Personal')}
+                                    className={`flex-row items-center mt-5 ${isActive('Infos Personal') ? 'bg-colorViolet rounded-full p-2' : ''
+                                        }`}
+                                >
+                                    <View className="bg-colorDark100 p-2 rounded-full mr-3">
+                                        <MaterialCommunityIcons name="account-details" size={23} color="#E4E4E7" />
+                                    </View>
+                                    <Text className="text-colorLight200 text-base font-medium">Meu Personal</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                     </View>
                 </ScrollView>
