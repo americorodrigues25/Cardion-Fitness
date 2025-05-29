@@ -4,6 +4,7 @@ import Perfil from '~/screens/aluno/perfil';
 import HelSupport from '~/screens/shared/helpSupport';
 import Privacy from '~/screens/shared/privacyScreen';
 import CustomDrawerContent from './customDrawerContent';
+import InfosPersonal from '~/screens/aluno/detalhesPersonal';
 
 const Drawer = createDrawerNavigator();
 
@@ -40,6 +41,10 @@ export default function AlunoDrawer() {
       <Drawer.Screen
         name="Politica de privacidade"
         component={Privacy}
+      />
+      <Drawer.Screen
+        name="Infos Personal"
+        component={InfosPersonal}
       />
     </Drawer.Navigator>
   );
