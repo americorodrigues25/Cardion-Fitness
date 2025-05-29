@@ -125,26 +125,29 @@ export const useGet = () => {
 
 
   // Trazer o personal do aluno, na tela do aluno nesse caso
-  const getPersonalDoAluno = async () => {
+ const getPersonalDoAluno = async () => {
+  const idAluno = await AsyncStorage.getItem('uid');
 
-    const idAluno = await AsyncStorage.getItem('uid')
+  const vinculoRef = collection(db, 'vinculos');
+  const q = query(vinculoRef, where('idAluno', '==', idAluno));
+  const querySnapshot = await getDocs(q);
 
-    const vinculoRef = collection(db, 'vinculos');
-    const q = query(vinculoRef, where('idAluno', '==', idAluno));
-    const querySnapshot = await getDocs(q);
+  if (querySnapshot.empty) return null;
 
-    if (querySnapshot.empty) return
+  const docVinculo = querySnapshot.docs[0];
+  const vinculoData = docVinculo.data();
 
-    const docVinculo = querySnapshot.docs[0];
-    const data = docVinculo.data();
+  const docRef = doc(db, 'personal', vinculoData.idPersonal);
+  const docSnap = await getDoc(docRef);
 
-    const docRef = doc(db, 'personal', data.idPersonal);
-    const docSnap = await getDoc(docRef);
+  const personal = docSnap.data();
 
-    const personal = docSnap.data()
-
-    return personal
-  }
+  // Retornando ambos os dados
+  return {
+    ...personal,
+    dataVinculacao: vinculoData.dataVinculacao, // data do vínculo
+  };
+};
 
 
   const buscarAlunosOrdenadosPorPontos = async () => {
