@@ -16,6 +16,7 @@ import { useRealizarSessaoTreino } from '~/hook/crud/treino/sessoesTreino/useRea
 
 export default function Home({ navigation }) {
     const [nome, setNome] = useState();
+    const [anotacao, setAnotacao] = useState();
     const { getById } = useGet();
     const { deleteAccount } = useDelete();
     const [usuario, setUsuario] = useState();
@@ -43,6 +44,7 @@ export default function Home({ navigation }) {
     const trazerNome = async () => {
         const user = await getById()
         setNome(user.nome)
+        setAnotacao(user.anotacao)
     }
 
     useEffect(() => {
@@ -248,8 +250,7 @@ export default function Home({ navigation }) {
                         visible={modalVisible}
                         onClose={() => setModalVisible(false)}
                         personal={personal}
-                        openWhatsApp={openWhatsApp}
-                        sendEmail={sendEmail}
+                        anotacao={anotacao}
                     />
 
                 </ScrollView>
