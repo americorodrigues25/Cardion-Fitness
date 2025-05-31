@@ -21,7 +21,7 @@ const DashboardGraficoAlunos = () => {
     const [alunoPontos, setAlunoPontos] = useState('');
     const [paginaAtual, setPaginaAtual] = useState(1);
     const [uidUsuarioLogado, setUidUsuarioLogado] = useState(null);
-    const itensPorPagina = 30;
+    const itensPorPagina = 10;
 
     const { buscarAlunosOrdenadosPorPontos } = useGet();
 
@@ -48,7 +48,9 @@ const DashboardGraficoAlunos = () => {
         ? dados.slice((paginaAtual - 1) * itensPorPagina, paginaAtual * itensPorPagina)
         : dados.slice(0, 5);
 
-    const dadosGrafico = mostrarTodos ? dados.slice(0, 10) : dados.slice(0, 5);
+    const dadosGrafico = mostrarTodos
+        ? dados.slice((paginaAtual - 1) * itensPorPagina, paginaAtual * itensPorPagina)
+        : dados.slice(0, 5);
 
 
     const chartData = {
