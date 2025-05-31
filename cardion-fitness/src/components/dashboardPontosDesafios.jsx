@@ -20,7 +20,7 @@ const GraficoPontosAlunos = () => {
     const [alunoNome, setAlunoNome] = useState('');
     const [alunoPontos, setAlunoPontos] = useState('');
     const [paginaAtual, setPaginaAtual] = useState(1);
-    const itensPorPagina = 30;
+    const itensPorPagina = 10;
 
     const { buscarAlunosOrdenadosPorPontosDesafios } = useGet();
 
@@ -46,7 +46,9 @@ const GraficoPontosAlunos = () => {
         ? dados.slice((paginaAtual - 1) * itensPorPagina, paginaAtual * itensPorPagina)
         : dados.slice(0, 5);
 
-    const dadosGrafico = mostrarTodos ? dados.slice(0, 10) : dados.slice(0, 5);
+    const dadosGrafico = mostrarTodos
+        ? dados.slice((paginaAtual - 1) * itensPorPagina, paginaAtual * itensPorPagina)
+        : dados.slice(0, 5);
 
     const chartData = {
         labels: dadosGrafico.map((aluno) =>
@@ -96,7 +98,7 @@ const GraficoPontosAlunos = () => {
                         backgroundGradientFrom: '#111827',
                         backgroundGradientTo: '#111827',
                         decimalPlaces: 0,
-                        color: () => '#3B82F6', 
+                        color: () => '#3B82F6',
                         labelColor: () => '#E5E7EB',
                         propsForBackgroundLines: {
                             stroke: '#374151',
