@@ -4,8 +4,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import { BackHandler } from 'react-native'; //esse é evento do botão voltar em Android
 import { useEffect, useState, useCallback } from 'react';
 import Toast from 'react-native-toast-message';
+import React from 'react';
 
 import InfosPersonal from '~/components/modais/infosPersonal';
+import AdCarousel from '~/components/anuncios/anuncioParceiros';
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -30,6 +32,8 @@ export default function Home({ navigation }) {
     const totalSessoes = 40;
     const [sessoes, setSessoes] = useState(0);
     const progresso = sessoes / totalSessoes;
+
+    const [showAd, setShowAd] = useState(false);
 
     const marcarSessao = async () => {
         const sessao = await realizarSessao()
@@ -118,41 +122,11 @@ export default function Home({ navigation }) {
         }
     };
 
-    const openWhatsApp = (telefone) => {
-        if (!telefone) {
-            Toast.show({
-                type: 'info',
-                text1: 'Telefone não informado.',
-            });
-            return;
-        }
-
-        const phoneNumber = telefone.replace(/\D/g, '');
-        const url = `https://wa.me/${phoneNumber}`;
-        Linking.openURL(url).catch(() =>
-            Toast.show({
-                type: 'error',
-                text1: 'Erro ao abrir o WhatsApp',
-            })
-        );
-    };
-
-    const sendEmail = (email) => {
-        if (!email) {
-            Toast.show({
-                type: 'info',
-                text1: 'Email não informado.',
-            });
-            return;
-        }
-        const url = `mailto:${email}`;
-        Linking.openURL(url).catch(() =>
-            Toast.show({
-                type: 'error',
-                text1: 'Erro ao abrir o cliente de email',
-            })
-        );
-    };
+    useFocusEffect(
+        React.useCallback(() => {
+            setShowAd(true); 
+        }, [])
+    );
 
     return (
         <SafeAreaView
@@ -181,6 +155,10 @@ export default function Home({ navigation }) {
                     </View>
                 </View>
 
+                <View>
+                    <AdCarousel visible={showAd} onClose={() => setShowAd(false)} />
+                </View>
+
                 <ScrollView
                     bounces={false}
                     overScrollMode="never"
@@ -203,7 +181,7 @@ export default function Home({ navigation }) {
                                     className="h-full rounded-2xl overflow-hidden justify-end" resizeMode="cover"
                                 >
                                     <View className="bg-black/30 p-5">
-                                        <Text className="text-white text-3xl font-bold"> Ver{"\n"} Treinos</Text>
+                                        <Text className="text-colorLight200 text-3xl font-bold"> Ver{"\n"} Treinos</Text>
                                     </View>
                                 </ImageBackground>
                             </TouchableOpacity>
@@ -221,7 +199,7 @@ export default function Home({ navigation }) {
                                     className="h-full rounded-2xl overflow-hidden justify-end" resizeMode="cover"
                                 >
                                     <View className="bg-black/30 p-5">
-                                        <Text className="text-white text-3xl font-bold"> Ver{"\n"} Avaliações</Text>
+                                        <Text className="text-colorLight200 text-3xl font-bold"> Ver{"\n"} Avaliações</Text>
                                     </View>
                                 </ImageBackground>
                             </TouchableOpacity>
@@ -239,9 +217,35 @@ export default function Home({ navigation }) {
                                     className="h-full rounded-2xl overflow-hidden justify-end" resizeMode="cover"
                                 >
                                     <View className="bg-black/30 p-5">
-                                        <Text className="text-white text-3xl font-bold"> Ver{"\n"} Ranking</Text>
+                                        <Text className="text-colorLight200 text-3xl font-bold"> Ver{"\n"} Ranking</Text>
                                     </View>
                                 </ImageBackground>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    <View className="mt-5 px-3 pb-5">
+                        <Text className="text-colorLight300 text-center text-base font-semibold mb-3">
+                            Veja alguns de nossos produtos
+                        </Text>
+
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('Produtos')}
+                            className="bg-colorViolet rounded-full py-[10px] mb-6 mx-10 items-center"
+                        >
+                            <Text className="text-colorLight200 font-bold text-lg">Conferir Produtos</Text>
+                        </TouchableOpacity>
+
+                        <Text className="text-colorLight300 text-center text-base font-semibold mb-3">
+                            Siga-nos nas redes sociais
+                        </Text>
+
+                        <View className="flex-row justify-center gap-x-4">
+                            <TouchableOpacity onPress={() => Linking.openURL('https://www.instagram.com/sua_empresa')}>
+                                <FontAwesome name="instagram" size={33} color="#6943FF" />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => Linking.openURL('https://www.facebook.com/sua_empresa')}>
+                                <FontAwesome name="facebook-square" size={32} color="#6943FF" />
                             </TouchableOpacity>
                         </View>
                     </View>
