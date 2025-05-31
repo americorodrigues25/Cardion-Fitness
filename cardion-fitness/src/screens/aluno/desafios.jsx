@@ -187,7 +187,7 @@ export default function Desafios() {
                         <View className="flex-1">
                             <Text className="text-colorLight300 font-bold text-xl">Acumule Pontos!</Text>
                             <Text className="text-gray-500 text-base">
-                                Fique entre os 3 melhores do ranking e ganhe brindes todo mês de nossos parceiros!
+                                Fique entre os 3 melhores do ranking e ganhe brindes todo mês de nossos parceiros! <Text className='text-colorViolet'>(em breve)</Text>
                             </Text>
                         </View>
                     </View>
