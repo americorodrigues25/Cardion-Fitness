@@ -1,4 +1,4 @@
-import { SafeAreaView, View, Image, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { SafeAreaView, View, Image, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -34,11 +34,11 @@ export default function SignUp({ }) {
     const [rememberMe, setRememberMe] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [formError, setFormError] = useState('');
     const [role, setRole] = useState('');
     const [nome, setNome] = useState();
     const { getById } = useGet();
     const [campoFocado, setCampoFocado] = useState('');
+    const [isLoadingButton, setIsLoadingButton] = useState(false);
 
     const validarEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -46,45 +46,61 @@ export default function SignUp({ }) {
     };
 
     const handleLogin = async () => {
-        setFormError('');
+        setIsLoadingButton(true);
 
         if (!email || !password) {
-            setFormError('Por favor, preencha todos os campos.');
+            Toast.show({
+                type: 'error',
+                text1: 'Erro',
+                text2: 'Preencha todos os campos.',
+                position: 'top',
+            });
+            setIsLoadingButton(false);
             return;
         }
 
         if (!validarEmail(email)) {
-            setFormError("E-mail inválido. Tente novamente.");
+            Toast.show({
+                type: 'error',
+                text1: 'Erro',
+                text2: 'E-mail inválido. Tente novamente.',
+                position: 'top',
+            });
+            setIsLoadingButton(false);
             return;
         }
 
         try {
-            const contaExiste = await accountExists(email)
+            const contaExiste = await accountExists(email);
             if (!contaExiste) {
-                setFormError('Conta não encontrada');
-                return
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erro',
+                    text2: 'Conta não encontrada.',
+                    position: 'top',
+                });
+                setIsLoadingButton(false);
+                return;
             }
 
             const user = await login(email, password, rememberMe);
-            
-            
             if (user) {
-                const referenciaUsuario = await getById()
-                const nomeUsuario = referenciaUsuario.nome
-                
-                // registerPushNotificationsAsync(referenciaUsuario.uid);
-                enviarMensagem("Boas vindas",`Muito bom ter você aqui ${referenciaUsuario.nome}`)
+                const referenciaUsuario = await getById();
+                const nomeUsuario = referenciaUsuario.nome;
+
+                enviarMensagem("Boas vindas", `Muito bom ter você aqui ${nomeUsuario}`);
 
                 setEmail('');
                 setPassword('');
+
                 Toast.show({
                     type: 'success',
-                    text1: `Olá, ${nomeUsuario} !`,
-                    text2: `Que bom que voltou 🎉`,
+                    text1: `Olá, ${nomeUsuario}!`,
+                    text2: 'Que bom que voltou 🎉',
                     position: 'top',
                 });
 
-                const role = await AsyncStorage.getItem("role")
+                const role = await AsyncStorage.getItem("role");
                 if (role == 'aluno') {
                     navigation.replace('homeAluno');
                 } else {
@@ -100,12 +116,25 @@ export default function SignUp({ }) {
                 errorCode === 'auth/invalid-email' ||
                 errorCode === 'auth/invalid-credential'
             ) {
-                setFormError('Usuário ou senha incorretos.');
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erro',
+                    text2: 'Usuário ou senha incorretos.',
+                    position: 'top',
+                });
             } else {
-                setFormError('Não foi possível realizar o login. Tente novamente.');
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erro',
+                    text2: 'Não foi possível realizar o login. Tente novamente.',
+                    position: 'top',
+                });
             }
+        } finally {
+            setIsLoadingButton(false);
         }
     };
+
 
     { /*Esta pegando o nome da role e importando na tela*/ }
     useEffect(() => {
@@ -120,37 +149,37 @@ export default function SignUp({ }) {
     }, []);
 
 
-    
+
     async function registerPushNotificationsAsync(userId) {
         const savedToken = await AsyncStorage.getItem('expoPushToken');
         let finalToken = savedToken;
-    
+
         if (!savedToken) {
-          const { status: existingStatus } = await Notifications.getPermissionsAsync();
-          let finalStatus = existingStatus;
-    
-          if (existingStatus !== 'granted') {
-            const { status } = await Notifications.requestPermissionsAsync();
-            finalStatus = status;
-          }
-    
-          if (finalStatus !== 'granted') {
-            Alert.alert('Permissão negada para notificações');
-            return;
-          }
-    
-          const { data } = await Notifications.getExpoPushTokenAsync();
-          finalToken = data;
-          await AsyncStorage.setItem('expoPushToken', finalToken);
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+
+            if (existingStatus !== 'granted') {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+
+            if (finalStatus !== 'granted') {
+                Alert.alert('Permissão negada para notificações');
+                return;
+            }
+
+            const { data } = await Notifications.getExpoPushTokenAsync();
+            finalToken = data;
+            await AsyncStorage.setItem('expoPushToken', finalToken);
         }
-    
+
         // Envia para o backend
         await fetch(`${SERVER_URL}/register-token`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: finalToken, userId }),
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: finalToken, userId }),
         });
-      }
+    }
 
     return (
         <BackgroundImage
@@ -222,10 +251,6 @@ export default function SignUp({ }) {
                                     }}
                                 />
 
-                                {formError !== '' && (
-                                    <Text className="text-red-500 mt-4 text-center">{formError}</Text>
-                                )}
-
                             </View>
 
                             <View className=" flex-row items-center gap-2 justify-center my-10">
@@ -242,18 +267,26 @@ export default function SignUp({ }) {
 
 
                             <View className=''>
-                                <ButtonViolet onPress={handleLogin}
+                                <ButtonViolet
+                                    onPress={handleLogin}
+                                    disabled={isLoadingButton}
                                     style={{
                                         shadowColor: '#6943FF',
                                         shadowOffset: { width: 0, height: 0 },
                                         shadowOpacity: 0.7,
                                         shadowRadius: 7,
                                         elevation: 12,
+                                        opacity: isLoadingButton ? 0.7 : 1,
                                     }}
                                 >
-                                    <ButtonTextViolet>Entrar</ButtonTextViolet>
+                                    {isLoadingButton ? (
+                                        <ActivityIndicator size="small" color="#E4E4E7" />
+                                    ) : (
+                                        <ButtonTextViolet>Entrar</ButtonTextViolet>
+                                    )}
                                 </ButtonViolet>
                             </View>
+
 
                             <TouchableOpacity className='mt-5' onPress={() => navigation.navigate('resetPassword')}>
                                 <Text className="text-colorLight200 text-base font-normal text-center">

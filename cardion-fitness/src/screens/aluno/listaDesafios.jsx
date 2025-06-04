@@ -119,13 +119,17 @@ export default function ListaDesafios({ route }) {
                                     </View>
 
                                     <TouchableOpacity
-                                        className="bg-colorViolet py-3 rounded-full"
+                                        className="bg-colorViolet py-3 rounded-full items-center justify-center"
                                         onPress={() => handleRealizarDesafio(item)}
                                         disabled={loadingDesafios[item.id]}
                                     >
-                                        <Text className="text-colorLight200 text-center font-bold text-sm uppercase">
-                                            {loadingDesafios[item.id] ? 'Processando...' : 'Realizar Desafio'}
-                                        </Text>
+                                        {loadingDesafios[item.id] ? (
+                                            <ActivityIndicator size="small" color="#E4E4E7" />
+                                        ) : (
+                                            <Text className="text-colorLight200 font-bold text-sm uppercase">
+                                                Realizar Desafio
+                                            </Text>
+                                        )}
                                     </TouchableOpacity>
 
                                 </View>

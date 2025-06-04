@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Modal, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Modal, Image, ActivityIndicator } from 'react-native'; // Importe ActivityIndicator
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -26,7 +26,7 @@ const Input = ({ label, keyboardType = 'default', className = '', value, onChang
 export default function CriarAvaliacao() {
     const route = useRoute();
     const { idAluno } = route.params || {};
-    
+
 
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false);
@@ -160,7 +160,7 @@ export default function CriarAvaliacao() {
                 text1: 'Erro ao salvar avaliação',
                 text2: err.message,
             });
-            
+
         }
     };
 
@@ -440,7 +440,11 @@ export default function CriarAvaliacao() {
                         onPress={salvarAvaliacao}
                         disabled={loading}
                     >
-                        <Text className="text-center text-colorLight200 font-bold text-lg">{loading ? 'Salvando...' : 'Salvar Avaliação'}</Text>
+                        {loading ? (
+                            <ActivityIndicator size="small" color="#E4E4E7" /> 
+                        ) : (
+                            <Text className="text-center text-colorLight200 font-bold text-lg">Salvar Avaliação</Text>
+                        )}
                     </TouchableOpacity>
 
                     <Modal visible={modalVisible} animationType="fade" transparent>

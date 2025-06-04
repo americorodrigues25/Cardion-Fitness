@@ -1,8 +1,10 @@
-import { SafeAreaView, View, Text, TouchableOpacity, Alert, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, Alert, Image, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 import { Input } from '~/components/input';
+
+import Toast from 'react-native-toast-message';
 
 import BackgroundImage from '~/components/loadingBackgroundImage';
 
@@ -17,27 +19,40 @@ export default function ResetPassword() {
 
 
     const handleReset = async () => {
-        setFormError('');
 
         if (!email) {
-            setFormError("Por favor, preencha o campo de e-mail.");
+            Toast.show({
+                type: 'error',
+                text1: 'Erro',
+                text2: 'Por favor, preencha o campo de e-mail.',
+            });
             return;
         }
 
         try {
             const ok = await resetPassword(email);
             if (ok) {
-                Alert.alert(
-                    "Sucesso!",
-                    "Se houver uma conta com este e-mail, você receberá um link para redefinir a senha.",
-                    [{ text: "OK", onPress: () => navigation.navigate('loginPassword') }]
-                );
+                Toast.show({
+                    type: 'success',
+                    text1: 'Sucesso!',
+                    text2: 'Se houver uma conta com este e-mail, você receberá um link para redefinir a senha.',
+                    onHide: () => navigation.navigate('loginPassword'),
+                    visibilityTime: 3000,
+                });
             }
         } catch (err) {
             if (err.code === 'auth/invalid-email') {
-                setFormError("E-mail inválido. Verifique o formato.");
+                Toast.show({
+                    type: 'error',
+                    text1: 'E-mail inválido',
+                    text2: 'Verifique o formato do e-mail.',
+                });
             } else {
-                setFormError("Ocorreu um erro ao enviar o link de redefinição.");
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erro',
+                    text2: 'Ocorreu um erro ao enviar o link de redefinição.',
+                });
             }
         }
     };
@@ -82,10 +97,6 @@ export default function ResetPassword() {
                                 />
                             </View>
 
-                            {formError ? (
-                                <Text className="text-red-500 text-sm mb-5 text-center">{formError}</Text>
-                            ) : null}
-
                             <View className="flex-row items-center justify-center mt-20">
                                 <ButtonViolet onPress={handleReset} disabled={loading}
                                     style={{
@@ -96,9 +107,11 @@ export default function ResetPassword() {
                                         elevation: 12,
                                     }}
                                 >
-                                    <ButtonTextViolet>
-                                        {loading ? 'Enviando...' : 'Enviar'}
-                                    </ButtonTextViolet>
+                                    {loading ? (
+                                        <ActivityIndicator size="small" color="#E4E4E7" />
+                                    ) : (
+                                        <ButtonTextViolet>Enviar</ButtonTextViolet>
+                                    )}
                                 </ButtonViolet>
                             </View>
                         </View>

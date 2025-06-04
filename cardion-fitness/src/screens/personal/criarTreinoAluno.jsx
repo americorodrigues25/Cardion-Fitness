@@ -119,7 +119,6 @@ export default function CriarTreinoAluno() {
                                 ))
                             )}
 
-                            {/* Paginação */}
                             {totalPaginas > 1 && (
                                 <View className="flex-row justify-center items-center gap-2 mt-5">
                                     <TouchableOpacity

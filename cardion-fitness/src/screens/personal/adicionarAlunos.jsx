@@ -1,4 +1,4 @@
-import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Image, Modal } from "react-native"
+import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Image, Modal, ActivityIndicator } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useState } from 'react';
 import Toast from "react-native-toast-message";
@@ -22,6 +22,7 @@ export default function AdicionarAlunos() {
     const [modalVisible, setModalVisible] = useState(false);
     const [usuarioEncontrado, setUsuarioEncontrado] = useState(false);
     const [usuario, setUsuario] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const { getAlunoByEmail } = useGet();
     const { vincularAluno } = useVinculo();
 
@@ -49,32 +50,31 @@ export default function AdicionarAlunos() {
         const users = await getAlunoByEmail(email)
         const user = users[0]
 
-        
+
 
         setUsuarioEncontrado(!!user);
         setUsuario(user);
         setModalVisible(true);
     };
 
-
     const handleAdicionarUsuario = async () => {
+        setIsLoading(true);
         try {
             const success = await vincularAluno(usuario.uid);
 
             if (success) {
                 setEmail('');
             } else {
-
                 setEmail('');
             }
         } catch (error) {
-            
             Toast.show({
                 type: 'error',
                 text1: 'Erro ao tentar vincular',
                 text2: 'Tente novamente mais tarde.',
             });
         } finally {
+            setIsLoading(false);
             setModalVisible(false);
         }
     };
@@ -164,8 +164,13 @@ export default function AdicionarAlunos() {
                                     <TouchableOpacity
                                         onPress={handleAdicionarUsuario}
                                         className="bg-colorViolet p-3 rounded-full mb-2 mx-10"
+                                        disabled={isLoading}
                                     >
-                                        <Text className="text-colorLight200 text-center">Adicionar usuário</Text>
+                                        {isLoading ? (
+                                            <ActivityIndicator size="small" color="#E4E4E7" />
+                                        ) : (
+                                            <Text className="text-colorLight200 text-center">Adicionar usuário</Text>
+                                        )}
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         onPress={() => limpar()}
