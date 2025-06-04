@@ -130,12 +130,11 @@ export default function Produtos() {
                         <ProdutoCard key={produto.id} produto={produto} />
                     ))}
 
-                    {/* Botão para ver mais */}
                     <TouchableOpacity
                         onPress={handleAbrirLink}
-                        className="bg-indigo-600 mt-6 mb-10 mx-auto px-6 py-3 rounded-xl"
+                        className="bg-colorViolet mt-6 mb-10 mx-auto px-6 py-3 rounded-full"
                     >
-                        <Text className="text-white font-semibold text-base text-center">Ver todos os produtos</Text>
+                        <Text className="text-colorLight200 font-semibold text-base text-center">Ver todos os produtos</Text>
                     </TouchableOpacity>
                 </ScrollView>
             </KeyboardAvoidingView>

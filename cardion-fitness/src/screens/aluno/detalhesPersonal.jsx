@@ -164,10 +164,15 @@ export default function InfosPersonal() {
                             <TouchableOpacity
                                 onPress={() => setShowModal(true)}
                                 disabled={loadingDelete}
+                                className="items-center"
                             >
-                                <Text className="text-red-600 font-semibold text-lg text-center">
-                                    {loadingDelete ? 'Excluindo...' : 'Excluir Personal'}
-                                </Text>
+                                {loadingDelete ? (
+                                    <ActivityIndicator size="small" color="#EF4444" />
+                                ) : (
+                                    <Text className="text-red-500 font-semibold text-lg text-center">
+                                        Excluir Personal
+                                    </Text>
+                                )}
                             </TouchableOpacity>
 
                             <Modal
@@ -193,7 +198,7 @@ export default function InfosPersonal() {
 
                                             <TouchableOpacity
                                                 onPress={handleExcluirPersonal}
-
+                                                className="flex-row items-center bg-colorViolet rounded-full py-3 justify-center w-40"
                                             >
                                                 <Text className="text-red-500 font-bold">Confirmar</Text>
                                             </TouchableOpacity>
@@ -205,7 +210,7 @@ export default function InfosPersonal() {
                         </>
                     ) : (
                         <View className="items-center justify-center py-10">
-                            <Text className="text-colorLight300 text-lg text-center">
+                            <Text className="text-colorLight300 text-center">
                                 Nenhum personal vinculado no momento.
                             </Text>
                         </View>

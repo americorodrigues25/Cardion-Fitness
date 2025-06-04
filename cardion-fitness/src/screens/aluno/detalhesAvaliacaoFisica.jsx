@@ -1,6 +1,7 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 
 import { gerarPdfAvaliacao } from "~/utils/gerarPdfAvaliacao";
 
@@ -9,6 +10,8 @@ export default function DetalhesAvaliacaoFisica() {
     const route = useRoute();
     const navigation = useNavigation();
     const { avaliacao } = route.params || {};
+    const [loading, setLoading] = useState(false);
+
 
     const SectionTitle = ({ title }) => (
         <Text className="text-lg font-bold mt-6 mb-2 text-colorViolet">{title}</Text>
@@ -85,9 +88,21 @@ export default function DetalhesAvaliacaoFisica() {
                 </View>
                 <View className="px-20 mb-8">
                     <TouchableOpacity
-                        onPress={() => gerarPdfAvaliacao(avaliacao)}
-                        className="bg-colorViolet py-3 rounded-full">
-                        <Text className="text-colorLight200 text-center text-lg font-semibold">Baixar Avaliação</Text>
+                        onPress={async () => {
+                            setLoading(true);
+                            await gerarPdfAvaliacao(avaliacao);
+                            setLoading(false);
+                        }}
+                        disabled={loading}
+                        className={`bg-colorViolet py-3 rounded-full ${loading ? 'opacity-70' : ''}`}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color="#E4E4E7" />
+                        ) : (
+                            <Text className="text-colorLight200 text-center text-lg font-semibold">
+                                Baixar Avaliação
+                            </Text>
+                        )}
                     </TouchableOpacity>
                 </View>
 

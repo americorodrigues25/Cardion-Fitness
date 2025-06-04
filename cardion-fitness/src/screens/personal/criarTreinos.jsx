@@ -22,6 +22,7 @@ export default function CriarTreino() {
     const { deletarTreinoAluno } = useDeleteTreino();
     const [loading, setLoading] = useState(true);
     const [expandedTreinos, setExpandedTreinos] = useState({});
+    const [deleting, setDeleting] = useState(false);
 
     const { EditarTreinoAluno } = useEditTreino();
 
@@ -81,9 +82,29 @@ export default function CriarTreino() {
     };
 
     const handleDeleteTreino = async (treinoId) => {
-        const result = await deletarTreinoAluno(treinoId);
-        if (result) {
-            setDadosTreinos((prev) => prev.filter((treino) => treino.id !== treinoId));
+        setDeleting(true);
+        try {
+            const result = await deletarTreinoAluno(treinoId);
+            if (result) {
+                setDadosTreinos((prev) => prev.filter((treino) => treino.id !== treinoId));
+                Toast.show({
+                    type: 'success',
+                    text1: 'Treino deletado com sucesso! 🎉',
+                });
+            } else {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Falha ao deletar treino.',
+                });
+            }
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: `Erro ao deletar treino: ${error.message}`,
+            });
+        } finally {
+            setDeleting(false);
+            setMostrarModal(false);
         }
     };
 
@@ -95,7 +116,7 @@ export default function CriarTreino() {
 
                 if (idAluno && idPersonal) {
                     const resultado = await getAllTreinosByIdAluno(idAluno, idPersonal);
-                    
+
                     setDadosTreinos(resultado);
                     setLoading(false);
                 }
@@ -459,13 +480,16 @@ export default function CriarTreino() {
                                         <Text className="text-colorViolet text-lg font-semibold">Cancelar</Text>
                                     </TouchableOpacity>
 
+                                    {/* BOTÃO DELETAR MODIFICADO */}
                                     <TouchableOpacity
-                                        onPress={async () => {
-                                            await handleDeleteTreino(treinoSelecionado);
-                                            setMostrarModal(false);
-                                        }}
+                                        onPress={() => handleDeleteTreino(treinoSelecionado)}
+                                        disabled={deleting} 
                                     >
-                                        <Text className="text-red-600 font-semibold text-lg">Deletar</Text>
+                                        {deleting ? (
+                                            <ActivityIndicator size="small" color="#EF4444" /> 
+                                        ) : (
+                                            <Text className="text-red-500 font-semibold text-lg">Deletar</Text>
+                                        )}
                                     </TouchableOpacity>
                                 </View>
                             </View>

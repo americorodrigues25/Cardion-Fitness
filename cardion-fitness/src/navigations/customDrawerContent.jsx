@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { useEffect, useState } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -23,6 +23,7 @@ export default function CustomDrawerContent(props) {
     const [nome, setNome] = useState();
     const { getById } = useGet()
     const [filename, setFilename] = useState()
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const [role, setRole] = useState('');
 
@@ -64,13 +65,16 @@ export default function CustomDrawerContent(props) {
     }, [])
 
     const handleLogout = async () => {
+        setIsLoggingOut(true);
         const auth = getAuth();
         try {
             await signOut(auth);
             await AsyncStorage.removeItem('userLoggedIn');
             navigation.replace('userType');
         } catch (error) {
-            Alert.alert('Erro ao sair:', error)
+            Alert.alert('Erro ao sair:', error.message || 'Tente novamente.');
+        } finally {
+            setIsLoggingOut(false);
         }
     };
 
@@ -168,11 +172,16 @@ export default function CustomDrawerContent(props) {
                 <View className="px-10 my-6">
                     <TouchableOpacity
                         onPress={handleLogout}
+                        disabled={isLoggingOut}
                         className="flex-row items-center bg-colorViolet rounded-full py-3 justify-center"
                     >
-                        <Text className="text-colorLight200 text-base font-semibold text-center">
-                            SAIR DA CONTA
-                        </Text>
+                        {isLoggingOut ? (
+                            <ActivityIndicator size="small" color="#E4E4E7" />
+                        ) : (
+                            <Text className="text-colorLight200 text-base font-semibold text-center">
+                                SAIR DA CONTA
+                            </Text>
+                        )}
                     </TouchableOpacity>
                 </View>
 

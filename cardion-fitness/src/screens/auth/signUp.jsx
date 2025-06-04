@@ -1,4 +1,4 @@
-import { SafeAreaView, View, Image, Text, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { SafeAreaView, View, Image, Text, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,10 +22,11 @@ export default function SignUp({ }) {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
-    const [formError, setFormError] = useState('');
     const [role, setRole] = useState('');
     const [campoFocado, setCampoFocado] = useState('');
     const [sobrenome, setSobrenome] = useState();
+    const [loading, setLoading] = useState(false);
+
 
     const validarEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,20 +34,38 @@ export default function SignUp({ }) {
     };
 
     const handleSignUp = async () => {
-        setFormError('');
+        setLoading(true);
 
         if (!name || !email || !sobrenome || !password || !confirmPassword) {
-            setFormError("Por favor, preencha todos os campos.");
+            Toast.show({
+                type: 'error',
+                text1: 'Erro',
+                text2: 'Por favor, preencha todos os campos.',
+                position: 'top',
+            });
+            setLoading(false);
             return;
         }
 
         if (!validarEmail(email)) {
-            setFormError("E-mail inválido. Tente novamente.");
+            Toast.show({
+                type: 'error',
+                text1: 'Erro',
+                text2: 'E-mail inválido. Tente novamente.',
+                position: 'top',
+            });
+            setLoading(false);
             return;
         }
 
         if (password !== confirmPassword) {
-            setFormError("A senha de confirmação precisa ser a mesma.");
+            Toast.show({
+                type: 'error',
+                text1: 'Erro',
+                text2: 'A senha de confirmação precisa ser a mesma.',
+                position: 'top',
+            });
+            setLoading(false);
             return;
         }
 
@@ -75,7 +94,8 @@ export default function SignUp({ }) {
                 setSobrenome('');
 
                 setTimeout(async () => {
-                    const role = await AsyncStorage.getItem("role")
+                    const role = await AsyncStorage.getItem("role");
+                    setLoading(false);
                     if (role == 'aluno') {
                         navigation.replace('homeAluno');
                     } else {
@@ -84,17 +104,29 @@ export default function SignUp({ }) {
                 }, 1500);
             }
         } catch (err) {
+            let message = 'Erro ao criar conta.';
+
             if (err.code === 'auth/email-already-in-use') {
-                setFormError("Este e-mail já está cadastrado.");
+                message = "Este e-mail já está cadastrado.";
             } else if (err.code === 'auth/invalid-email') {
-                setFormError("E-mail inválido.");
+                message = "E-mail inválido.";
             } else if (err.code === 'auth/weak-password') {
-                setFormError("A senha deve ter pelo menos 6 caracteres.");
-            } else {
-                setFormError("Erro ao criar conta: " + err.message);
+                message = "A senha deve ter pelo menos 6 caracteres.";
+            } else if (err.message) {
+                message = err.message;
             }
+
+            Toast.show({
+                type: 'error',
+                text1: 'Erro',
+                text2: message,
+                position: 'top',
+            });
+
+            setLoading(false);
         }
     };
+
 
     { /*Esta pegando o nome da role e importando na tela*/ }
     useEffect(() => {
@@ -227,12 +259,6 @@ export default function SignUp({ }) {
                                         borderColor: campoFocado === 'senha' ? '#6943FF' : '#27272A',
                                     }}
                                 />
-
-                                {formError !== '' && (
-                                    <Text className={`mt-4 text-center ${formError.includes("sucesso") ? 'text-green-400' : 'text-red-500'}`}>
-                                        {formError}
-                                    </Text>
-                                )}
                             </View>
 
                             <View className="flex-row items-center gap-2 justify-center my-10">
@@ -248,15 +274,21 @@ export default function SignUp({ }) {
 
                             <View className=''>
                                 <ButtonViolet onPress={handleSignUp}
+                                    disabled={loading}
                                     style={{
                                         shadowColor: '#6943FF',
                                         shadowOffset: { width: 0, height: 0 },
                                         shadowOpacity: 0.7,
                                         shadowRadius: 7,
                                         elevation: 12,
+                                        opacity: loading ? 0.7 : 1,
                                     }}
                                 >
-                                    <ButtonTextViolet>Cadastrar</ButtonTextViolet>
+                                    {loading ? (
+                                        <ActivityIndicator size="small" color="#FFFFFF" />
+                                    ) : (
+                                        <ButtonTextViolet>Cadastrar</ButtonTextViolet>
+                                    )}
                                 </ButtonViolet>
                             </View>
                         </View>

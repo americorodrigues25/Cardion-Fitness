@@ -241,10 +241,10 @@ export default function Home({ navigation }) {
                         </Text>
 
                         <View className="flex-row justify-center gap-x-4">
-                            <TouchableOpacity onPress={() => Linking.openURL('https://www.instagram.com/sua_empresa')}>
+                            <TouchableOpacity onPress={() => Linking.openURL('https://www.instagram.com/medux_technology/?igsh=MTVrMmlsaG5rdHNlbQ%3D%3D#')}>
                                 <FontAwesome name="instagram" size={33} color="#6943FF" />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => Linking.openURL('https://www.facebook.com/sua_empresa')}>
+                            <TouchableOpacity onPress={() => Linking.openURL('https://www.facebook.com/people/Medux-Technology/61577055530284/?mibextid=kFxxJD')}>
                                 <FontAwesome name="facebook-square" size={32} color="#6943FF" />
                             </TouchableOpacity>
                         </View>

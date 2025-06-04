@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, Alert, Modal, TextInput, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert, Modal, TextInput, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
@@ -219,6 +219,7 @@ export default function HelSupport() {
                             </ButtonViolet>
 
                             <ButtonViolet
+                                onPress={() => Linking.openURL('https://seudominio.com/sobre')}
                                 style={{
                                     shadowColor: '#6943FF',
                                     shadowOffset: 0,

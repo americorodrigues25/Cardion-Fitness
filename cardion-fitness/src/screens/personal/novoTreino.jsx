@@ -10,6 +10,7 @@ import {
     ScrollView,
     Image,
     Modal,
+    ActivityIndicator
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
@@ -25,11 +26,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function NovoTreino() {
     const navigation = useNavigation();
     const route = useRoute();
-    const [formError, setFormError] = useState('');
     const idAluno = route.params?.idAluno;
     const [modalVisible, setModalVisible] = useState(false);
     const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
     const [exercicioIndexParaExcluir, setExercicioIndexParaExcluir] = useState(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const [addingExercise, setAddingExercise] = useState(false);
 
     const [novoTreino, setNovoTreino] = useState({
         nome: '',
@@ -41,9 +43,12 @@ export default function NovoTreino() {
     const { criarTreinoAluno, loading, error } = useCreateTreino();
 
     const salvarTreino = async () => {
-
         if (exercicios.length === 0) {
-            setFormError('Adicione pelo menos um exercicio ao treino. ❌');
+            Toast.show({
+                type: 'error',
+                text1: 'Erro',
+                text2: 'Adicione pelo menos um exercício ao treino.',
+            });
             return;
         }
 
@@ -56,16 +61,18 @@ export default function NovoTreino() {
             return;
         }
 
-        const idPersonal = await AsyncStorage.getItem("uid")
+        setIsSaving(true);
+
+        const idPersonal = await AsyncStorage.getItem("uid");
 
         const treinoData = {
-            idPersonal: idPersonal,
-            idAluno: idAluno,
+            idPersonal,
+            idAluno,
             nome: novoTreino.nome,
             tipo: novoTreino.tipo,
             dia: novoTreino.dia,
             sessoes: novoTreino.sessoes,
-            exercicios: exercicios,
+            exercicios,
             criadoEm: new Date()
         };
 
@@ -80,20 +87,22 @@ export default function NovoTreino() {
                 Toast.show({
                     type: 'success',
                     text1: 'Sucesso !',
-                    text2: 'Treino adicionado. ✅'
+                    text2: 'Treino adicionado.'
                 });
 
                 navigation.goBack();
             }
         } catch (err) {
-            
             Toast.show({
                 type: 'error',
                 text1: 'Erro ao salvar treino',
                 text2: err.message,
             });
+        } finally {
+            setIsSaving(false);
         }
     };
+
 
 
     const [exercicios, setExercicios] = useState([]);
@@ -116,10 +125,13 @@ export default function NovoTreino() {
             repeticoes.trim() === '' ||
             descanso.trim() === ''
         ) {
-            setFormError('Preencha todos os campos para adicionar um exercício.');
+            Toast.show({
+                type: 'error',
+                text1: 'Erro',
+                text2: 'Preencha todos os campos para adicionar um exercício.',
+            });
             return;
         }
-        setFormError('');
         setExercicios([...exercicios, novoExercicio]);
         setNovoExercicio({ nome: '', carga: '', series: '', repeticoes: '', descanso: '', observacao: '' });
         setModalVisible(false);
@@ -283,11 +295,6 @@ export default function NovoTreino() {
                                 </View>
                             ))}
 
-                            {formError !== '' && (
-                                <Text className="text-red-500 text-sm mt-1 text-center">{formError}</Text>
-                            )}
-
-
                             <TouchableOpacity
                                 onPress={() => {
                                     if (!novoTreino.nome || !novoTreino.tipo || !novoTreino.dia || !novoTreino.sessoes) {
@@ -311,8 +318,16 @@ export default function NovoTreino() {
 
                         </View>
 
-                        <TouchableOpacity onPress={salvarTreino} className="py-4 rounded-lg">
-                            <Text className="text-center text-colorViolet font-bold text-lg">Salvar treino</Text>
+                        <TouchableOpacity
+                            onPress={salvarTreino}
+                            disabled={isSaving}
+                            className='mt-4'
+                        >
+                            {isSaving ? (
+                                <ActivityIndicator size="small" color="#6943FF" />
+                            ) : (
+                                <Text className="text-colorViolet text-center text-lg font-bold">Salvar treino</Text>
+                            )}
                         </TouchableOpacity>
                     </View>
 
@@ -322,7 +337,6 @@ export default function NovoTreino() {
                         visible={modalVisible}
                         onRequestClose={() => {
                             setModalVisible(false);
-                            setFormError('');
                             setNovoExercicio({ nome: '', carga: '', series: '', repeticoes: '', descanso: '', observacao: '' });
                         }}
                     >
@@ -362,10 +376,6 @@ export default function NovoTreino() {
                                         ))}
                                     </View>
 
-                                    {formError !== '' && (
-                                        <Text className="text-red-500 text-center text-sm mt-4">{formError}</Text>
-                                    )}
-
                                     <TouchableOpacity
                                         onPress={adicionarExercicio}
                                         className="bg-colorViolet py-4 rounded-full mt-8"
@@ -375,7 +385,6 @@ export default function NovoTreino() {
 
                                     <TouchableOpacity
                                         onPress={() => {
-                                            setFormError('');
                                             setNovoExercicio({ nome: '', carga: '', series: '', repeticoes: '', descanso: '', observacao: '' });
                                             setModalVisible(false);
                                         }}

@@ -20,6 +20,8 @@ export default function TreinosAluno() {
     const { getById, getPersonalDoAluno } = useGet();
     const [nome, setNome] = useState();
     const [nomePersonal, setNomePersonal] = useState();
+    const [loadingDownload, setLoadingDownload] = useState(false);
+
 
     useFocusEffect(
         useCallback(() => {
@@ -34,8 +36,8 @@ export default function TreinosAluno() {
                     }
                 } catch (error) {
                     Toast.show({
-                      type: 'error',
-                      text1: 'Erro ao buscar treinos',                    
+                        type: 'error',
+                        text1: 'Erro ao buscar treinos',
                     });
                 } finally {
                     setLoading(false);
@@ -156,10 +158,27 @@ export default function TreinosAluno() {
 
                             <View className="px-20 mb-10">
                                 <TouchableOpacity
-                                    onPress={() => gerarPdfTreinos(dadosTreinos, nome)}
-                                    className="bg-colorViolet py-3 rounded-full"
+                                    disabled={loadingDownload}
+                                    onPress={async () => {
+                                        try {
+                                            setLoadingDownload(true);
+                                            await gerarPdfTreinos(dadosTreinos, nome);
+                                        } catch (error) {
+                                            Toast.show({
+                                                type: 'error',
+                                                text1: 'Erro ao gerar PDF',
+                                            });
+                                        } finally {
+                                            setLoadingDownload(false);
+                                        }
+                                    }}
+                                    className={`bg-colorViolet py-3 rounded-full ${loadingDownload ? 'opacity-60' : ''}`}
                                 >
-                                    <Text className="text-colorLight200 text-center text-lg font-bold">Baixar Treino</Text>
+                                    {loadingDownload ? (
+                                        <ActivityIndicator size="small" color="#E4E4E7" />
+                                    ) : (
+                                        <Text className="text-colorLight200 text-center text-lg font-bold">Baixar Treino</Text>
+                                    )}
                                 </TouchableOpacity>
                             </View>
                         </>

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, KeyboardAvoidingView, Platform, Pressable, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform, Pressable, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useState, useEffect, useRef } from 'react';
@@ -12,6 +12,7 @@ export default function TreinoDetalhado({ route }) {
     const [seconds, setSeconds] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const intervalRef = useRef(null);
+    const [loading, setLoading] = useState(false);
 
     const { realizarSessao } = useRealizarSessaoTreino();
 
@@ -102,9 +103,11 @@ export default function TreinoDetalhado({ route }) {
                         ))}
                         <View className='px-20 py-5'>
                             <TouchableOpacity
-                                disabled={Object.keys(checks).length !== treino.exercicios.length || Object.values(checks).includes(false)}
+                                disabled={loading || Object.keys(checks).length !== treino.exercicios.length || Object.values(checks).includes(false)}
                                 onPress={async () => {
+                                    setLoading(true);
                                     const sucesso = await realizarSessao(treino.id);
+                                    setLoading(false);
                                     if (sucesso) {
                                         Toast.show({
                                             type: 'success',
@@ -114,13 +117,19 @@ export default function TreinoDetalhado({ route }) {
                                     }
                                 }}
                                 className={`mt-6 p-3 rounded-full 
-                                ${Object.keys(checks).length !== treino.exercicios.length || Object.values(checks).includes(false)
+                                        ${Object.keys(checks).length !== treino.exercicios.length || Object.values(checks).includes(false)
                                         ? 'bg-gray-500'
                                         : 'bg-colorViolet'}`}
                             >
-                                <Text className="text-center text-colorLight200 font-bold text-lg">
-                                    Concluir Treino
-                                </Text>
+                                {
+                                    loading ? (
+                                        <ActivityIndicator color="#fff" />
+                                    ) : (
+                                        <Text className="text-center text-colorLight200 font-bold text-lg">
+                                            Concluir Treino
+                                        </Text>
+                                    )
+                                }
                             </TouchableOpacity>
                         </View>
                     </View>

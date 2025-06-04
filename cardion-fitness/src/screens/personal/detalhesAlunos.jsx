@@ -1,4 +1,4 @@
-import { View, Text, KeyboardAvoidingView, Platform, TouchableOpacity, Image, imageUrl, TextInput, Alert, Modal } from "react-native";
+import { View, Text, KeyboardAvoidingView, Platform, TouchableOpacity, Image, imageUrl, TextInput, ActivityIndicator, Modal } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -30,29 +30,32 @@ export default function DetalhesAlunos() {
     const [anotacao, setAnotacao] = useState()
     const [anotacaoOriginal, setAnotacaoOriginal] = useState('');
     const { criarAnotacoes } = useCreateAnotacoes();
-
     const { desvincularAluno } = useVinculo();
+    const [loading, setLoading] = useState(false);
+
 
     const handleExcluirAluno = async () => {
+        setLoading(true);
         try {
             await desvincularAluno(aluno.id);
             setShowModal(false);
 
             Toast.show({
                 type: 'success',
-                text1: 'Aluno desvinculado com sucesso ✅',
+                text1: 'Aluno desvinculado com sucesso.',
             });
 
             setTimeout(() => {
                 navigation.goBack();
             }, 100);
-
         } catch (error) {
             Toast.show({
                 type: 'error',
-                text1: 'Erro ao desvincular ❌',
+                text1: 'Erro ao desvincular',
                 text2: error.message,
             });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -216,9 +219,13 @@ export default function DetalhesAlunos() {
                                         <Text className="text-colorViolet text-lg font-semibold">Cancelar</Text>
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={handleExcluirAluno}>
-                                        <Text className="text-red-600 font-semibold text-lg">Excluir</Text>
-                                    </TouchableOpacity>
+                                    {loading ? (
+                                        <ActivityIndicator size="small" color="#FF0000" />
+                                    ) : (
+                                        <TouchableOpacity onPress={handleExcluirAluno}>
+                                            <Text className="text-red-600 font-semibold text-lg">Excluir</Text>
+                                        </TouchableOpacity>
+                                    )}
                                 </View>
                             </View>
                         </View>
