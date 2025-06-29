@@ -1,24 +1,28 @@
-import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, ActivityIndicator, Modal } from 'react-native';
+import React, { useState } from 'react';
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    ScrollView,
+    KeyboardAvoidingView,
+    Platform,
+    ActivityIndicator,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState, useEffect } from 'react';
-import React from 'react';
-
-import Entypo from 'react-native-vector-icons/Entypo'
-import Feather from 'react-native-vector-icons/Feather';
-
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Feather from 'react-native-vector-icons/Feather';
+import Toast from 'react-native-toast-message';
+
+import HeaderAppBack from '~/components/header/headerAppBack';
+import ExcluirAvaliacao from '~/components/modais/excluirAvaliacao';
 
 import { useGetAvaliacaoFisica } from '~/hook/crud/avaliacaoFisica/useGetAvaliacao';
 import { useDeleteAvaliacaoFisica } from '~/hook/crud/avaliacaoFisica/useDeleteAvalicaoFisica';
 
-import { GerarPdfAvaliacao } from '~/utils/gerarPdfAvaliacao';
-
-import Toast from "react-native-toast-message";
-
 export default function AvaliacaoScreen() {
     const navigation = useNavigation();
-    const route = useRoute();
-    const { idAluno } = route.params || {};
+    const { idAluno } = useRoute().params || {};
 
     const [avaliacoes, setAvaliacoes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -32,153 +36,102 @@ export default function AvaliacaoScreen() {
         React.useCallback(() => {
             let isActive = true;
 
-            const fetchAvaliacoes = async () => {
+            const fetchData = async () => {
                 if (!idAluno) return;
-
                 setLoading(true);
                 try {
                     const data = await getAllAvaliacoesByIdAluno(idAluno);
-                    if (isActive) {
-                        setAvaliacoes(data);
-                    }
-                } catch (error) {
-                     Toast.show({
-                      type: 'error',
-                      text1: 'Erro ao buscar avaliacoes',                    
-                    });
+                    if (isActive) setAvaliacoes(data);
+                } catch {
+                    Toast.show({ type: 'error', text1: 'Erro ao buscar avaliações' });
                 } finally {
                     if (isActive) setLoading(false);
                 }
             };
 
-            fetchAvaliacoes();
-
+            fetchData();
             return () => {
                 isActive = false;
             };
         }, [idAluno])
     );
 
-
-    const handleAvaliacao = (avaliacao) => {
-        navigation.navigate('DetalhesAvaliacao', { avaliacao });
-    };
-
-    const confirmarDelete = (avaliacaoId) => {
-        setAvaliacaoSelecionada(avaliacaoId);
-        setModalVisible(true);
-    };
-
-    const handleDeleteConfirmado = async () => {
+    const handleDelete = async () => {
         try {
             await deletarAvalicaoFisica(avaliacaoSelecionada);
-            setAvaliacoes((prev) => prev.filter((a) => a.id !== avaliacaoSelecionada));
-        } catch (err) {
-             Toast.show({
-                      type: 'error',
-                      text1: 'Erro ao deletar avaliacoes',                    
-                    });
+            setAvaliacoes(prev => prev.filter(a => a.id !== avaliacaoSelecionada));
+        } catch {
+            Toast.show({ type: 'error', text1: 'Erro ao deletar avaliação' });
         } finally {
             setModalVisible(false);
             setAvaliacaoSelecionada(null);
         }
     };
 
+    const abrirModal = (id) => {
+        setAvaliacaoSelecionada(id);
+        setModalVisible(true);
+    };
 
     return (
-        <SafeAreaView edges={["top"]} className="flex-1 bg-colorBackground">
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+        <SafeAreaView edges={['top']} className="flex-1 bg-colorBackground">
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
                 <ScrollView
                     bounces={false}
                     overScrollMode="never"
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ flexGrow: 1 }}
                 >
-                    <View className="pt-5 px-5 pb-5">
-                        <TouchableOpacity onPress={() => navigation.goBack()} className="flex-row">
-                            <Image source={require('~/assets/img/btnVoltar.png')} className="w-4 h-5" />
-                            <Text className="ml-2 text-colorLight200">Avaliação</Text>
+                    <HeaderAppBack title="Avaliação" />
+
+                    <View className="px-5 py-5">
+                        {loading ? (
+                            <ActivityIndicator size="large" color="#6943FF" className="mt-10" />
+                        ) : avaliacoes.length === 0 ? (
+                            <Text className="text-center text-colorLight200">Nenhuma avaliação registrada.</Text>
+                        ) : (
+                            avaliacoes.map((avaliacao) => (
+                                <TouchableOpacity
+                                    key={avaliacao.id}
+                                    onPress={() => navigation.navigate('DetalhesAvaliacao', { avaliacao })}
+                                    className="bg-colorLight200 p-4 rounded-xl mb-3"
+                                >
+                                    <View className="flex-row justify-between items-center mb-1">
+                                        <Text className="font-bold text-colorDark100">Avaliação</Text>
+                                        <View className="flex-row gap-x-3">
+                                            <TouchableOpacity onPress={() => navigation.navigate('EditarAvaliacao', { avaliacao })}>
+                                                <Feather name="refresh-ccw" size={20} color="#6943FF" />
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={() => abrirModal(avaliacao.id)}>
+                                                <Feather name="trash-2" size={20} color="#6943FF" />
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                    <Text className="text-gray-600">Nome: {avaliacao.nome || 'Nome'}</Text>
+                                    <Text className="text-gray-600">Data: {avaliacao.data || 'DD/MM/AAAA'}</Text>
+                                    <Text className="text-gray-600">Próxima Avaliação: {avaliacao.dataProximaAvaliacao || 'DD/MM/AAAA'}</Text>
+                                </TouchableOpacity>
+                            ))
+                        )}
+
+                        <TouchableOpacity
+                            className="flex-row items-center bg-colorViolet py-3 rounded-full justify-center mt-5"
+                            onPress={() => navigation.navigate('CriarAvaliacao', { idAluno })}
+                        >
+                            <Entypo name="plus" size={20} color="#E4E4E7" />
+                            <Text className="text-colorLight200 text-center text-lg font-semibold ml-2">
+                                Criar nova avaliação
+                            </Text>
                         </TouchableOpacity>
                     </View>
-
-                    <View className='px-5 py-5'>
-                        <View className='px-5 py-5'>
-                            {loading ? (
-                                <ActivityIndicator size="large" color="#6943FF" className="mt-10" />
-                            ) : avaliacoes.length === 0 ? (
-                                <Text className="text-center text-colorLight200">Nenhuma avaliação registrada.</Text>
-                            ) : (
-                                avaliacoes.map((avaliacao) => (
-                                    <TouchableOpacity
-                                        key={avaliacao.id}
-                                        onPress={() => handleAvaliacao(avaliacao)}
-                                        className="bg-colorLight200 p-4 rounded-xl mb-3"
-                                    >
-                                        <View className='flex-row justify-between items-center mb-1'>
-                                            <Text className="font-bold text-colorDark100">Avaliação</Text>
-                                            <View className='flex-row justify-between items-center gap-x-3'>
-                                                <TouchableOpacity onPress={() => navigation.navigate('EditarAvaliacao', { avaliacao })}>
-                                                    <Feather name="refresh-ccw" size={20} color="#6943FF" />
-                                                </TouchableOpacity>
-
-                                                <TouchableOpacity onPress={() => confirmarDelete(avaliacao.id)}>
-                                                    <Feather name="trash-2" size={20} color="#6943FF" />
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
-                                        <Text className="text-gray-600">Nome: {avaliacao.nome || 'Nome'}</Text>
-                                        <Text className="text-gray-600">Data: {avaliacao.data || 'DD/MM/AAAA'}</Text>
-                                        <Text className="text-gray-600">Proxima Avaliação: {avaliacao.dataProximaAvaliacao || 'DD/MM/AAAA'}</Text>
-                                    </TouchableOpacity>
-                                ))
-                            )}
-                            <View className='mt-5'>
-                                <TouchableOpacity
-                                    className="flex-row items-center bg-colorViolet py-3 rounded-full justify-center"
-                                    onPress={() => navigation.navigate('CriarAvaliacao', { idAluno })}
-                                >
-                                    <View className="flex-row items-center gap-x-1">
-                                        <Entypo name="plus" size={20} color="#E4E4E7" />
-                                        <Text className="text-colorLight200 text-center text-lg font-semibold">Criar nova avaliação</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-
-                    <Modal
-                        transparent={true}
-                        visible={modalVisible}
-                        animationType="fade"
-                        onRequestClose={() => setModalVisible(false)}
-                    >
-                        <View className="flex-1 justify-center items-center bg-black/80 px-6">
-                            <View className="bg-colorDark100 rounded-2xl w-full p-6">
-                                <Text className='text-colorLight200 text-lg font-bold mb-3'>
-                                    Tem certeza que deseja apagar está avaliação?
-                                </Text>
-                                <Text className="text-gray-400 mb-8">
-                                    Isso não poderá ser revertido.
-                                </Text>
-                                <View className="flex-row justify-end gap-x-10">
-                                    <TouchableOpacity
-                                        className="text-colorViolet text-lg font-semibold"
-                                        onPress={() => setModalVisible(false)}
-                                    >
-                                        <Text className="text-colorViolet text-lg font-semibold">Cancelar</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        onPress={handleDeleteConfirmado}
-                                    >
-                                        <Text className="text-red-600 font-semibold text-lg">Apagar</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-                    </Modal>
-
                 </ScrollView>
+
+                <ExcluirAvaliacao
+                    visible={modalVisible}
+                    onCancel={() => setModalVisible(false)}
+                    onConfirm={handleDelete}
+                />
             </KeyboardAvoidingView>
-        </SafeAreaView >
+        </SafeAreaView>
     );
 }

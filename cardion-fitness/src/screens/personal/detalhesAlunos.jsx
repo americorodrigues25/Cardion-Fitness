@@ -1,91 +1,100 @@
-import { View, Text, KeyboardAvoidingView, Platform, TouchableOpacity, Image, imageUrl, TextInput, ActivityIndicator, Modal } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+    View,
+    Text,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    TouchableOpacity,
+    Image,
+    TextInput,
+    ActivityIndicator,
+    Modal,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRoute } from "@react-navigation/native";
-import { ScrollView } from "react-native-gesture-handler";
-import { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
+import axios from "axios";
 
-import { getAuth } from 'firebase/auth';
+import { getAuth } from "firebase/auth";
 
-import { useVinculo } from '~/hook/crud/vincularAlunos/vincularAluno';
-
+import HeaderAppBack from "~/components/header/headerAppBack";
 import { useCreateAnotacoes } from "~/hook/crud/anotacoes/useCreateAnotacoes";
+import { useVinculo } from "~/hook/crud/vincularAlunos/vincularAluno";
+import { SERVER_URL } from "~/apiConfig/config";
 
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
-
-import axios from 'axios';
-
-import { SERVER_URL } from '~/apiConfig/config';
 
 export default function DetalhesAlunos() {
     const navigation = useNavigation();
     const route = useRoute();
-    const [showModal, setShowModal] = useState(false);
     const { aluno } = route.params || {};
-    const [imageUrl, setImageUrl] = useState()
-    const [anotacao, setAnotacao] = useState()
-    const [anotacaoOriginal, setAnotacaoOriginal] = useState('');
+
     const { criarAnotacoes } = useCreateAnotacoes();
     const { desvincularAluno } = useVinculo();
-    const [loading, setLoading] = useState(false);
 
+    const [imageUrl, setImageUrl] = useState('');
+    const [anotacao, setAnotacao] = useState('');
+    const [anotacaoOriginal, setAnotacaoOriginal] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+
+    const houveMudanca = anotacao !== anotacaoOriginal;
+
+    useEffect(() => {
+        if (!aluno) return;
+
+        const fetchImage = async () => {
+            try {
+                const auth = getAuth();
+                const user = auth.currentUser;
+                const token = await user.getIdToken();
+                const res = await axios.get(`${SERVER_URL}/image/${aluno.id}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                setImageUrl(`${res.data.url}?${Date.now()}`);
+            } catch (err) {
+                console.warn("Erro ao buscar imagem do aluno:", err);
+            }
+        };
+
+        fetchImage();
+        setAnotacao(aluno.anotacao || '');
+        setAnotacaoOriginal(aluno.anotacao || '');
+    }, [aluno]);
+
+    const handleSalvar = async () => {
+        await criarAnotacoes(aluno.uid, anotacao);
+        setAnotacaoOriginal(anotacao);
+        Toast.show({
+            type: "success",
+            text1: "Anotação salva com sucesso.",
+        });
+    };
 
     const handleExcluirAluno = async () => {
         setLoading(true);
         try {
             await desvincularAluno(aluno.id);
-            setShowModal(false);
-
             Toast.show({
-                type: 'success',
-                text1: 'Aluno desvinculado com sucesso.',
+                type: "success",
+                text1: "Aluno desvinculado com sucesso.",
             });
-
-            setTimeout(() => {
-                navigation.goBack();
-            }, 100);
+            navigation.goBack();
         } catch (error) {
             Toast.show({
-                type: 'error',
-                text1: 'Erro ao desvincular',
+                type: "error",
+                text1: "Erro ao desvincular",
                 text2: error.message,
             });
         } finally {
             setLoading(false);
+            setShowModal(false);
         }
     };
-
-
-    useEffect(() => {
-        const fetchNome = async () => {
-            await trazerDadosPersonal();
-        };
-
-        const fetchImage = async () => {
-            const auth = getAuth();
-            const user = auth.currentUser;
-
-            const token = await user.getIdToken();
-            const res = await axios.get(`${SERVER_URL}/image/${aluno.id}`, { headers: { 'Authorization': `Bearer ${token}` } });
-
-            setImageUrl(`${res.data.url}?${Date.now()}`);
-        };
-
-        fetchImage();
-        fetchNome();
-        setAnotacao(aluno.anotacao)
-        setAnotacaoOriginal(aluno.anotacao)
-    }, []);
-
-    const handleSalvar = async () => {
-        await criarAnotacoes(aluno.uid, anotacao)
-        setAnotacaoOriginal(anotacao)
-    }
-    const houveMudanca = anotacao !== anotacaoOriginal;
 
     if (!aluno) {
         return (
@@ -106,11 +115,9 @@ export default function DetalhesAlunos() {
                                 <Text className="ml-2 text-colorLight200">Alunos</Text>
                             </TouchableOpacity>
                         </View>
-
                         <View className="flex-1 items-center justify-center">
                             <Text className="text-colorLight200">Erro: Nenhum aluno encontrado.</Text>
                         </View>
-
                     </ScrollView>
                 </KeyboardAvoidingView>
             </SafeAreaView>
@@ -129,69 +136,55 @@ export default function DetalhesAlunos() {
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ flexGrow: 1 }}
                 >
-
-                    <View className="pt-5 px-5">
-                        <TouchableOpacity onPress={() => navigation.goBack()} className="flex-row">
-                            <Image source={require('~/assets/img/btnVoltar.png')} className="w-4 h-5" />
-                            <Text className="ml-2 text-colorLight200">Alunos</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <HeaderAppBack title="Alunos" />
 
                     <View className="px-10 py-10">
 
-                        <View className="">
-                            <View className="flex-row items-center">
-                                <Image
-                                    key={imageUrl}
-                                    source={imageUrl ? { uri: imageUrl } : require('~/assets/img/imgProfileDefault.png')}
-                                    resizeMode="cover"
-                                    className="w-20 h-20 rounded-full"
-                                />
-                                <View>
-                                    <Text className="text-colorLight200 text-xl font-bold pl-5">{aluno.nome} {aluno.sobrenome}</Text>
-                                </View>
-                            </View>
+                        {/* Dados do aluno */}
+                        <View className="flex-row items-center mb-8">
+                            <Image
+                                key={imageUrl}
+                                source={imageUrl ? { uri: imageUrl } : require('~/assets/img/imgProfileDefault.png')}
+                                className="w-20 h-20 rounded-full"
+                                resizeMode="cover"
+                            />
+                            <Text className="text-colorLight200 text-xl font-bold pl-5">
+                                {aluno.nome} {aluno.sobrenome}
+                            </Text>
                         </View>
 
-                        <View className="py-10 gap-y-5">
-                            <TouchableOpacity
-                                onPress={() => navigation.navigate('criarTreinos', { idAluno: aluno.id })}
-                                className="flex-row items-center">
-                                <FontAwesome6
-                                    name="dumbbell" size={25} color="#E4E4E7"
-                                />
+                        {/* Ações */}
+                        <View className="gap-y-5 mb-10">
+                            <TouchableOpacity onPress={() => navigation.navigate('criarTreinos', { idAluno: aluno.id })} className="flex-row items-center">
+                                <FontAwesome6 name="dumbbell" size={25} color="#E4E4E7" />
                                 <Text className="text-colorLight200 font-bold text-base pl-3">Treinos</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
-                                onPress={() => navigation.navigate('Avaliacoes', { idAluno: aluno.id })}
-                                className="flex-row items-center">
+                            <TouchableOpacity onPress={() => navigation.navigate('Avaliacoes', { idAluno: aluno.id })} className="flex-row items-center">
                                 <FontAwesome5 name="clipboard-list" size={25} color="#E4E4E7" />
                                 <Text className="text-colorLight200 font-bold text-base pl-3">Avaliação</Text>
                             </TouchableOpacity>
                         </View>
 
+                        {/* Anotações */}
                         <View>
                             <Text className="text-colorLight200 font-bold mb-2">Feedback</Text>
                             <TextInput
                                 multiline
                                 textAlignVertical="center"
-                                className="bg-colorInputs w-full h-40 rounded-2xl border border-colorDark100 text-colorLight200 text-base p-5"
-                                onChangeText={setAnotacao}
                                 value={anotacao}
+                                onChangeText={setAnotacao}
+                                className="bg-colorInputs w-full h-40 rounded-2xl border border-colorDark100 text-colorLight200 text-base p-5"
                             />
-
                             {houveMudanca && (
-                                <TouchableOpacity
-                                    onPress={handleSalvar}
-                                    className="bg-colorViolet py-3 px-6 rounded-full mt-3"
-                                >
+                                <TouchableOpacity onPress={handleSalvar} className="bg-colorViolet py-3 px-6 rounded-full mt-3">
                                     <Text className="text-white font-bold text-center">Salvar</Text>
                                 </TouchableOpacity>
                             )}
                         </View>
 
-                        <View className=" pt-10 items-center">
+                        {/* Botão excluir */}
+                        <View className="pt-10 items-center">
                             <TouchableOpacity
                                 onPress={() => setShowModal(true)}
                                 className="flex-row items-center bg-colorViolet rounded-full py-3 justify-center w-40"
@@ -201,9 +194,9 @@ export default function DetalhesAlunos() {
                                 </Text>
                             </TouchableOpacity>
                         </View>
-
                     </View>
 
+                    {/* Modal de confirmação */}
                     <Modal
                         transparent
                         visible={showModal}
@@ -212,7 +205,9 @@ export default function DetalhesAlunos() {
                     >
                         <View className="flex-1 justify-center items-center bg-black/80 px-6">
                             <View className="bg-colorDark100 rounded-2xl w-full p-6">
-                                <Text className="text-colorLight200 text-lg font-bold mb-4">Deseja mesmo excluir este aluno?</Text>
+                                <Text className="text-colorLight200 text-lg font-bold mb-4">
+                                    Deseja mesmo excluir este aluno?
+                                </Text>
 
                                 <View className="flex-row justify-end gap-x-6">
                                     <TouchableOpacity onPress={() => setShowModal(false)}>
@@ -230,10 +225,8 @@ export default function DetalhesAlunos() {
                             </View>
                         </View>
                     </Modal>
-
                 </ScrollView>
             </KeyboardAvoidingView>
-
         </SafeAreaView>
     );
 }

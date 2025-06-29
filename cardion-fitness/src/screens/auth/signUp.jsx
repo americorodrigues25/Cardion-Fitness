@@ -1,70 +1,68 @@
-import { SafeAreaView, View, Image, Text, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
+// 📦 Imports
+import {
+    SafeAreaView,
+    View,
+    Text,
+    ScrollView,
+    TouchableOpacity,
+    KeyboardAvoidingView,
+    Platform,
+    ActivityIndicator,
+} from 'react-native';
 import { useState, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import { useNavigation } from '@react-navigation/native';
 
-
+// 🎯 Componentes e utilitários
 import { ButtonViolet, ButtonTextViolet } from '~/components/button';
 import { Input } from '~/components/input';
 import { InputPassword } from '~/components/inputPassword';
-
 import BackgroundImage from '~/components/loadingBackgroundImage';
+import HeaderAuth from '~/components/header/headerAuth';
 
-// hook
+// 🔁 Hooks
 import { useAuth } from '~/hook/useAuthentication';
 
-export default function SignUp({ }) {
+export default function SignUp() {
     const { signUp } = useAuth();
     const navigation = useNavigation();
+
     const [rememberMe, setRememberMe] = useState(false);
-    const [name, setName] = useState();
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
-    const [confirmPassword, setConfirmPassword] = useState();
+    const [name, setName] = useState('');
+    const [sobrenome, setSobrenome] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [role, setRole] = useState('');
     const [campoFocado, setCampoFocado] = useState('');
-    const [sobrenome, setSobrenome] = useState();
     const [loading, setLoading] = useState(false);
 
+    const validarEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    const validarEmail = (email) => {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
-    };
+    const mostrarToastErro = (mensagem) =>
+        Toast.show({ type: 'error', text1: 'Erro', text2: mensagem, position: 'top' });
+
+    const mostrarToastSucesso = (mensagem) =>
+        Toast.show({ type: 'success', text1: 'Conta criada com sucesso!', text2: mensagem, position: 'top' });
 
     const handleSignUp = async () => {
         setLoading(true);
 
-        if (!name || !email || !sobrenome || !password || !confirmPassword) {
-            Toast.show({
-                type: 'error',
-                text1: 'Erro',
-                text2: 'Por favor, preencha todos os campos.',
-                position: 'top',
-            });
+        if (!name || !sobrenome || !email || !password || !confirmPassword) {
+            mostrarToastErro('Por favor, preencha todos os campos.');
             setLoading(false);
             return;
         }
 
         if (!validarEmail(email)) {
-            Toast.show({
-                type: 'error',
-                text1: 'Erro',
-                text2: 'E-mail inválido. Tente novamente.',
-                position: 'top',
-            });
+            mostrarToastErro('E-mail inválido. Tente novamente.');
             setLoading(false);
             return;
         }
 
         if (password !== confirmPassword) {
-            Toast.show({
-                type: 'error',
-                text1: 'Erro',
-                text2: 'A senha de confirmação precisa ser a mesma.',
-                position: 'top',
-            });
+            mostrarToastErro('A senha de confirmação precisa ser a mesma.');
             setLoading(false);
             return;
         }
@@ -73,86 +71,47 @@ export default function SignUp({ }) {
             const user = await signUp(name, email, password, sobrenome, rememberMe);
             if (user) {
                 await AsyncStorage.setItem('userType', role);
+                rememberMe
+                    ? await AsyncStorage.setItem('userLoggedIn', 'true')
+                    : await AsyncStorage.removeItem('userLoggedIn');
 
-                if (rememberMe) {
-                    await AsyncStorage.setItem('userLoggedIn', 'true');
-                } else {
-                    await AsyncStorage.removeItem('userLoggedIn');
-                }
+                mostrarToastSucesso('Bem-vindo(a)! 🎉');
 
-                Toast.show({
-                    type: 'success',
-                    text1: 'Conta criada com sucesso!',
-                    text2: 'Bem-vindo(a)! 🎉',
-                    position: 'top',
-                });
-
+                // Limpar campos
                 setName('');
+                setSobrenome('');
                 setEmail('');
                 setPassword('');
                 setConfirmPassword('');
-                setSobrenome('');
 
                 setTimeout(async () => {
-                    const role = await AsyncStorage.getItem("role");
-                    setLoading(false);
-                    if (role == 'aluno') {
-                        navigation.replace('homeAluno');
-                    } else {
-                        navigation.replace('homePersonal');
-                    }
+                    const role = await AsyncStorage.getItem('role');
+                    navigation.replace(role === 'aluno' ? 'homeAluno' : 'homePersonal');
                 }, 1500);
             }
         } catch (err) {
             let message = 'Erro ao criar conta.';
+            if (err.code === 'auth/email-already-in-use') message = 'Este e-mail já está cadastrado.';
+            else if (err.code === 'auth/invalid-email') message = 'E-mail inválido.';
+            else if (err.code === 'auth/weak-password') message = 'A senha deve ter pelo menos 6 caracteres.';
+            else if (err.message) message = err.message;
 
-            if (err.code === 'auth/email-already-in-use') {
-                message = "Este e-mail já está cadastrado.";
-            } else if (err.code === 'auth/invalid-email') {
-                message = "E-mail inválido.";
-            } else if (err.code === 'auth/weak-password') {
-                message = "A senha deve ter pelo menos 6 caracteres.";
-            } else if (err.message) {
-                message = err.message;
-            }
-
-            Toast.show({
-                type: 'error',
-                text1: 'Erro',
-                text2: message,
-                position: 'top',
-            });
-
+            mostrarToastErro(message);
+        } finally {
             setLoading(false);
         }
     };
 
-
-    { /*Esta pegando o nome da role e importando na tela*/ }
     useEffect(() => {
-        const getRole = async () => {
-            const storedRole = await AsyncStorage.getItem('role');
-            if (storedRole) {
-                setRole(storedRole === 'aluno' ? 'Aluno' : 'Personal');
-            }
-        };
-
-        getRole();
+        AsyncStorage.getItem('role').then((storedRole) =>
+            setRole(storedRole === 'aluno' ? 'Aluno' : 'Personal')
+        );
     }, []);
 
     return (
-        <BackgroundImage
-            source={require('~/assets/img/backgroundImage/imagemFundo3.png')}
-        >
-
-            <SafeAreaView className='w-full h-full'>
-
-                <View className=" px-5 pt-5 flex-row justify-between">
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Image source={require('~/assets/img/btnVoltar.png')} className='w-4 h-5' />
-                    </TouchableOpacity>
-                    <Image source={require('~/assets/img/logo/Logo1.png')} className="w-24 h-12" resizeMode="contain" />
-                </View>
+        <BackgroundImage source={require('~/assets/img/backgroundImage/imagemFundo3.png')}>
+            <SafeAreaView className="w-full h-full">
+                <HeaderAuth />
 
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -163,108 +122,79 @@ export default function SignUp({ }) {
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
                     >
-
-
                         <Text className="text-colorLight200 text-5xl font-semibold text-center">
                             Crie sua conta
                         </Text>
 
-                        <View className='px-10 w-full'>
-                            {role !== '' && (
-                                <Text className='text-lg mt-2 text-colorViolet text-center'>{role}</Text>
-                            )}
+                        <View className="px-10 w-full">
+                            {role && <Text className="text-lg mt-2 text-colorViolet text-center">{role}</Text>}
 
-                            <View className='mt-10'>
+                            <View className="mt-10 space-y-5">
                                 <Input
-                                    placeholder='Digite seu nome'
-                                    keyboardType="default"
-                                    autoCapitalize="words"
-                                    returnKeyType="done"
-                                    maxLength={30}
-                                    placeholderTextColor='#5d5d5d'
+                                    placeholder="Digite seu nome"
                                     value={name}
                                     onChangeText={setName}
-                                    autoCorrect={true}
                                     onFocus={() => setCampoFocado('nome')}
                                     onBlur={() => setCampoFocado('')}
-                                    style={{
-                                        borderColor: campoFocado === 'nome' ? '#6943FF' : '#27272A',
-                                    }}
+                                    placeholderTextColor="#5d5d5d"
+                                    autoCapitalize="words"
+                                    autoCorrect
+                                    style={{ borderColor: campoFocado === 'nome' ? '#6943FF' : '#27272A' }}
                                 />
 
                                 <Input
-                                    placeholder='Digite seu sobrenome'
-                                    keyboardType="default"
-                                    autoCapitalize="words"
-                                    returnKeyType="done"
-                                    maxLength={30}
-                                    placeholderTextColor='#5d5d5d'
+                                    placeholder="Digite seu sobrenome"
                                     value={sobrenome}
                                     onChangeText={setSobrenome}
-                                    autoCorrect={true}
                                     onFocus={() => setCampoFocado('sobrenome')}
                                     onBlur={() => setCampoFocado('')}
-                                    style={{
-                                        borderColor: campoFocado === 'sobrenome' ? '#6943FF' : '#27272A',
-                                    }}
+                                    placeholderTextColor="#5d5d5d"
+                                    autoCapitalize="words"
+                                    autoCorrect
+                                    style={{ borderColor: campoFocado === 'sobrenome' ? '#6943FF' : '#27272A' }}
                                 />
 
                                 <Input
-                                    placeholder='Digite seu e-mail'
+                                    placeholder="Digite seu e-mail"
                                     keyboardType="email-address"
-                                    returnKeyType="done"
-                                    autoCapitalize="none"
-                                    autoCorrect={false}
-                                    textContentType="emailAddress"
-                                    placeholderTextColor='#5d5d5d'
                                     value={email}
                                     onChangeText={setEmail}
                                     onFocus={() => setCampoFocado('email')}
                                     onBlur={() => setCampoFocado('')}
-                                    style={{
-                                        borderColor: campoFocado === 'email' ? '#6943FF' : '#27272A',
-                                    }}
+                                    placeholderTextColor="#5d5d5d"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    style={{ borderColor: campoFocado === 'email' ? '#6943FF' : '#27272A' }}
                                 />
 
                                 <InputPassword
-                                    placeholder='Digite sua senha'
-                                    keyboardType="default"
-                                    autoCapitalize="none"
-                                    returnKeyType="done"
-                                    autoCorrect={false}
-                                    textContentType="password"
-                                    placeholderTextColor='#5d5d5d'
+                                    placeholder="Digite sua senha"
                                     value={password}
                                     onChangeText={setPassword}
                                     onFocus={() => setCampoFocado('senha')}
                                     onBlur={() => setCampoFocado('')}
-                                    style={{
-                                        borderColor: campoFocado === 'senha' ? '#6943FF' : '#27272A',
-                                    }}
+                                    placeholderTextColor="#5d5d5d"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    style={{ borderColor: campoFocado === 'senha' ? '#6943FF' : '#27272A' }}
                                 />
 
                                 <InputPassword
-                                    placeholder='Confirme a senha'
-                                    keyboardType="default"
-                                    autoCapitalize="none"
-                                    returnKeyType="done"
-                                    autoCorrect={false}
-                                    textContentType="password"
-                                    placeholderTextColor='#5d5d5d'
+                                    placeholder="Confirme a senha"
                                     value={confirmPassword}
                                     onChangeText={setConfirmPassword}
                                     onFocus={() => setCampoFocado('senha')}
                                     onBlur={() => setCampoFocado('')}
-                                    style={{
-                                        borderColor: campoFocado === 'senha' ? '#6943FF' : '#27272A',
-                                    }}
+                                    placeholderTextColor="#5d5d5d"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    style={{ borderColor: campoFocado === 'senha' ? '#6943FF' : '#27272A' }}
                                 />
                             </View>
 
                             <View className="flex-row items-center gap-2 justify-center my-10">
                                 <TouchableOpacity
                                     onPress={() => setRememberMe(!rememberMe)}
-                                    activeOpacity={0.7}
                                     className="w-6 h-6 rounded-md border-2 border-colorViolet flex items-center justify-center"
                                 >
                                     {rememberMe && <View className="w-6 h-6 bg-colorViolet rounded-md" />}
@@ -272,25 +202,24 @@ export default function SignUp({ }) {
                                 <Text className="text-gray-300 text-base">Lembrar</Text>
                             </View>
 
-                            <View className=''>
-                                <ButtonViolet onPress={handleSignUp}
-                                    disabled={loading}
-                                    style={{
-                                        shadowColor: '#6943FF',
-                                        shadowOffset: { width: 0, height: 0 },
-                                        shadowOpacity: 0.7,
-                                        shadowRadius: 7,
-                                        elevation: 12,
-                                        opacity: loading ? 0.7 : 1,
-                                    }}
-                                >
-                                    {loading ? (
-                                        <ActivityIndicator size="small" color="#FFFFFF" />
-                                    ) : (
-                                        <ButtonTextViolet>Cadastrar</ButtonTextViolet>
-                                    )}
-                                </ButtonViolet>
-                            </View>
+                            <ButtonViolet
+                                onPress={handleSignUp}
+                                disabled={loading}
+                                style={{
+                                    shadowColor: '#6943FF',
+                                    shadowOffset: { width: 0, height: 0 },
+                                    shadowOpacity: 0.7,
+                                    shadowRadius: 7,
+                                    elevation: 12,
+                                    opacity: loading ? 0.7 : 1,
+                                }}
+                            >
+                                {loading ? (
+                                    <ActivityIndicator size="small" color="#FFFFFF" />
+                                ) : (
+                                    <ButtonTextViolet>Cadastrar</ButtonTextViolet>
+                                )}
+                            </ButtonViolet>
                         </View>
                     </ScrollView>
                 </KeyboardAvoidingView>

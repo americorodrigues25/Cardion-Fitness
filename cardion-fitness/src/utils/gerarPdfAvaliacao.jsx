@@ -54,15 +54,15 @@ export async function gerarPdfAvaliacao(avaliacao) {
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(uri);
     } else {
-       Toast.show({
-                      type: 'error',
-                      text1: 'Compartilhamento não disponivel',                    
-                    });
+      Toast.show({
+        type: 'error',
+        text1: 'Compartilhamento não disponivel',
+      });
     }
   } catch (error) {
-     Toast.show({
-                      type: 'error',
-                      text1: 'Erro ao gerar pdf',                    
-                    });
+    Toast.show({
+      type: 'error',
+      text1: 'Erro ao gerar pdf',
+    });
   }
 }

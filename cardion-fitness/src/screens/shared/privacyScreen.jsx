@@ -35,7 +35,6 @@ export default function Privacy() {
                     <Text className="text-base text-colorLight200 text-justify"><Text className="text-colorViolet text-base font-bold ">-</Text> Dados Pessoais: Nome, e-mail, idade, sexo, peso, altura, cidade e senha de acesso. </Text>
                     <Text className="text-base text-colorLight200 text-justify"><Text className="text-colorViolet text-base font-bold ">-</Text> Dados de Saúde e Treino: Informações sobre treinos realizados, metas, avaliações físicas, frequência e preferências.</Text>
                     <Text className="text-base text-colorLight200 text-justify"><Text className="text-colorViolet text-base font-bold ">-</Text> Dados de Uso: Informações sobre como o app é utilizado, como tempo de uso, interações e sessões ativas.</Text>
-
                     <Text className="text-colorViolet text-lg font-semibold mt-3 text-justify">2. Uso das Informações</Text>
                     <Text className="text-base text-colorLight200 text-justify">As informações coletadas serão utilizadas para:</Text>
                     <Text className="text-base text-colorLight200 text-justify"><Text className="text-colorViolet text-base font-bold ">-</Text> Personalizar planos de treino e recomendações com base no perfil individual;</Text>

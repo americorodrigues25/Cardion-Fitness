@@ -24,8 +24,7 @@ export default function Splash({ navigation }) {
 
                 onAuthStateChanged(auth, (user) => {
                     if (user && remember === 'true') {
-                        { /*Buscamos o usuario...Porém depois precisa arrumar quando separar autenticações(Aluno/Personal)
-                            e seguir com as telas correspondentes*/ }
+                        { /*Busca se o usuario já está autenticado e entra na conta correspondente*/ }
                         navigation.replace('homeAluno');
                     }
                     else {
