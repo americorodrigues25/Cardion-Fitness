@@ -30,10 +30,10 @@ export const useCreateTreino = () => {
     // }
     try {
       
-      const role = await AsyncStorage.getItem('role')
-      const uid = await AsyncStorage.getItem('uid')
+      // const role = await AsyncStorage.getItem('role')
+      // const uid = await AsyncStorage.getItem('uid')
 
-      if(role != "personal") return false
+      // if(role != "personal") return false
       
       
 

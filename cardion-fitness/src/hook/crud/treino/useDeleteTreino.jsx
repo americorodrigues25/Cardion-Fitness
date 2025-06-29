@@ -18,6 +18,7 @@ export const useDeleteTreino = () => {
 
     try {
 <<<<<<< HEAD
+<<<<<<< HEAD
      
       const role = await AsyncStorage.getItem('role')
 
@@ -35,6 +36,14 @@ export const useDeleteTreino = () => {
         setError('Acesso negado: Você não tem permissão para excluir este treino.');
         return false;
       }
+=======
+      // const role = await AsyncStorage.getItem('role');
+
+      // if (role !== 'personal') {
+      //   setError('Acesso negado: Você não tem permissão para excluir este treino.');
+      //   return false;
+      // }
+>>>>>>> dd6e428 (refactor: remove validacao de personal)
 
       await deleteDoc(doc(db, 'treino', idTreino));
       
