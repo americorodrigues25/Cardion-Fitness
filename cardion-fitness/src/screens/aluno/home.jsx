@@ -1,16 +1,30 @@
-import { View, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, Image, ImageBackground, Modal, Linking, ActivityIndicator } from 'react-native';
+import {
+    ActivityIndicator,
+    Alert,
+    BackHandler,
+    Image,
+    ImageBackground,
+    KeyboardAvoidingView,
+    Linking,
+    Modal,
+    Platform,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+
+import React, { useEffect, useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import { BackHandler } from 'react-native'; //esse é evento do botão voltar em Android
-import { useEffect, useState, useCallback } from 'react';
+
 import Toast from 'react-native-toast-message';
-import React from 'react';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import InfosPersonal from '~/components/modais/infosPersonal';
 import AdCarousel from '~/components/anuncios/anuncioParceiros';
-
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import HeaderApp from '~/components/header/headerApp';
 
 import { useDelete } from '~/hook/crud/useDelete';
 import { useGet } from '~/hook/crud/useGet';
@@ -59,27 +73,6 @@ export default function Home({ navigation }) {
         fetchNome();
     }, [])
 
-    const autenticar = async () => {
-        const compatibilidade = await LocalAuthentication.hasHardwareAsync();
-        const biometriaCadastrada = await LocalAuthentication.isEnrolledAsync();
-
-        if (!compatibilidade || !biometriaCadastrada) {
-            Alert.alert('Biometria não configurada', 'Seu dispositivo não tem biometria ou ela não está ativada.');
-            return;
-        }
-
-        const resultado = await LocalAuthentication.authenticateAsync({
-            promptMessage: 'Autentique-se para continuar',
-            fallbackLabel: 'Usar senha',
-        });
-
-        if (resultado.success) {
-            await deleteAccount()
-        } else {
-            Alert.alert('Falha na autenticação');
-        }
-    };
-
     useFocusEffect(
         useCallback(() => {
             const onBackPress = () => {
@@ -124,7 +117,7 @@ export default function Home({ navigation }) {
 
     useFocusEffect(
         React.useCallback(() => {
-            setShowAd(true); 
+            setShowAd(true);
         }, [])
     );
 
@@ -138,22 +131,7 @@ export default function Home({ navigation }) {
                 style={{ flex: 1 }}
             >
 
-                <View className='flex-row items-center justify-between mb-2'>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image source={require('~/assets/img/logo/Logo1.png')} className="w-20 h-10" resizeMode="contain" />
-                    </View>
-
-                    <View className='flex-row items-center gap-3'>
-
-                        <TouchableOpacity onPress={abrirModalPersonal} disabled={loading} className="p-2">
-                            {loading ? (
-                                <ActivityIndicator size="small" color="#6943FF" />
-                            ) : (
-                                <MaterialCommunityIcons name="message-reply-text-outline" size={20} color="#e4e4e7" />
-                            )}
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <HeaderApp onPressIcon={abrirModalPersonal} loading={loading} />
 
                 <View>
                     <AdCarousel visible={showAd} onClose={() => setShowAd(false)} />

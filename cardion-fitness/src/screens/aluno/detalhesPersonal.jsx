@@ -188,7 +188,7 @@ export default function InfosPersonal() {
                                             Você perderá todos os dados vinculados a este personal como treinos, avaliações físicas e outros.
                                         </Text>
 
-                                        <View className="flex-row justify-end gap-x-6">
+                                        <View className="flex-row items-center justify-end gap-x-6">
                                             <TouchableOpacity
                                                 onPress={() => setShowModal(false)}
 
@@ -200,7 +200,7 @@ export default function InfosPersonal() {
                                                 onPress={handleExcluirPersonal}
                                                 className="flex-row items-center bg-colorViolet rounded-full py-3 justify-center w-40"
                                             >
-                                                <Text className="text-red-500 font-bold">Confirmar</Text>
+                                                <Text className="text-colorLight200 font-bold">Confirmar</Text>
                                             </TouchableOpacity>
                                         </View>
                                     </View>
