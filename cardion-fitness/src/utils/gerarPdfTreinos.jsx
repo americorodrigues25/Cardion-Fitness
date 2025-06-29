@@ -4,9 +4,9 @@ import { Alert } from 'react-native';
 
 import Toast from "react-native-toast-message";
 
-export async function gerarPdfTreinos(treinos,nomeAluno) {
+export async function gerarPdfTreinos(treinos, nomeAluno) {
   try {
-    
+
     let htmlContent = ` <h1>Ficha de Treino - ${nomeAluno} </h1>`;
 
     treinos.forEach((treino) => {
@@ -39,10 +39,10 @@ export async function gerarPdfTreinos(treinos,nomeAluno) {
           </tbody>
         </table>
       `;
-  });
+    });
 
     const { uri } = await Print.printToFileAsync({
-      html: htmlContent, 
+      html: htmlContent,
       base64: false,
     });
 
@@ -50,14 +50,14 @@ export async function gerarPdfTreinos(treinos,nomeAluno) {
       await Sharing.shareAsync(uri);
     } else {
       Toast.show({
-                      type: 'error',
-                      text1: 'compartilhamento não disponivel',                    
-                    });
+        type: 'error',
+        text1: 'compartilhamento não disponivel',
+      });
     }
   } catch (error) {
     Toast.show({
-                      type: 'error',
-                      text1: 'Erro ao gerar pdf',                    
-                    });
+      type: 'error',
+      text1: 'Erro ao gerar pdf',
+    });
   }
 }

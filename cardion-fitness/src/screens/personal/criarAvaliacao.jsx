@@ -1,12 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Modal, Image, ActivityIndicator } from 'react-native'; // Importe ActivityIndicator
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    ScrollView,
+    KeyboardAvoidingView,
+    Platform,
+    Modal,
+    Image,
+    ActivityIndicator
+}
+    from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useCreateAvaliacaoFisica } from '~/hook/crud/avaliacaoFisica/useCreateAvaliacaoFisica';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import Icon from 'react-native-vector-icons/Feather';
 import Toast from 'react-native-toast-message';
+
+import HeaderAppBack from '~/components/header/headerAppBack';
 
 const Input = ({ label, keyboardType = 'default', className = '', value, onChangeText, editable = true }) => (
     <View className={`mb-3 ${className}`}>
@@ -441,7 +456,7 @@ export default function CriarAvaliacao() {
                         disabled={loading}
                     >
                         {loading ? (
-                            <ActivityIndicator size="small" color="#E4E4E7" /> 
+                            <ActivityIndicator size="small" color="#E4E4E7" />
                         ) : (
                             <Text className="text-center text-colorLight200 font-bold text-lg">Salvar Avaliação</Text>
                         )}

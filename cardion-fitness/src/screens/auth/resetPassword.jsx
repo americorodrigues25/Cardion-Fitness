@@ -1,119 +1,122 @@
-import { SafeAreaView, View, Text, TouchableOpacity, Alert, Image, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+// 📦 Imports
+import {
+    SafeAreaView,
+    View,
+    Text,
+    KeyboardAvoidingView,
+    Platform,
+    ActivityIndicator,
+} from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { ButtonViolet, ButtonTextViolet } from '~/components/button';
-import { Input } from '~/components/input';
-
 import Toast from 'react-native-toast-message';
 
+// 🎯 Componentes e utilitários
+import { ButtonViolet, ButtonTextViolet } from '~/components/button';
+import { Input } from '~/components/input';
 import BackgroundImage from '~/components/loadingBackgroundImage';
+import HeaderAuth from '~/components/header/headerAuth';
 
+// 🔁 Hooks
 import { useAuth } from '~/hook/useAuthentication';
 
 export default function ResetPassword() {
     const { resetPassword, loading } = useAuth();
     const navigation = useNavigation();
+
     const [email, setEmail] = useState('');
-    const [formError, setFormError] = useState('');
     const [campoFocado, setCampoFocado] = useState('');
 
+    const validarEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    const mostrarToastErro = (mensagem) => {
+        Toast.show({
+            type: 'error',
+            text1: 'Erro',
+            text2: mensagem,
+        });
+    };
+
+    const mostrarToastSucesso = (mensagem) => {
+        Toast.show({
+            type: 'success',
+            text1: 'Sucesso!',
+            text2: mensagem,
+            onHide: () => navigation.navigate('loginPassword'),
+            visibilityTime: 3000,
+        });
+    };
 
     const handleReset = async () => {
-
         if (!email) {
-            Toast.show({
-                type: 'error',
-                text1: 'Erro',
-                text2: 'Por favor, preencha o campo de e-mail.',
-            });
+            mostrarToastErro('Por favor, preencha o campo de e-mail.');
+            return;
+        }
+
+        if (!validarEmail(email)) {
+            mostrarToastErro('E-mail inválido. Verifique o formato.');
             return;
         }
 
         try {
             const ok = await resetPassword(email);
             if (ok) {
-                Toast.show({
-                    type: 'success',
-                    text1: 'Sucesso!',
-                    text2: 'Se houver uma conta com este e-mail, você receberá um link para redefinir a senha.',
-                    onHide: () => navigation.navigate('loginPassword'),
-                    visibilityTime: 3000,
-                });
+                mostrarToastSucesso('Se houver uma conta com este e-mail, você receberá o link de redefinição.');
             }
         } catch (err) {
-            if (err.code === 'auth/invalid-email') {
-                Toast.show({
-                    type: 'error',
-                    text1: 'E-mail inválido',
-                    text2: 'Verifique o formato do e-mail.',
-                });
-            } else {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Erro',
-                    text2: 'Ocorreu um erro ao enviar o link de redefinição.',
-                });
-            }
+            const isInvalid = err?.code === 'auth/invalid-email';
+            mostrarToastErro(isInvalid ? 'E-mail inválido. Verifique o formato.' : 'Ocorreu um erro ao enviar o link.');
         }
     };
 
     return (
         <BackgroundImage source={require('~/assets/img/backgroundImage/imagemFundo3.png')}>
-            <SafeAreaView className='w-full h-full'>
-                <View className=" px-5 pt-5 flex-row justify-between">
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Image source={require('~/assets/img/btnVoltar.png')} className='w-4 h-5' />
-                    </TouchableOpacity>
-                    <Image source={require('~/assets/img/logo/Logo1.png')} className="w-24 h-12" resizeMode="contain" />
-                </View>
+            <SafeAreaView className="w-full h-full">
+                <HeaderAuth />
 
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    className="flex-1">
-
-                    <View className='justify-center flex-1'>
-                        <Text className="text-colorLight200 text-5xl font-semibold text-center">
+                    className="flex-1"
+                >
+                    <View className="justify-center flex-1 px-10">
+                        <Text className="text-colorLight200 text-5xl font-semibold text-center mb-20">
                             Redefinir senha
                         </Text>
 
-                        <View className='px-10 w-full'>
+                        <Input
+                            placeholder="Digite o e-mail de cadastro"
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            textContentType="emailAddress"
+                            placeholderTextColor="#5d5d5d"
+                            value={email}
+                            onChangeText={setEmail}
+                            onFocus={() => setCampoFocado('email')}
+                            onBlur={() => setCampoFocado('')}
+                            style={{
+                                borderColor: campoFocado === 'email' ? '#6943FF' : '#27272A',
+                            }}
+                        />
 
-                            <View className='mt-20'>
-                                <Input
-                                    placeholder='Digite o e-mail de cadastro'
-                                    keyboardType="email-address"
-                                    returnKeyType="done"
-                                    autoCapitalize="none"
-                                    autoCorrect={false}
-                                    textContentType="emailAddress"
-                                    placeholderTextColor='#5d5d5d'
-                                    value={email}
-                                    onChangeText={setEmail}
-                                    onFocus={() => setCampoFocado('email')}
-                                    onBlur={() => setCampoFocado('')}
-                                    style={{
-                                        borderColor: campoFocado === 'email' ? '#6943FF' : '#27272A',
-                                    }}
-                                />
-                            </View>
-
-                            <View className="flex-row items-center justify-center mt-20">
-                                <ButtonViolet onPress={handleReset} disabled={loading}
-                                    style={{
-                                        shadowColor: '#6943FF',
-                                        shadowOffset: { width: 0, height: 0 },
-                                        shadowOpacity: 0.7,
-                                        shadowRadius: 7,
-                                        elevation: 12,
-                                    }}
-                                >
-                                    {loading ? (
-                                        <ActivityIndicator size="small" color="#E4E4E7" />
-                                    ) : (
-                                        <ButtonTextViolet>Enviar</ButtonTextViolet>
-                                    )}
-                                </ButtonViolet>
-                            </View>
+                        <View className="items-center mt-20">
+                            <ButtonViolet
+                                onPress={handleReset}
+                                disabled={loading}
+                                style={{
+                                    shadowColor: '#6943FF',
+                                    shadowOffset: { width: 0, height: 0 },
+                                    shadowOpacity: 0.7,
+                                    shadowRadius: 7,
+                                    elevation: 12,
+                                }}
+                            >
+                                {loading ? (
+                                    <ActivityIndicator size="small" color="#E4E4E7" />
+                                ) : (
+                                    <ButtonTextViolet>Enviar</ButtonTextViolet>
+                                )}
+                            </ButtonViolet>
                         </View>
                     </View>
                 </KeyboardAvoidingView>
