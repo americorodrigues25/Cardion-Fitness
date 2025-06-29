@@ -7,50 +7,23 @@ export const useDeleteTreino = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-<<<<<<< HEAD
-    //FLUXO <PERSONAL>   
-    // deletar treino 
-=======
->>>>>>> 2345cb8 (feat: Corrige problema para deletar treino, incrementa idTreino para buscar o treino)
   const deletarTreinoAluno = async (idTreino) => {
     setLoading(true);
     setError(null);
 
     try {
-<<<<<<< HEAD
-<<<<<<< HEAD
-     
-      const role = await AsyncStorage.getItem('role')
-
-      if(role != "personal") return false
-     
-      await deleteDoc(doc(db, 'treino',idTreino));
-      
-      return true
-
-=======
       const role = await AsyncStorage.getItem('role');
-      const uid = await AsyncStorage.getItem('uid');
 
-      if (role !== 'personal' || !uid) {
+      if (role !== 'personal') {
         setError('Acesso negado: Você não tem permissão para excluir este treino.');
         return false;
       }
-=======
-      // const role = await AsyncStorage.getItem('role');
-
-      // if (role !== 'personal') {
-      //   setError('Acesso negado: Você não tem permissão para excluir este treino.');
-      //   return false;
-      // }
->>>>>>> dd6e428 (refactor: remove validacao de personal)
 
       await deleteDoc(doc(db, 'treino', idTreino));
-      
-      return true; 
->>>>>>> 2345cb8 (feat: Corrige problema para deletar treino, incrementa idTreino para buscar o treino)
+      return true;
+
     } catch (err) {
-      setError(err.message); 
+      setError(err.message);
       return false;
     } finally {
       setLoading(false);

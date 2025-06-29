@@ -5,7 +5,6 @@ import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Toast from "react-native-toast-message";
 
-import { Linking } from "react-native";
 import { ButtonViolet } from "~/components/button";
 import { useNavigation } from '@react-navigation/native';
 
