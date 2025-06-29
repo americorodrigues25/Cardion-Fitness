@@ -9,6 +9,7 @@ import {
   Animated,
   Modal,
 } from 'react-native';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const { width } = Dimensions.get('window');
@@ -18,7 +19,7 @@ const ad = {
   id: '1',
   title: 'Super desconto CrossFit Suzano',
   image: require('~/assets/img/anuncios/imageBannerCFS2.jpg'),
-  link: 'https://exemplo-suplemento.com',
+  link: 'https://google.com',
 };
 
 export default function AdCarousel({ visible, onClose }) {

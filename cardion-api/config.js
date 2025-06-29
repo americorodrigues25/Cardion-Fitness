@@ -1,3 +1,3 @@
-const SERVER_URL = 'http://192.168.0.33:3001';
+const SERVER_URL = 'http://192.168.217.161:3001';
 
 module.exports = SERVER_URL;
