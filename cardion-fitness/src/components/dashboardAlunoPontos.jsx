@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { useGet } from '~/hook/crud/useGet';
 
 const DashboardGraficoAlunos = () => {
