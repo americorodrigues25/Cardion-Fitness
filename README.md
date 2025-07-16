@@ -38,15 +38,25 @@
 - Diversos modais interativos  
 - Integração com anúncios  
 
-E muito mais...
+---
 
 ## 🛠️ Tecnologias e ferramentas utilizadas:
 - [React Native](https://reactnative.dev/)
 - [Firebase](https://firebase.google.com/?hl=pt-br)
 - [Node.js](https://nodejs.org/pt)
-- [Expo](https://expo.dev/)
+- [Expo SDK 52](https://docs.expo.dev/)
 - [NativeWind](https://www.nativewind.dev/)
 - [Styled Components](https://styled-components.com/)
+
+--- 
+
+## ✅ Requisitos e observações técnicas:
+- **Node.js** versão recomendada: `18.x` ou superior  
+- **Expo**: projeto rodando com **Expo SDK 52**  
+- Necessário ter **npm** instalado  
+- O IP configurado em `config.js` deve ser o endereço de IP local da máquina onde a API estará rodando para possibilitar notificações e upload de imagem de perfil  
+
+---
 
 ## 🚀 Como instalar e rodar o projeto:
 ```bash
@@ -55,15 +65,34 @@ $ git clone https://github.com/americorodrigues25/Cardion-Fitness.git
 ```
 
 ```bash
-# Acesse a pasta da aplicação
-$ cd ...
+# Acesse o diretório principal da aplicação:
+$ cd Cardion-Fitness
 
-# Instale as dependências
+# Acesse o diretório da API:
+$ cd cardion-api
+
+# Instale as dependências:
 $ npm install
 
-# Inicie a aplicação
-$ npx expo start
+# Configure o endereço de IP local no arquivo 'config.js' dentro de cardion-api
+# Rode a API (Deixe-a rodando):
+$ node config.js
+
+# Volte um diretório:
+$ cd ..
+
+# Entre no diretório raiz
+$ cd cardion-fitness
+
+# Instale as dependências:
+$ npm install
+
+# Configure o mesmo endereço de IP local no arquivo 'src/apiConfig/config.js'
 ```
 
+```bash
+# Por fim, inicie a aplicação com:
+$ npx expo start
+```
 _________________________________________________________
 <div align="center">💻 Feito por Américo Rodrigues</div>
