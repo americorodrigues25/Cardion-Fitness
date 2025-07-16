@@ -113,5 +113,7 @@ $ npx expo start
 ## 📢 Publicação no LinkedIn
 
 [🔗 Ver post no LinkedIn](https://www.linkedin.com/feed/update/urn:li:activity:7345609999747878915/)
-_________________________________________________________
+
+---
+
 <div align="center">💻 Feito por Américo Rodrigues</div>
