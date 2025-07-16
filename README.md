@@ -1,10 +1,23 @@
 # 🔝 Cardion Fitness App
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/5bfbcae7-a1e6-4ef1-a031-38c094c7a148" width="30%" style="max-width: 200px; margin: 5px;" />
-  <img src="https://github.com/user-attachments/assets/820e5602-f313-4683-9bab-4be0fc6a9b7b" width="30%" style="max-width: 200px; margin: 5px;" />
-  <img src="https://github.com/user-attachments/assets/835f3e34-ce55-4a41-86d1-dec53c760246" width="30%" style="max-width: 200px; margin: 5px;" />
+  <img src="https://github.com/user-attachments/assets/5bfbcae7-a1e6-4ef1-a031-38c094c7a148" width="20%" style="max-width: 200px; margin: 5px;" />
+  <img src="https://github.com/user-attachments/assets/54415d18-f517-4441-a010-bffb0a5ecd6a" width="20%" style="max-width: 200px; margin: 5px;" />
+  <img src="https://github.com/user-attachments/assets/820e5602-f313-4683-9bab-4be0fc6a9b7b" width="20%" style="max-width: 200px; margin: 5px;" />
 </div>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/835f3e34-ce55-4a41-86d1-dec53c760246" width="20%" style="max-width: 200px; margin: 5px;" />
+  <img src="https://github.com/user-attachments/assets/62049b52-f8e0-422b-9b7a-ab177b67d8fe" width="20%" style="max-width: 200px; margin: 5px;" />
+  <img src="https://github.com/user-attachments/assets/93cb1f8c-65e0-4e7d-add7-8bcef89fb7ff" width="20%" style="max-width: 200px; margin: 5px;" />
+</div>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/b2569c0e-3499-4fdb-bb1c-526ea831464e" width="20%" style="max-width: 200px; margin: 5px;" />
+  <img src="https://github.com/user-attachments/assets/b36a2610-60e1-485b-bdbd-ba6107dd593e" width="20%" style="max-width: 200px; margin: 5px;" />
+  <img src="https://github.com/user-attachments/assets/027d0e01-8f32-4c39-8ecf-7ee212982246" width="20%" style="max-width: 200px; margin: 5px;" />
+</div>
+
 
 ## 📚 Informações sobre o projeto:
 * Este projeto foi desenvolvido como conclusão do curso de Análise e Desenvolvimento de Sistemas
@@ -94,5 +107,11 @@ $ npm install
 # Por fim, inicie a aplicação com:
 $ npx expo start
 ```
+
+---
+
+## 📢 Publicação no LinkedIn
+
+[🔗 Ver post no LinkedIn](https://www.linkedin.com/feed/update/urn:li:activity:7345609999747878915/)
 _________________________________________________________
 <div align="center">💻 Feito por Américo Rodrigues</div>
